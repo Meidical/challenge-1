@@ -1,3 +1,9 @@
+%% Servidor
+:- use_module(library(http/thread_httpd)).
+:- use_module(library(http/http_dispatch)).
+:- use_module(library(http/http_server)).
+:- use_module(library(http/http_client)).
+
 % Versão preparada para lidar com regras que contenham negação (nao)
 % Metaconhecimento
 % Usar base de conhecimento veIculos2.txt
@@ -11,10 +17,7 @@
 
 :-dynamic justifica/3.
 
-
-carrega_bc:-
-		write('NOME DA BASE DE CONHECIMENTO (terminar com .)-> '),
-		read(NBC),
+carrega_bc(NBC):-
 		consult(NBC).
 
 arranca_motor:-	facto(N,Facto),
@@ -236,3 +239,17 @@ explica_porque_nao([P|LPF],Nivel):-
 
 formata(Nivel):-
 	Esp is (Nivel-1)*5, tab(Esp).
+
+servidor(Port) :-
+    http_server(http_dispatch, [port(Port)]).
+
+% Define the route (URL path) and handler
+:-http_handler(root(hello), say_hello, []).
+
+say_hello(_Request) :-
+    % Captura a saída do mostra_factos/0 em uma string
+    with_output_to(string(Output), mostra_factos),
+
+    % Retorna como resposta HTTP
+    format('Content-type: text/plain~n~n'),
+    format('~s', [Output]).

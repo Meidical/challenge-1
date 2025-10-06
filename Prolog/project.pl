@@ -1,6 +1,7 @@
 :- consult('engine.pl').
 
 main :-
-    servidor(7071).
+    servidor(8080),
+    carrega_bc('veiculos2.txt').
 
 :- main.
