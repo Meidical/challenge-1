@@ -38,6 +38,11 @@
 
 ### Week 4
 
+- Início do desenvolvimento do relatório;
+- Início do desenvolvimento dos trabalhos;
+- Esclarecimento de dúvidas com o professor acerca das regras e factos do sistema pericial;
+- Criação do fluxograma.
+
 ### Week 5
 
 ### Week 6
