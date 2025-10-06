@@ -6,11 +6,15 @@
   <br> **R.:**
 
   - Bloco Operatório
-  -
-  -
+  - Anestesia fora do bloco (anestisias para ress magnetica, endoscopias etc)
+  - Consulta pre-anestesica (consulta antes do procedimento) -> avaliaçao de via aerea
 
 - Como é feita a avaliação das vias respiratórias do paciente? (Procedimento)
   <br> **R.:**
+
+  - MOANS
+  - LEMON
+  - RODS
 
 - Como é feito o processo de anestesia?
   <br> **R.:**
