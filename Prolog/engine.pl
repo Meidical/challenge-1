@@ -254,16 +254,22 @@ formata(Nivel):-
 servidor(Port) :-
     http_server(http_dispatch, [port(Port)]).
 
-% Define the route (URL path) and handler
-:-http_handler(root(hello), say_hello, []).
+mostra_factos_json(JSON) :-
+    findall(KeyStr-FactJson, (
+        facto(N, Fact),
+        atom_number(KeyStr, N),
+        Fact =.. [Field, Arg1, Arg2],
+        (atom(Arg1) -> atom_string(Arg1, Arg1String) ; Arg1String = Arg1),
+        FactJson = json([Field=[Arg1String, Arg2]])
+    ), Pairs),
+    JSON = json(Pairs).
 
-say_hello(_Request) :-
-    % Captura a saída do mostra_factos/0 em uma string
-    with_output_to(string(Output), mostra_factos),
+% HTTP handler for getting facts as JSON
+:- http_handler(root(show), get_facts_json, []).
 
-    % Retorna como resposta HTTP
-    format('Content-type: text/plain~n~n'),
-    format('~s', [Output]).
+get_facts_json(_Request) :-
+    mostra_factos_json(JSON),
+    reply_json(JSON).
 
 :- http_handler(root(facts), load_facts_json, [method(post)]).
 
