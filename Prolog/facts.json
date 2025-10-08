@@ -1,0 +1,38 @@
+{
+    "1": {
+        "lotacao": [
+            "meu_veículo",
+            3
+        ]
+    },
+    "2": {
+        "peso": [
+            "meu_veículo",
+            4500
+        ]
+    },
+    "3": {
+        "tipo": [
+            "meu_veículo",
+            "mercadorias"
+        ]
+    },
+    "4": {
+        "lotacao": [
+            "teu_veículo",
+            5
+        ]
+    },
+    "5": {
+        "peso": [
+            "teu_veículo",
+            2500
+        ]
+    },
+    "6": {
+        "tipo": [
+            "teu_veículo",
+            "passageiros"
+        ]
+    }
+}

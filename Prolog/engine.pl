@@ -4,6 +4,14 @@
 :- use_module(library(http/http_server)).
 :- use_module(library(http/http_client)).
 
+% Make sure to include the necessary JSON libraries
+:- use_module(library(http/json)).
+:- use_module(library(http/json_convert)).
+:- use_module(library(http/http_json)).
+
+% Module list
+:- use_module(library(lists)).
+
 % Versão preparada para lidar com regras que contenham negação (nao)
 % Metaconhecimento
 % Usar base de conhecimento veIculos2.txt
@@ -17,13 +25,16 @@
 
 :-dynamic justifica/3.
 
-carrega_bc(NBC):-
-		consult(NBC).
+ultimo:-
+    findall(N, facto(N, _), Ns),
+    reverse(Ns, [Last|_]),
+    retractall(ultimo_facto(_)),
+    assertz(ultimo_facto(Last)).
 
 arranca_motor:-	facto(N,Facto),
 		facto_dispara_regras1(Facto, LRegras),
 		dispara_regras(N, Facto, LRegras),
-		ultimo_facto(N).
+		ultimo.
 
 facto_dispara_regras1(Facto, LRegras):-
 	facto_dispara_regras(Facto, LRegras),
@@ -253,3 +264,24 @@ say_hello(_Request) :-
     % Retorna como resposta HTTP
     format('Content-type: text/plain~n~n'),
     format('~s', [Output]).
+
+:- http_handler(root(facts), load_facts_json, [method(post)]).
+
+load_facts_json(Request) :-
+   retractall(facto(_,_)),
+   http_read_json(Request, DictIn,[json_object(term)]),
+   DictOut=DictIn,
+   reply_json(DictOut),
+   assert_json_facts(DictIn).
+
+assert_json_facts(json(Pairs)) :-
+    maplist(assert_json_fact, Pairs).
+
+assert_json_fact(Key=json([Field=[Arg1,Arg2]])) :-
+    atom_number(Key, Num),
+    facto_functor(Field, Arg1, Arg2, Fact),
+    assertz(facto(Num, Fact)).
+
+facto_functor(Field, V, N, Term) :-
+    atom_string(V2, V),
+    Term =.. [Field, V2, N].
