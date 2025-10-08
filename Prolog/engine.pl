@@ -3,6 +3,7 @@
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_server)).
 :- use_module(library(http/http_client)).
+:- use_module(library(http/http_parameters)).
 
 % Make sure to include the necessary JSON libraries
 :- use_module(library(http/json)).
@@ -291,3 +292,67 @@ assert_json_fact(Key=json([Field=[Arg1,Arg2]])) :-
 facto_functor(Field, V, N, Term) :-
     atom_string(V2, V),
     Term =.. [Field, V2, N].
+
+% Convert "como" explanation to JSON format
+como_json(N, json([error="Conclusion not reached"])) :-
+    ultimo_facto(Last), 
+    Last < N, !.
+
+como_json(N, JSON) :-
+    justifica(N, ID, LFactos), !,
+    facto(N, F),
+    F =.. [Predicate|Args],
+    
+    % Get supporting facts - FIXED to collect all facts
+    findall(json([
+        id=FactID,
+        predicate=Pred,
+        arguments=Args2,
+        type=Type
+    ]), (
+        member(FactID, LFactos),
+        integer(FactID),          
+        facto(FactID, Fact),      % Get the actual fact
+        Fact =.. [Pred|Args2],    % Extract predicate and arguments
+        (justifica(FactID, _, _) -> Type = "derived_fact" ; Type = "initial_fact")
+    ), SupportingFacts),
+    
+    % Get rule description if available
+    (regra ID se LHS entao _RHS ->
+        term_string(LHS, LHSString)
+    ;
+        LHSString = ""
+    ),
+    
+    JSON = json([
+        conclusion=json([
+            id=N,
+            predicate=Predicate,
+            arguments=Args
+        ]),
+        rule=json([
+            id=ID,
+            description=LHSString
+        ]),
+        supporting_facts=SupportingFacts
+    ]).
+
+como_json(N, JSON) :-
+    facto(N, F),
+    F =.. [Predicate|Args],
+    JSON = json([
+        conclusion=json([
+            id=N,
+            predicate=Predicate,
+            arguments=Args
+        ]),
+        type="initial_fact"
+    ]).
+
+% HTTP handler for getting explanations as JSON using query parameter
+:- http_handler(root(explain), get_explanation_json, []).
+
+get_explanation_json(Request) :-
+    http_parameters(Request, [id(ID, [integer])]),
+    como_json(ID, JSON),
+    reply_json(JSON).
