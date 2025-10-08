@@ -1,3 +1,5 @@
+:- set_prolog_flag(encoding, utf8).
+
 %% Servidor
 :- use_module(library(http/thread_httpd)).
 :- use_module(library(http/http_dispatch)).
@@ -31,6 +33,9 @@ ultimo:-
     reverse(Ns, [Last|_]),
     retractall(ultimo_facto(_)),
     assertz(ultimo_facto(Last)).
+
+arranca_motor1:-
+	findall(_,arranca_motor,_).
 
 arranca_motor:-	facto(N,Facto),
 		facto_dispara_regras1(Facto, LRegras),
@@ -105,12 +110,12 @@ cria_facto(F,_,_):-
 	facto(_,F),!.
 
 cria_facto(F,ID,LFactos):-
-	retract(ultimo_facto(N1)),
-	N is N1+1,
-	asserta(ultimo_facto(N)),
-	assertz(justifica(N,ID,LFactos)),
-	assertz(facto(N,F)),
-	write('Foi concluído o facto nº '),write(N),write(' -> '),write(F),get0(_),!.
+    retract(ultimo_facto(N1)),
+    N is N1+1,
+    asserta(ultimo_facto(N)),
+    assertz(justifica(N,ID,LFactos)),
+    assertz(facto(N,F)),!.
+    %format('Foi concluído o facto nº ~w -> ~w~n', [N, F]),!.
 
 
 
@@ -356,3 +361,37 @@ get_explanation_json(Request) :-
     http_parameters(Request, [id(ID, [integer])]),
     como_json(ID, JSON),
     reply_json(JSON).
+
+:- http_handler(root(start), start_engine, []).
+
+start_engine(_Request) :-
+    % Store current facts before running engine
+    findall(N, facto(N, _), ExistingFactIDs),
+    
+    % Run the engine
+    arranca_motor1,
+    
+    % Get all facts after running
+    findall(N, facto(N, _), AllFactIDs),
+    
+    % Find only new fact IDs (set difference)
+    subtract(AllFactIDs, ExistingFactIDs, NewFactIDs),
+    
+    % Build the JSON object with the correct format
+    findall(KeyStr-FactJson, (
+        member(N, NewFactIDs),
+        facto(N, Fact),
+        atom_number(KeyStr, N),  % Convert N to string for JSON key
+        Fact =.. [Field, Arg1, Arg2],
+        (atom(Arg1) -> atom_string(Arg1, Arg1String) ; Arg1String = Arg1),
+        FactJson = json([Field=[Arg1String, Arg2]])
+    ), Pairs),
+    
+    % Create the final JSON response
+    FactsJSON = json(Pairs),
+    
+    % Return as JSON
+    reply_json(json([
+        status='Engine started successfully',
+        new_facts=FactsJSON
+    ])).
