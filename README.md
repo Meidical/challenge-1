@@ -16,14 +16,34 @@
   - LEMON
   - RODS
 
-- Como é feito o processo de anestesia?
+- Após ser detetado um indicador, o procedimento pertencente é automaticamente descartado? Os indicadores são quantificáveis, ou apenas de resposta sim/não?
   <br> **R.:**
 
-- Em que parte do tratamento pode um sistema ser benefico? (Diagnostico/Procedimento/Recuperação)
+- Podemos associar um peso a cada indicador de modo a perceber qual procedimento é o menos difícil/de risco? Existem valores disponíveis para referência?
   <br> **R.:**
+  <br><br>
 
-- Quais são as maiores dificuldades durante os procedimentos?
-  <br> **R.:**
+# Mnemónica : Indicadores
 
-- Imagine um sistema que fosse especializado no domínio, que tipo de respostas este deverá fornecer? Como as respostas devem ser apresentadas?
-  <br> **R.:**
+## MOANS (Dificuldade prevísivel de ventilação com máscara facial):
+
+- **M** - Mask Seal
+- **O** - Obstruction
+- **A** - Age > 55
+- **N** - No Teeth
+- **S** - Stiff
+
+## LEMON (Dificuldade de laringoscopia e intubação):
+
+- **L** - Look Externaly
+- **E** - Evaluate the 3-3-2 Rule
+- **M** - Mallampati Score
+- **O** - Obstruction/Obesity
+- **N** - Neck Mobility
+
+## RODS (Dificuldade no uso dos dispositivos supraglóticos):
+
+- **R** - Restricted Mouth Opening
+- **O** - Obstruction
+- **D** - Disrupted or Distorted Airway
+- **S** - Stiff Lungs or Cervical Spine
