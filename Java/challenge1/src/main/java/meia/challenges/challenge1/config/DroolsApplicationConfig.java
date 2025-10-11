@@ -1,4 +1,4 @@
-package config;
+package meia.challenges.challenge1.config;
 
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class DroolsApplicationConfig {
 
     private static final KieServices kieServices = KieServices.Factory.get();
-    private static final String RULES_CUSTOMER_RULES_DRL = "rules/loan_rate.drl";
+    private static final String RULES_CUSTOMER_RULES_DRL = "rules/Rules.drl";
 
     @Bean
     public KieContainer kieContainer() {

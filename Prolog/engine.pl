@@ -270,6 +270,15 @@ mostra_factos_json(JSON) :-
     ), Pairs),
     JSON = json(Pairs).
 
+retirar_facto(K) :-
+	retract(facto(K,_)),
+	findall(K1,(justifica(K1,_,L),member(K,L)),LK1),retirar_lista_factos(LK1).
+retirar_lista_factos([ ]).
+	retirar_lista_factos([K1|LK1]):-
+	retract(justifica(K1,_,_)),
+	retirar_facto(K1),
+	retirar_lista_factos(LK1).
+
 % HTTP handler for getting facts as JSON
 :- http_handler(root(show), get_facts_json, []).
 
