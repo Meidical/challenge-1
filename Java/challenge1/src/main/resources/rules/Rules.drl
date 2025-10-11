@@ -1,0 +1,313 @@
+package meia.challenges.challenge1.rules
+
+import meia.challenges.challenge1.facts.PatientAirwayAssessment;
+import meia.challenges.challenge1.facts.AssessmentFactor;
+import meia.challenges.challenge1.utils.CertaintyFactor;
+
+// LEMON Rules for difficult laryngoscopy prediction
+
+// L - Look externally
+rule "Difficult Laryngoscopy - Look Externally"
+    when
+        $patient : PatientAirwayAssessment()
+        $lFactor : AssessmentFactor(
+            category == "LEMON",
+            code == "L",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        // The patient has external features suggesting difficult laryngoscopy
+        modify($patient) {
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), $cf))
+        }
+end
+
+// E - Evaluate 3-3-2 rule
+rule "Difficult Laryngoscopy - Evaluate 3-3-2 Rule"
+    when
+        $patient : PatientAirwayAssessment()
+        $eFactor : AssessmentFactor(
+            category == "LEMON",
+            code == "E",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), $cf))
+        }
+end
+
+// M - Mallampati score
+rule "Difficult Laryngoscopy - Mallampati Score High"
+    when
+        $patient : PatientAirwayAssessment()
+        $mFactor : AssessmentFactor(
+            category == "LEMON",
+            code == "M",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), $cf))
+        }
+end
+
+// O - Obstruction/Obesity
+rule "Difficult Laryngoscopy - Obstruction or Obesity"
+    when
+        $patient : PatientAirwayAssessment()
+        $oFactor : AssessmentFactor(
+            category == "LEMON",
+            code == "O",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), $cf))
+        }
+end
+
+// N - Neck mobility
+rule "Difficult Laryngoscopy - Neck Mobility"
+    when
+        $patient : PatientAirwayAssessment()
+        $nFactor : AssessmentFactor(
+            category == "LEMON",
+            code == "N",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), $cf))
+        }
+end
+
+// High overall LEMON score indicates difficult laryngoscopy
+rule "Overall LEMON Assessment High"
+    when
+        $patient : PatientAirwayAssessment(lemonCF > 0.6)
+    then
+        modify($patient) {
+            setDifficultAirwayPredicted(true),
+            setRecommendedApproach("Consider alternative techniques to direct laryngoscopy")
+        }
+        System.out.println("High LEMON score detected: CF = " + $patient.getLemonCF() +
+            ". Difficult laryngoscopy likely.");
+end
+
+// MOANS Rules for difficult mask ventilation prediction
+
+// M - Mask seal
+rule "Difficult Mask Ventilation - Mask Seal"
+    when
+        $patient : PatientAirwayAssessment()
+        $mFactor : AssessmentFactor(
+            category == "MOANS",
+            code == "M",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), $cf))
+        }
+end
+
+// O - Obstruction
+rule "Difficult Mask Ventilation - Obstruction"
+    when
+        $patient : PatientAirwayAssessment()
+        $oFactor : AssessmentFactor(
+            category == "MOANS",
+            code == "O",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), $cf))
+        }
+end
+
+// BMI specific rule
+rule "Difficult Mask Ventilation - BMI Over 26"
+    when
+        $patient : PatientAirwayAssessment(bmi > 26)
+    then
+        modify($patient) {
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), 0.5))
+        }
+        System.out.println("Patient has BMI > 26, increasing MOANS CF");
+end
+
+// Pregnancy specific rule
+rule "Difficult Mask Ventilation - Third Trimester Pregnancy"
+    when
+        $patient : PatientAirwayAssessment(pregnantThirdTrimester == true)
+    then
+        modify($patient) {
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), 0.6))
+        }
+        System.out.println("Patient is in third trimester pregnancy, increasing MOANS CF");
+end
+
+// A - Age
+rule "Difficult Mask Ventilation - Advanced Age"
+    when
+        $patient : PatientAirwayAssessment()
+        $aFactor : AssessmentFactor(
+            category == "MOANS",
+            code == "A",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), $cf))
+        }
+end
+
+// N - No teeth
+rule "Difficult Mask Ventilation - No Teeth"
+    when
+        $patient : PatientAirwayAssessment()
+        $nFactor : AssessmentFactor(
+            category == "MOANS",
+            code == "N",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), $cf))
+        }
+end
+
+// S - Stiff
+rule "Difficult Mask Ventilation - Stiff Lungs or Airway"
+    when
+        $patient : PatientAirwayAssessment()
+        $sFactor : AssessmentFactor(
+            category == "MOANS",
+            code == "S",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), $cf))
+        }
+end
+
+// High overall MOANS score indicates difficult mask ventilation
+rule "Overall MOANS Assessment High"
+    when
+        $patient : PatientAirwayAssessment(moansCF > 0.6)
+    then
+        modify($patient) {
+            setDifficultAirwayPredicted(true),
+            setRecommendedApproach("Consider alternative ventilation techniques")
+        }
+        System.out.println("High MOANS score detected: CF = " + $patient.getMoansCF() +
+            ". Difficult mask ventilation likely.");
+end
+
+// SHORT Rules for difficult cricothyrotomy prediction
+
+// S - Surgery or disruption to the airway
+rule "Difficult Cricothyrotomy - Surgery or Disruption"
+    when
+        $patient : PatientAirwayAssessment()
+        $sFactor : AssessmentFactor(
+            category == "SHORT",
+            code == "S",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), $cf))
+        }
+end
+
+// H - Hematoma or infection
+rule "Difficult Cricothyrotomy - Hematoma or Infection"
+    when
+        $patient : PatientAirwayAssessment()
+        $hFactor : AssessmentFactor(
+            category == "SHORT",
+            code == "H",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), $cf))
+        }
+end
+
+// O - Obesity
+rule "Difficult Cricothyrotomy - Obesity"
+    when
+        $patient : PatientAirwayAssessment()
+        $oFactor : AssessmentFactor(
+            category == "SHORT",
+            code == "O",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), $cf))
+        }
+end
+
+// R - Radiation distortion
+rule "Difficult Cricothyrotomy - Radiation"
+    when
+        $patient : PatientAirwayAssessment()
+        $rFactor : AssessmentFactor(
+            category == "SHORT",
+            code == "R",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), $cf))
+        }
+end
+
+// T - Tumor
+rule "Difficult Cricothyrotomy - Tumor"
+    when
+        $patient : PatientAirwayAssessment()
+        $tFactor : AssessmentFactor(
+            category == "SHORT",
+            code == "T",
+            present == true,
+            $cf : certaintyFactor
+        )
+    then
+        modify($patient) {
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), $cf))
+        }
+end
+
+// High overall SHORT score indicates difficult cricothyrotomy
+rule "Overall SHORT Assessment High"
+    when
+        $patient : PatientAirwayAssessment(shortCF > 0.6)
+    then
+        modify($patient) {
+            setDifficultAirwayPredicted(true),
+            setRecommendedApproach("Consider alternatives to cricothyrotomy as rescue technique")
+        }
+        System.out.println("High SHORT score detected: CF = " + $patient.getShortCF() +
+            ". Difficult cricothyrotomy likely.");
+end
