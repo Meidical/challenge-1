@@ -15,8 +15,6 @@ public class PatientAirwayAssessment {
     private int age;
     @Setter
     private double bmi;
-    @Setter
-    private boolean isPregnantThirdTrimester;
 
     // Certainty factors for overall assessments (range: -1.0 to 1.0)
     @Setter

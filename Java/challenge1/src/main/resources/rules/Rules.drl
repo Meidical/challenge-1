@@ -145,17 +145,6 @@ rule "Difficult Mask Ventilation - BMI Over 26"
         System.out.println("Patient has BMI > 26, increasing MOANS CF");
 end
 
-// Pregnancy specific rule
-rule "Difficult Mask Ventilation - Third Trimester Pregnancy"
-    when
-        $patient : PatientAirwayAssessment(pregnantThirdTrimester == true)
-    then
-        modify($patient) {
-            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), 0.6))
-        }
-        System.out.println("Patient is in third trimester pregnancy, increasing MOANS CF");
-end
-
 // A - Age
 rule "Difficult Mask Ventilation - Advanced Age"
     when
@@ -310,4 +299,35 @@ rule "Overall SHORT Assessment High"
         }
         System.out.println("High SHORT score detected: CF = " + $patient.getShortCF() +
             ". Difficult cricothyrotomy likely.");
+end
+
+// Rule for normal laryngoscopy recommendation when all scores are below threshold
+rule "Normal Airway Management"
+    when
+        $patient : PatientAirwayAssessment(
+            lemonCF <= 0.6,
+            moansCF <= 0.6,
+            rodsCF <= 0.6,
+            shortCF <= 0.6,
+            difficultAirwayPredicted == false
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Normal laryngoscopy process recommended")
+        }
+        System.out.println("All assessment scores below threshold. Normal laryngoscopy process recommended.");
+end
+
+// Final assessment rule that executes after all other rules
+rule "Final Assessment Evaluation"
+    salience -100 // Lower salience means this rule fires after others
+    when
+        $patient : PatientAirwayAssessment()
+    then
+        System.out.println("Final assessment complete.");
+        System.out.println("LEMON CF: " + $patient.getLemonCF());
+        System.out.println("MOANS CF: " + $patient.getMoansCF());
+        System.out.println("RODS CF: " + $patient.getRodsCF());
+        System.out.println("SHORT CF: " + $patient.getShortCF());
+        System.out.println("Recommended approach: " + $patient.getRecommendedApproach());
 end

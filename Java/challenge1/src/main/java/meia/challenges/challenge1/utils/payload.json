@@ -2,7 +2,6 @@
     "patientId": "007",
     "age": 20,
     "bmi": 1.20,
-    "isPregnantThirdTrimester": false,
     "lemonFactors": [
         {
             "category": "LEMON",
