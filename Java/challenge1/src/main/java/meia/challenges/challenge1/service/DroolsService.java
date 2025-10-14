@@ -5,7 +5,6 @@ import org.kie.api.runtime.KieSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import meia.challenges.challenge1.facts.PatientAirwayAssessment;
 import meia.challenges.challenge1.facts.AssessmentFactor;
 
