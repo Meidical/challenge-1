@@ -2,5 +2,5 @@
 
 main :-
     servidor(8080),
-    consult('veiculos2.txt').
+    consult('rules.txt').
 :- main.

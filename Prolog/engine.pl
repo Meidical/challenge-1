@@ -28,19 +28,25 @@
 
 :-dynamic justifica/3.
 
-ultimo:-
-    findall(N, facto(N, _), Ns),
-    reverse(Ns, [Last|_]),
-    retractall(ultimo_facto(_)),
-    assertz(ultimo_facto(Last)).
+%ultimo:-
+%    findall(N, facto(N, _), Ns),
+%    reverse(Ns, [Last|_]),
+%    retractall(ultimo_facto(_)).
+%    assertz(ultimo_facto(Last)).
 
 arranca_motor1:-
 	findall(_,arranca_motor,_).
 
 arranca_motor:-	facto(N,Facto),
+        contar_factos(Cont),
+        assertz(ultimo_facto(Cont)),
 		facto_dispara_regras1(Facto, LRegras),
 		dispara_regras(N, Facto, LRegras),
-		ultimo.
+        retractall(ultimo_facto(_)).
+
+contar_factos(Cont):-
+    findall(X, facto(X, _), Lista),
+    length(Lista, Cont).
 
 facto_dispara_regras1(Facto, LRegras):-
 	facto_dispara_regras(Facto, LRegras),
@@ -114,7 +120,7 @@ cria_facto(F,ID,LFactos):-
     N is N1+1,
     asserta(ultimo_facto(N)),
     assertz(justifica(N,ID,LFactos)),
-    assertz(facto(N,F)),!.
+    assertz(facto(N,F)).
     %format('Foi concluído o facto nº ~w -> ~w~n', [N, F]),!.
 
 
