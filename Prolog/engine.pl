@@ -292,14 +292,37 @@ get_facts_json(_Request) :-
     mostra_factos_json(JSON),
     reply_json(JSON).
 
-:- http_handler(root(facts), load_facts_json, [method(post)]).
+:- http_handler(root(facts), carrega_factos_json, [method(post)]).
 
-load_facts_json(Request) :-
-   retractall(facto(_,_)),
-   http_read_json(Request, DictIn,[json_object(term)]),
-   DictOut=DictIn,
-   reply_json(DictOut),
-   assert_json_facts(DictIn).
+carrega_factos_json(Request) :-
+    http_read_json_dict(Request, Dict),         
+    retractall(facto(_,_)),                      
+    retractall(ultimo_facto(_)),
+
+    assertz(facto(1, id_paciente(Dict.patientId))),
+    assertz(facto(2, idade(Dict.age))),
+    assertz(facto(3, bmi(Dict.bmi))),
+
+    assert_lista_fatores(Dict.lemonFactors),
+    assert_lista_fatores(Dict.moansFactors),
+    assert_lista_fatores(Dict.rodsFactors),
+    assert_lista_fatores(Dict.shortFactors),
+
+    reply_json(_{status:"Facts loaded"}).
+
+assert_lista_fatores(null) :- !. 
+assert_lista_fatores([]) :- !.        
+assert_lista_fatores([H | Lista]) :-
+    (H.present == true, assert_fator(H.category, H.code);   
+    H.present \== true),
+    assert_lista_fatores(Lista).       
+
+
+assert_fator(Category, Code) :-
+    (retract(ultimo_facto(N1)) -> true ; N1 = 0),
+    N is N1 + 1,
+    asserta(ultimo_facto(N)),
+    assertz(facto(N, fator(Category, Code))).
 
 assert_json_facts(json(Pairs)) :-
     maplist(assert_json_fact, Pairs).

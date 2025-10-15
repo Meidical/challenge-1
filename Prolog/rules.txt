@@ -1,99 +1,99 @@
-:-dynamic facto/2,ultimo_facto/1.
+:- dynamic facto/2, ultimo_facto/1.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Meta-conhecimento
+% META-CONHECIMENTO
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-facto_dispara_regras(fator(_, _), Rules) :- numlist(1,19,Rules).
+facto_dispara_regras(fator(_, _), Rules) :- numlist(1, 19, Rules).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % LEMON
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 regra 1
-    se [fator(lemon, l)]    % Look externally
-    entao [cria_facto(teste(lemon, [l, 0.2]))].
+    se [fator("LEMON", "L")]    % Look externally
+    entao [cria_facto(teste("LEMON", ["L", 0.2]))].
 
 regra 2
-    se [fator(lemon, e)]    % Evaluate 3-3-2 rule
-    entao [cria_facto(teste(lemon, [e, 0.2]))].
+    se [fator("LEMON", "E")]    % Evaluate 3-3-2 rule
+    entao [cria_facto(teste("LEMON", ["E", 0.2]))].
 
 regra 3
-    se [fator(lemon, m)]    % Mallampati
-    entao [cria_facto(teste(lemon, [m, 0.2]))].
+    se [fator("LEMON", "M")]    % Mallampati
+    entao [cria_facto(teste("LEMON", ["M", 0.2]))].
 
 regra 4
-    se [fator(lemon, o)]    % Obstruction
-    entao [cria_facto(teste(lemon, [o, 0.2]))].
+    se [fator("LEMON", "O")]    % Obstruction
+    entao [cria_facto(teste("LEMON", ["O", 0.2]))].
 
 regra 5
-    se [fator(lemon, n)]    % Neck mobility
-    entao [cria_facto(teste(lemon, [n, 0.2]))].
+    se [fator("LEMON", "N")]    % Neck mobility
+    entao [cria_facto(teste("LEMON", ["N", 0.2]))].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MOANS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 regra 6
-    se [fator(moans, m)]    % Mask seal
-    entao [cria_facto(teste(moans, [m, 0.2]))].
+    se [fator("MOANS", "M")]    % Mask seal
+    entao [cria_facto(teste("MOANS", ["M", 0.2]))].
 
 regra 7
-    se [fator(moans, o)]    % Obesity
-    entao [cria_facto(teste(moans, [o, 0.2]))].
+    se [fator("MOANS", "O")]    % Obesity
+    entao [cria_facto(teste("MOANS", ["O", 0.2]))].
 
 regra 8
-    se [fator(moans, a)]    % Age > 55
-    entao [cria_facto(teste(moans, [a, 0.2]))].
+    se [fator("MOANS", "A")]    % Age > 55
+    entao [cria_facto(teste("MOANS", ["A", 0.2]))].
 
 regra 9
-    se [fator(moans, n)]    % No teeth
-    entao [cria_facto(teste(moans, [n, 0.2]))].
+    se [fator("MOANS", "N")]    % No teeth
+    entao [cria_facto(teste("MOANS", ["N", 0.2]))].
 
 regra 10
-    se [fator(moans, s)]    % Stiff lungs/neck
-    entao [cria_facto(teste(moans, [s, 0.2]))].
+    se [fator("MOANS", "S")]    % Stiff lungs/neck
+    entao [cria_facto(teste("MOANS", ["S", 0.2]))].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % RODS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 regra 11
-    se [fator(rods, r)]    % Restricted mouth opening
-    entao [cria_facto(teste(rods, [r, 0.25]))].
+    se [fator("RODS", "R")]    % Restricted mouth opening
+    entao [cria_facto(teste("RODS", ["R", 0.25]))].
 
 regra 12
-    se [fator(rods, o)]    % Obstruction
-    entao [cria_facto(teste(rods, [o, 0.25]))].
+    se [fator("RODS", "O")]    % Obstruction
+    entao [cria_facto(teste("RODS", ["O", 0.25]))].
 
 regra 13
-    se [fator(rods, d)]    % Distorted anatomy
-    entao [cria_facto(teste(rods, [d, 0.25]))].
+    se [fator("RODS", "D")]    % Distorted anatomy
+    entao [cria_facto(teste("RODS", ["D", 0.25]))].
 
 regra 14
-    se [fator(rods, s)]    % Stiff lungs/neck
-    entao [cria_facto(teste(rods, [s, 0.25]))].
+    se [fator("RODS", "S")]    % Stiff lungs/neck
+    entao [cria_facto(teste("RODS", ["S", 0.25]))].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SHORT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 regra 15
-    se [fator(short, s)]    % Surgery / Scar
-    entao [cria_facto(teste(short, [s, 0.2]))].
+    se [fator("SHORT", "S")]    % Surgery / Scar
+    entao [cria_facto(teste("SHORT", ["S", 0.2]))].
 
 regra 16
-    se [fator(short, h)]    % Hematoma
-    entao [cria_facto(teste(short, [h, 0.2]))].
+    se [fator("SHORT", "H")]    % Hematoma
+    entao [cria_facto(teste("SHORT", ["H", 0.2]))].
 
 regra 17
-    se [fator(short, o)]    % Obesity / Obstruction
-    entao [cria_facto(teste(short, [o, 0.2]))].
+    se [fator("SHORT", "O")]    % Obesity / Obstruction
+    entao [cria_facto(teste("SHORT", ["O", 0.2]))].
 
 regra 18
-    se [fator(short, r)]    % Radiation / Reduced mobility
-    entao [cria_facto(teste(short, [r, 0.2]))].
+    se [fator("SHORT", "R")]    % Radiation / Reduced mobility
+    entao [cria_facto(teste("SHORT", ["R", 0.2]))].
 
 regra 19
-    se [fator(short, t)]    % Tumor / Trauma
-    entao [cria_facto(teste(short, [t, 0.2]))].
-
+    se [fator("SHORT", "T")]    % Tumor / Trauma
+    entao [cria_facto(teste("SHORT", ["T", 0.2]))].
