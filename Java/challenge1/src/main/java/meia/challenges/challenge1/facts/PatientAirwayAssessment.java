@@ -37,6 +37,8 @@ public class PatientAirwayAssessment {
     private boolean difficultAirwayPredicted = false;
     @Setter
     private String recommendedApproach;
+    @Setter
+    private StandardLaryngoscopyStatus standardLaryngoscopyStatus = StandardLaryngoscopyStatus.NOT_STARTED;
 
     public void addLemonFactor(AssessmentFactor factor) { this.lemonFactors.add(factor); }
 
