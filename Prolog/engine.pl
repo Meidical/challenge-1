@@ -28,16 +28,10 @@
 
 :-dynamic justifica/3.
 
-%ultimo:-
-%    findall(N, facto(N, _), Ns),
-%    reverse(Ns, [Last|_]),
-%    retractall(ultimo_facto(_)).
-%    assertz(ultimo_facto(Last)).
+arranca_motor:-
+	findall(_,arranca_motor1,_).
 
-arranca_motor1:-
-	findall(_,arranca_motor,_).
-
-arranca_motor:-	facto(N,Facto),
+arranca_motor1:-	facto(N,Facto),
         contar_factos(Cont),
         assertz(ultimo_facto(Cont)),
 		facto_dispara_regras1(Facto, LRegras),
@@ -292,9 +286,9 @@ get_facts_json(_Request) :-
     mostra_factos_json(JSON),
     reply_json(JSON).
 
-:- http_handler(root(facts), carrega_factos_json, [method(post)]).
+:- http_handler(root(inferir_via_aerea), inferir_via_aerea, [method(post)]).
 
-carrega_factos_json(Request) :-
+inferir_via_aerea(Request) :-
     http_read_json_dict(Request, Dict),         
     retractall(facto(_,_)),                      
     retractall(ultimo_facto(_)),
@@ -302,13 +296,17 @@ carrega_factos_json(Request) :-
     assertz(facto(1, id_paciente(Dict.patientId))),
     assertz(facto(2, idade(Dict.age))),
     assertz(facto(3, bmi(Dict.bmi))),
+    asserta(ultimo_facto(3)), 
 
     assert_lista_fatores(Dict.lemonFactors),
     assert_lista_fatores(Dict.moansFactors),
     assert_lista_fatores(Dict.rodsFactors),
     assert_lista_fatores(Dict.shortFactors),
 
-    reply_json(_{status:"Facts loaded"}).
+    arranca_motor,
+    calcular_cf(CF),
+
+    reply_json(_{'cf': CF}).
 
 assert_lista_fatores(null) :- !. 
 assert_lista_fatores([]) :- !.        
@@ -335,6 +333,36 @@ assert_json_fact(Key=json([Field=[Arg1,Arg2]])) :-
 facto_functor(Field, V, N, Term) :-
     atom_string(V2, V),
     Term =.. [Field, V2, N].
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%Calculo de certeza de via aérea difícil
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+calcular_cf(CFFinal) :-
+    findall(Value,
+        (facto(_, Facto),
+         Facto =.. [teste, _Category, Args],
+         Args = [_, Value]),
+        CFs),
+    calcular_cf1(CFs, 0, CF),
+    CFFinal is CF * 2 - 1.
+
+calcular_cf1([], CF, CF) :- !.
+calcular_cf1([CF1 | Rest], CF2, CF) :-
+    combine_cf(CF2, CF1, CF3),
+    calcular_cf1(Rest, CF3, CF).
+
+combine_cf(CF1, CF2, CF) :-
+    CF1 >= 0, CF2 >= 0,
+    CF is CF1 + CF2 * (1 - CF1), !.
+
+%combine_cf(CF1, CF2, CF) :-
+%    CF1 < 0, CF2 < 0,
+%    CF is CF1 + CF2 * (1 + CF1), !.
+
+%combine_cf(CF1, CF2, CF) :-
+%    CF is (CF1 + CF2) / (1 - min(abs(CF1), abs(CF2))), !.
+
 
 % Convert "como" explanation to JSON format
 como_json(N, json([error="Conclusion not reached"])) :-
@@ -401,35 +429,3 @@ get_explanation_json(Request) :-
     reply_json(JSON).
 
 :- http_handler(root(start), start_engine, []).
-
-start_engine(_Request) :-
-    % Store current facts before running engine
-    findall(N, facto(N, _), ExistingFactIDs),
-    
-    % Run the engine
-    arranca_motor1,
-    
-    % Get all facts after running
-    findall(N, facto(N, _), AllFactIDs),
-    
-    % Find only new fact IDs (set difference)
-    subtract(AllFactIDs, ExistingFactIDs, NewFactIDs),
-    
-    % Build the JSON object with the correct format
-    findall(KeyStr-FactJson, (
-        member(N, NewFactIDs),
-        facto(N, Fact),
-        atom_number(KeyStr, N),  % Convert N to string for JSON key
-        Fact =.. [Field, Arg1, Arg2],
-        (atom(Arg1) -> atom_string(Arg1, Arg1String) ; Arg1String = Arg1),
-        FactJson = json([Field=[Arg1String, Arg2]])
-    ), Pairs),
-    
-    % Create the final JSON response
-    FactsJSON = json(Pairs),
-    
-    % Return as JSON
-    reply_json(json([
-        status='Engine started successfully',
-        new_facts=FactsJSON
-    ])).
