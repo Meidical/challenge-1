@@ -2,7 +2,10 @@ package meia.challenges.challenge1.rules
 
 import meia.challenges.challenge1.facts.PatientAirwayAssessment;
 import meia.challenges.challenge1.facts.AssessmentFactor;
+import meia.challenges.challenge1.facts.LaryngoscopyOutcomeRequest;
+import meia.challenges.challenge1.facts.StandardLaryngoscopyStatus;
 import meia.challenges.challenge1.utils.CertaintyFactor;
+
 
 // LEMON Rules for difficult laryngoscopy prediction
 
@@ -295,4 +298,34 @@ rule "Default Easy Airway Approach"
             setRecommendedApproach("Proceed with standard direct laryngoscopy")
         }
         System.out.println("Easy airway: recommending standard laryngoscopy.");
+end
+
+rule "Set Laryngoscopy Status Started"
+    salience -110  // Lower salience than Default Easy Airway Approach so it fires afterward
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Proceed with standard direct laryngoscopy",
+            standardLaryngoscopyStatus == StandardLaryngoscopyStatus.NOT_STARTED
+        )
+    then
+        modify($patient) {
+            setStandardLaryngoscopyStatus(StandardLaryngoscopyStatus.STARTED)
+        }
+        System.out.println("Starting standard laryngoscopy");
+end
+
+rule "Set Laryngoscopy Status Successful"
+    salience -120  // Lower salience than Set Laryngoscopy Status Started
+    when
+        $patient : PatientAirwayAssessment(standardLaryngoscopyStatus == StandardLaryngoscopyStatus.STARTED)
+        $laryngoscopySuccess : LaryngoscopyOutcomeRequest(
+            patientId == $patient.patientId,
+            successful == true
+        )
+    then
+        modify($patient) {
+            setStandardLaryngoscopyStatus(StandardLaryngoscopyStatus.SUCCESSFUL),
+            setRecommendedApproach("Laryngoscopy completed successfully")
+        }
+        System.out.println($patient.toString());
 end

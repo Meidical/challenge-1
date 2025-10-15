@@ -1,5 +1,6 @@
 package meia.challenges.challenge1.controller;
 
+import meia.challenges.challenge1.facts.LaryngoscopyOutcomeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,12 @@ public class DroolsSampleController {
     @PostMapping("/assessment")
     public ResponseEntity<PatientAirwayAssessment> getRate(@RequestBody PatientAirwayAssessment request){
         PatientAirwayAssessment assessment = droolsService.evaluateAirwayAssessment(request);
+        return new ResponseEntity<>(assessment, HttpStatus.OK);
+    }
+
+    @PostMapping("/laryngoscopy")
+    public ResponseEntity<LaryngoscopyOutcomeRequest> getLaryngoscopyOutcome(@RequestBody LaryngoscopyOutcomeRequest request) {
+        LaryngoscopyOutcomeRequest assessment = droolsService.setLaryngoscopyOutcomeRequest(request);
         return new ResponseEntity<>(assessment, HttpStatus.OK);
     }
 
