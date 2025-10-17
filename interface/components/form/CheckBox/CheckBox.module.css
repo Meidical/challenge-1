@@ -1,0 +1,68 @@
+.checkBoxFrame {
+  display: block;
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+  padding-left: 35px;
+  padding-block: 2px;
+  cursor: pointer;
+  user-select: none;
+
+  font-family: "OpenSans";
+  font-size: var(--ftiny);
+  font-weight: normal;
+  color: var(--white);
+}
+
+/* Hide the browser's default checkbox */
+.checkBoxFrame input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkMark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: var(--full-radius);
+}
+
+/* On mouse-over, add a grey background color */
+.checkBoxFrame:hover input ~ .checkMark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.checkBoxFrame input:checked ~ .checkMark {
+  background-color: var(--green);
+}
+
+/* Create the checkMark/indicator (hidden when not checked) */
+.checkMark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkMark when checked */
+.checkBoxFrame input:checked ~ .checkMark:after {
+  display: block;
+}
+
+/* Style the checkMark/indicator */
+.checkBoxFrame .checkMark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}

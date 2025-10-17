@@ -1,0 +1,10 @@
+.glassContainer {
+  display: flex;
+  gap: var(--tiny);
+  border: 1px solid var(--grey);
+  border-radius: var(--full-radius);
+  padding: var(--tiny) var(--tiny);
+  background-color: transparent;
+  box-shadow: var(--glass-inset-glow), var(--basic-drop-shadow);
+  backdrop-filter: var(--glass-blur);
+}

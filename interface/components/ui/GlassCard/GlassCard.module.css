@@ -1,0 +1,11 @@
+.glassCard {
+  padding: var(--lg);
+  display: flex;
+  background: var(--glass-gradient);
+  position: relative;
+  border-radius: var(--card-radius);
+  border: 1px solid var(--grey);
+  box-shadow: var(--basic-drop-shadow);
+  backdrop-filter: var(--glass-blur);
+  overflow: hidden;
+}

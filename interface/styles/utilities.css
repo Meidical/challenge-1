@@ -1,0 +1,95 @@
+.gap-massive,
+.gap-huge,
+.gap-xl,
+.gap-lg,
+.gap-md,
+.gap-sm,
+.gap-xs,
+.gap-tiny,
+.gap-micro,
+.column,
+.row {
+  display: flex;
+}
+
+.gap-massive {
+  gap: var(--massive);
+}
+
+.gap-huge {
+  gap: var(--huge);
+}
+
+.gap-xl {
+  gap: var(--xl);
+}
+
+.gap-lg {
+  gap: var(--lg);
+}
+
+.gap-md {
+  gap: var(--md);
+}
+
+.gap-sm {
+  gap: var(--sm);
+}
+
+.gap-xs {
+  gap: var(--xs);
+}
+
+.gap-tiny {
+  gap: var(--tiny);
+}
+
+.gap-micro {
+  gap: var(--micro);
+}
+
+.column {
+  flex-direction: column;
+}
+
+.row {
+  flex-direction: row;
+}
+
+.flex {
+  flex: 1;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.invisible {
+  opacity: 0 !important;
+}
+
+.relative {
+  position: relative;
+}
+
+.abs {
+  position: absolute;
+}
+
+.abs-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

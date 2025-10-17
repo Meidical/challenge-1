@@ -1,0 +1,27 @@
+.spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  overflow: visible !important;
+
+  transition: var(--fade-transition);
+}
+
+.rotate {
+  animation: jump-rotate 1s cubic-bezier(0.175, 0.885, 0.32, 1.175) infinite
+    both;
+}
+
+@keyframes jump-rotate {
+  0% {
+    transform: rotate(0);
+  }
+  90% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

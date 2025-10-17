@@ -1,0 +1,10 @@
+.basicCard {
+  padding: var(--lg);
+  display: flex;
+  background: var(--card-background-gradient);
+  position: relative;
+  border-radius: var(--card-radius);
+  border: 1px solid var(--stone);
+  box-shadow: var(--basic-drop-shadow);
+  overflow: hidden;
+}

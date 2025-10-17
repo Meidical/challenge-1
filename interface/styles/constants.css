@@ -1,0 +1,86 @@
+:root {
+  /* Font Sizes */
+  --fhuge: 16.6138rem;
+  --fxl: 10.2685rem;
+  --flg: 6.3462rem;
+  --fmd: 3.9223rem;
+  --fsm: 2.4246rem;
+  --fxs: 1.4988rem;
+  --ftiny: 0.9268rem;
+  --fmicro: 0.5769rem;
+
+  /* Spacing */
+  --massive: clamp(246.4px, 20.052vw, 554.56px);
+  --huge: clamp(153.6px, 12.5vw, 276.48px);
+  --xl: clamp(120px, 7.8125vw, 216px);
+  --lg: clamp(60.16px, 4.8958vw, 135.36px);
+  --md: clamp(37.76px, 3.0729vw, 85.12px);
+  --sm: clamp(23.68px, 1.9271vw, 42.56px);
+  --xs: clamp(14.72px, 1.1979vw, 27.68px);
+  --tiny: clamp(8.96px, 0.7292vw, 16.96px);
+  --micro: clamp(5.76px, 0.4688vw, 10.72px);
+
+  /* Border Radius */
+  --card-radius: 70px;
+  --small-radius: 16px;
+  --full-radius: 999px;
+
+  /* Colors */
+  --green: #40ae47;
+
+  --red: #b82424;
+
+  --sky-blue: #2b83e8;
+  --sky-blue-60: #2b83e860;
+  --sky-blue-40: #2b83e840;
+
+  --white: white;
+  --white-60: #ffffff60;
+  --white-40: #ffffff40;
+  --white-10: #ffffff10;
+
+  --grey: #c4c5cd;
+  --grey-40: #c4c5cd40;
+  --grey-10: #c4c5cd10;
+
+  --steel: #9e9e9e;
+  --stone: #474747;
+  --dust: #2b2b2b;
+  --smoke: #252525;
+  --deep-smoke: #1d1d1d;
+  --charcoal: #181919;
+
+  /* Gradients */
+  --glass-gradient: linear-gradient(
+    135deg,
+    var(--white-40) 0%,
+    var(--grey-10) 80%
+  );
+
+  --card-background-gradient: linear-gradient(
+    0deg,
+    var(--smoke) 70%,
+    var(--deep-smoke) 100%
+  );
+
+  --inverted-card-background-gradient: linear-gradient(
+    0deg,
+    var(--grey) 70%,
+    var(--white) 100%
+  );
+
+  /* Effects */
+  --basic-drop-shadow: 0 4px 20px hsla(0, 0%, 0%, 0.3);
+  --basic-inset-shadow: inset 0 4px 20px hsla(0, 0%, 0%, 0.3);
+  --hard-drop-shadow: 0 4px 20px hsla(0, 0%, 0%, 0.6);
+
+  --glass-inset-glow: inset 0 0 10px var(--grey);
+  --blue-glow: 0 0 200px var(--sky-blue-60);
+  --text-glow: 0 0 30px var(--white-60);
+
+  --glass-blur: blur(30px);
+  --layer-blur: blur(60px);
+
+  /* Transitions */
+  --fade-transition: 0.5s ease;
+}

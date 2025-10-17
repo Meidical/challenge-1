@@ -1,0 +1,23 @@
+.dotLoader {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1.9px;
+  height: 1.9px;
+  border-radius: 50%;
+  color: var(--grey);
+  box-shadow: 9.1px 0 0 3.4px, 18.2px 0 0 1.4px, 27.299999999999997px 0 0 0;
+  transform: translateY(-50%) translateX(-7px) scale(0.8);
+  animation: dots 0.5s infinite alternate linear;
+}
+
+@keyframes dots {
+  50% {
+    box-shadow: 9.1px 0 0 1.4px, 18.2px 0 0 3.4px,
+      27.299999999999997px 0 0 1.4px;
+  }
+
+  100% {
+    box-shadow: 9.1px 0 0 0, 18.2px 0 0 1.4px, 27.299999999999997px 0 0 3.4px;
+  }
+}

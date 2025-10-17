@@ -1,0 +1,55 @@
+"use client";
+import React from "react";
+import styles from "./SwitchButton.module.css";
+import { Icon, IconName } from "../Icon";
+
+type SwitchButtonProps = {
+  textLeft?: string;
+  textRight?: string;
+  className?: string;
+  switched?: boolean;
+  switchIconLeft?: IconName;
+  switchIconRight?: IconName;
+};
+
+export default function SwitchButton({
+  textLeft = "Item 1",
+  textRight = "Item 2",
+  className = "",
+  switched = false,
+  switchIconLeft = "prolog",
+  switchIconRight = "drools",
+}: SwitchButtonProps) {
+  const [isSwitched, setIsSwitched] = React.useState(switched);
+
+  const handleClick = () => {
+    setIsSwitched(!isSwitched);
+  };
+
+  return (
+    <div className={styles.wrapper}>
+      <span className={isSwitched ? styles.textInactive : styles.textActive}>
+        {textLeft}
+      </span>
+      <button
+        className={`${
+          isSwitched ? styles.switchButtonRight : styles.switchButtonLeft
+        } ${className}`}
+        type="button"
+        onClick={handleClick}
+      >
+        <div className={styles.switch}>
+          <Icon
+            fill="black"
+            stroke="black"
+            iconName={isSwitched ? switchIconRight : switchIconLeft}
+            size={16}
+          />
+        </div>
+      </button>
+      <span className={isSwitched ? styles.textActive : styles.textInactive}>
+        {textRight}
+      </span>
+    </div>
+  );
+}

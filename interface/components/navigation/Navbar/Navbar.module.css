@@ -1,0 +1,12 @@
+.navbar {
+  padding: var(--sm) var(--xl);
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.logo {
+  height: 28px;
+  width: auto;
+}
