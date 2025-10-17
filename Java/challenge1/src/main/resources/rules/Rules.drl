@@ -2,7 +2,10 @@ package meia.challenges.challenge1.rules
 
 import meia.challenges.challenge1.facts.PatientAirwayAssessment;
 import meia.challenges.challenge1.facts.AssessmentFactor;
+import meia.challenges.challenge1.facts.LaryngoscopyOutcomeRequest;
+import meia.challenges.challenge1.facts.StandardLaryngoscopyStatus;
 import meia.challenges.challenge1.utils.CertaintyFactor;
+
 
 // LEMON Rules for difficult laryngoscopy prediction
 
@@ -13,13 +16,12 @@ rule "Difficult Laryngoscopy - Look Externally"
         $lFactor : AssessmentFactor(
             category == "LEMON",
             code == "L",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         // The patient has external features suggesting difficult laryngoscopy
         modify($patient) {
-            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), $cf))
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), 0.2))
         }
 end
 
@@ -30,12 +32,11 @@ rule "Difficult Laryngoscopy - Evaluate 3-3-2 Rule"
         $eFactor : AssessmentFactor(
             category == "LEMON",
             code == "E",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), $cf))
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), 0.2))
         }
 end
 
@@ -46,12 +47,11 @@ rule "Difficult Laryngoscopy - Mallampati Score High"
         $mFactor : AssessmentFactor(
             category == "LEMON",
             code == "M",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), $cf))
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), 0.2))
         }
 end
 
@@ -62,12 +62,11 @@ rule "Difficult Laryngoscopy - Obstruction or Obesity"
         $oFactor : AssessmentFactor(
             category == "LEMON",
             code == "O",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), $cf))
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), 0.2))
         }
 end
 
@@ -78,12 +77,11 @@ rule "Difficult Laryngoscopy - Neck Mobility"
         $nFactor : AssessmentFactor(
             category == "LEMON",
             code == "N",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), $cf))
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), 0.2))
         }
 end
 
@@ -109,12 +107,11 @@ rule "Difficult Mask Ventilation - Mask Seal"
         $mFactor : AssessmentFactor(
             category == "MOANS",
             code == "M",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), $cf))
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), 0.2))
         }
 end
 
@@ -125,12 +122,11 @@ rule "Difficult Mask Ventilation - Obstruction"
         $oFactor : AssessmentFactor(
             category == "MOANS",
             code == "O",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), $cf))
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), 0.2))
         }
 end
 
@@ -152,12 +148,11 @@ rule "Difficult Mask Ventilation - Advanced Age"
         $aFactor : AssessmentFactor(
             category == "MOANS",
             code == "A",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), $cf))
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), 0.2))
         }
 end
 
@@ -168,12 +163,11 @@ rule "Difficult Mask Ventilation - No Teeth"
         $nFactor : AssessmentFactor(
             category == "MOANS",
             code == "N",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), $cf))
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), 0.2))
         }
 end
 
@@ -184,12 +178,11 @@ rule "Difficult Mask Ventilation - Stiff Lungs or Airway"
         $sFactor : AssessmentFactor(
             category == "MOANS",
             code == "S",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), $cf))
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), 0.2))
         }
 end
 
@@ -215,12 +208,11 @@ rule "Difficult Cricothyrotomy - Surgery or Disruption"
         $sFactor : AssessmentFactor(
             category == "SHORT",
             code == "S",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setShortCF(CertaintyFactor.combine($patient.getShortCF(), $cf))
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), 0.2))
         }
 end
 
@@ -231,12 +223,11 @@ rule "Difficult Cricothyrotomy - Hematoma or Infection"
         $hFactor : AssessmentFactor(
             category == "SHORT",
             code == "H",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setShortCF(CertaintyFactor.combine($patient.getShortCF(), $cf))
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), 0.2))
         }
 end
 
@@ -247,12 +238,11 @@ rule "Difficult Cricothyrotomy - Obesity"
         $oFactor : AssessmentFactor(
             category == "SHORT",
             code == "O",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setShortCF(CertaintyFactor.combine($patient.getShortCF(), $cf))
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), 0.2))
         }
 end
 
@@ -263,12 +253,11 @@ rule "Difficult Cricothyrotomy - Radiation"
         $rFactor : AssessmentFactor(
             category == "SHORT",
             code == "R",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setShortCF(CertaintyFactor.combine($patient.getShortCF(), $cf))
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), 0.2))
         }
 end
 
@@ -279,19 +268,18 @@ rule "Difficult Cricothyrotomy - Tumor"
         $tFactor : AssessmentFactor(
             category == "SHORT",
             code == "T",
-            present == true,
-            $cf : certaintyFactor
+            present == true
         )
     then
         modify($patient) {
-            setShortCF(CertaintyFactor.combine($patient.getShortCF(), $cf))
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), 0.2))
         }
 end
 
 // High overall SHORT score indicates difficult cricothyrotomy
 rule "Overall SHORT Assessment High"
     when
-        $patient : PatientAirwayAssessment(shortCF > 0.6)
+        $patient : PatientAirwayAssessment(shortCF > 0.2)
     then
         modify($patient) {
             setDifficultAirwayPredicted(true),
@@ -301,33 +289,43 @@ rule "Overall SHORT Assessment High"
             ". Difficult cricothyrotomy likely.");
 end
 
-// Rule for normal laryngoscopy recommendation when all scores are below threshold
-rule "Normal Airway Management"
+rule "Default Easy Airway Approach"
+    salience -100
+    when
+        $patient : PatientAirwayAssessment(difficultAirwayPredicted == false)
+    then
+        modify($patient) {
+            setRecommendedApproach("Proceed with standard direct laryngoscopy")
+        }
+        System.out.println("Easy airway: recommending standard laryngoscopy.");
+end
+
+rule "Set Laryngoscopy Status Started"
+    salience -110  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
         $patient : PatientAirwayAssessment(
-            lemonCF <= 0.6,
-            moansCF <= 0.6,
-            rodsCF <= 0.6,
-            shortCF <= 0.6,
-            difficultAirwayPredicted == false
+            recommendedApproach == "Proceed with standard direct laryngoscopy",
+            standardLaryngoscopyStatus == StandardLaryngoscopyStatus.NOT_STARTED
         )
     then
         modify($patient) {
-            setRecommendedApproach("Normal laryngoscopy process recommended")
+            setStandardLaryngoscopyStatus(StandardLaryngoscopyStatus.STARTED)
         }
-        System.out.println("All assessment scores below threshold. Normal laryngoscopy process recommended.");
+        System.out.println("Starting standard laryngoscopy");
 end
 
-// Final assessment rule that executes after all other rules
-rule "Final Assessment Evaluation"
-    salience -100 // Lower salience means this rule fires after others
+rule "Set Laryngoscopy Status Successful"
+    salience -120  // Lower salience than Set Laryngoscopy Status Started
     when
-        $patient : PatientAirwayAssessment()
+        $patient : PatientAirwayAssessment(standardLaryngoscopyStatus == StandardLaryngoscopyStatus.STARTED)
+        $laryngoscopySuccess : LaryngoscopyOutcomeRequest(
+            patientId == $patient.patientId,
+            successful == true
+        )
     then
-        System.out.println("Final assessment complete.");
-        System.out.println("LEMON CF: " + $patient.getLemonCF());
-        System.out.println("MOANS CF: " + $patient.getMoansCF());
-        System.out.println("RODS CF: " + $patient.getRodsCF());
-        System.out.println("SHORT CF: " + $patient.getShortCF());
-        System.out.println("Recommended approach: " + $patient.getRecommendedApproach());
+        modify($patient) {
+            setStandardLaryngoscopyStatus(StandardLaryngoscopyStatus.SUCCESSFUL),
+            setRecommendedApproach("Laryngoscopy completed successfully")
+        }
+        System.out.println($patient.toString());
 end
