@@ -195,12 +195,6 @@ export default function InferenceForm() {
                     <span>Não</span>
                   </label>
                 </div>
-
-                {currentAnswer ? (
-                  <div className={styles.answerMeta}>
-                    Resposta: {currentAnswer === "yes" ? "Sim" : "Não"}
-                  </div>
-                ) : null}
               </>
             ) : (
               <>
