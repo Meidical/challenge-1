@@ -1,3 +1,5 @@
+"use client";
+import React from "react";
 import { FactForm, InferenceForm } from "@/components/form";
 
 export default function MainPage() {

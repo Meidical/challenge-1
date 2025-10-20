@@ -62,7 +62,8 @@ public class PatientAirwayAssessment {
                 ", RODS CF=" + rodsCF +
                 ", SHORT CF=" + shortCF +
                 ", difficultAirway=" + difficultAirwayPredicted +
-                ", recommendedApproach='" + recommendedApproach + '\'' +
+                ", recommendedApproach='" + recommendedApproach +
+                ", standardLaryngoscopyStatus='" +standardLaryngoscopyStatus+ '\'' +
                 '}';
     }
 }
