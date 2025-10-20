@@ -37,7 +37,7 @@ export default function InferenceForm() {
       case "q1":
         return "Procedimento: Laringoscopia";
       case "q2":
-        return "Procedimento: Fibroscopia intubação";
+        return "Procedimento: SUPRAGLÓTICO";
       case "q3Vent":
         return "Procedimento: Fibroscopia intubação";
       case "qEmergency":
