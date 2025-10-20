@@ -2,8 +2,10 @@
 import React, { useMemo, useState } from "react";
 import styles from "./InferenceForm.module.css";
 import { BasicCard, Button } from "@/components/ui";
+import { useRouter } from "next/navigation";
 
 export default function InferenceForm() {
+  const router = useRouter();
   type Answer = "yes" | "no" | null;
   type Step = "q1" | "q2" | "q3Vent" | "qEmergency";
 
@@ -44,6 +46,7 @@ export default function InferenceForm() {
   }, [answers.q1, answers.q2]);
 
   const stepIndex = stepsOrder.indexOf(step);
+  const currentAnswer = answers[step];
 
   const handleAnswer = (value: Exclude<Answer, null>) => {
     if (finalOutcome) return;
@@ -104,7 +107,7 @@ export default function InferenceForm() {
 
     switch (step) {
       case "q1":
-        if (typeof window !== "undefined") window.history.back();
+        router.back();
         break;
       case "q2":
         setStep("q1");
@@ -176,12 +179,7 @@ export default function InferenceForm() {
                       type="radio"
                       name={`q-${step}`}
                       value="yes"
-                      checked={
-                        (step === "q1" && answers.q1 === "yes") ||
-                        (step === "q2" && answers.q2 === "yes") ||
-                        (step === "q3Vent" && answers.q3Vent === "yes") ||
-                        (step === "qEmergency" && answers.qEmergency === "yes")
-                      }
+                      checked={currentAnswer === "yes"}
                       onChange={() => handleAnswer("yes")}
                     />
                     <span>Sim</span>
@@ -191,31 +189,16 @@ export default function InferenceForm() {
                       type="radio"
                       name={`q-${step}`}
                       value="no"
-                      checked={
-                        (step === "q1" && answers.q1 === "no") ||
-                        (step === "q2" && answers.q2 === "no") ||
-                        (step === "q3Vent" && answers.q3Vent === "no") ||
-                        (step === "qEmergency" && answers.qEmergency === "no")
-                      }
+                      checked={currentAnswer === "no"}
                       onChange={() => handleAnswer("no")}
                     />
                     <span>Não</span>
                   </label>
                 </div>
 
-                {(step === "q1" && answers.q1) ||
-                (step === "q2" && answers.q2) ||
-                (step === "q3Vent" && answers.q3Vent) ||
-                (step === "qEmergency" && answers.qEmergency) ? (
+                {currentAnswer ? (
                   <div className={styles.answerMeta}>
-                    Resposta: {(
-                      (step === "q1" && answers.q1) ||
-                      (step === "q2" && answers.q2) ||
-                      (step === "q3Vent" && answers.q3Vent) ||
-                      (step === "qEmergency" && answers.qEmergency)
-                    ) === "yes"
-                      ? "Sim"
-                      : "Não"}
+                    Resposta: {currentAnswer === "yes" ? "Sim" : "Não"}
                   </div>
                 ) : null}
               </>
