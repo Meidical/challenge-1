@@ -1,0 +1,73 @@
+.cardFrame {
+  display: flex;
+  flex: 1;
+}
+
+.formFrame {
+  display: flex;
+  flex-direction: column;
+  gap: var(--md);
+}
+
+.systemBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardFrame {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  animation: pulsate 4s ease-in-out infinite both;
+}
+
+.intermediateContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-radius: var(--small-radius);
+  background-color: var(--dust);
+  box-shadow: var(--basic-inset-shadow);
+  border: 1px solid var(--stone);
+}
+
+.conclusionContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-radius: var(--small-radius);
+  background-color: var(--dust);
+  box-shadow: var(--basic-inset-shadow);
+  border: 1px solid var(--stone);
+}
+
+.justificationContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border-radius: var(--small-radius);
+  background-color: var(--dust);
+  box-shadow: var(--basic-inset-shadow);
+  border: 1px solid var(--stone);
+}
+
+.formText {
+  font-size: var(--fsm);
+}
+
+@keyframes pulsate {
+  0% {
+    box-shadow: var(--basic-drop-shadow), 0 0 200px #2b83e840 !important;
+  }
+  40% {
+    box-shadow: var(--basic-drop-shadow), 0 0 200px #2b83e830 !important;
+  }
+  45% {
+    box-shadow: var(--basic-drop-shadow), 0 0 200px #2b83e830 !important;
+  }
+  100% {
+    box-shadow: var(--basic-drop-shadow), 0 0 200px #2b83e840 !important;
+  }
+}

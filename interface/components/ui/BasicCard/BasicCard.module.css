@@ -1,5 +1,5 @@
 .basicCard {
-  padding: var(--lg);
+  padding: var(--md);
   display: flex;
   background: var(--card-background-gradient);
   position: relative;
