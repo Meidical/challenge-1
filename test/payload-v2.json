@@ -1,0 +1,86 @@
+{
+  "lemonFactors": [
+    {
+      "code": "L",
+      "present": true
+    },
+    {
+      "code": "E",
+      "present": true
+    },
+    {
+      "code": "M",
+      "present": true
+    },
+    {
+      "code": "O",
+      "present": true
+    },
+    {
+      "code": "N",
+      "present": true
+    }
+  ],
+  "moansFactors": [
+    {
+      "code": "M",
+      "present": true
+    },
+    {
+      "code": "O",
+      "present": true
+    },
+    {
+      "code": "A",
+      "present": true
+    },
+    {
+      "code": "N",
+      "present": true
+    },
+    {
+      "code": "S",
+      "present": true
+    }
+  ],
+  "rodsFactors": [
+    {
+      "code": "R",
+      "present": true
+    },
+    {
+      "code": "O",
+      "present": true
+    },
+    {
+      "code": "D",
+      "present": true
+    },
+    {
+      "code": "S",
+      "present": true
+    }
+  ],
+  "shortFactors": [
+    {
+      "code": "S",
+      "present": true
+    },
+    {
+      "code": "H",
+      "present": true
+    },
+    {
+      "code": "O",
+      "present": true
+    },
+    {
+      "code": "R",
+      "present": true
+    },
+    {
+      "code": "T",
+      "present": true
+    }
+  ]
+}
