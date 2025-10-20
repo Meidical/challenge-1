@@ -75,9 +75,11 @@ main {
   width: 100%;
   flex-direction: column;
   gap: var(--huge);
+  flex: 1;
 }
 
 .main-page {
+  display: flex;
   padding: var(--md) var(--lg);
   gap: var(--huge);
   flex: 1;
