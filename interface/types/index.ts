@@ -1,1 +1,1 @@
-export type { Factor } from "./Factor";
+export type { Factor, FactorCategory } from "./Factor";

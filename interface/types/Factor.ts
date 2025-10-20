@@ -1,5 +1,7 @@
+export type FactorCategory = "LEMON" | "MOANS" | "RODS" | "SHORT";
+
 export type Factor = {
-  category: "LEMON" | "MOANS" | "RODS" | "SHORT";
+  category: FactorCategory;
   code: string;
   isPresent: boolean;
 };
