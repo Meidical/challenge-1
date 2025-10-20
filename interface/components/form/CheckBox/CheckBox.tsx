@@ -3,14 +3,9 @@ import styles from "./CheckBox.module.css";
 
 type CheckBoxProps = {
   label: string;
-  className?: string;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
-export default function CheckBox({
-  label,
-  className = "",
-  ...props
-}: CheckBoxProps) {
+export default function CheckBox({ label, ...props }: CheckBoxProps) {
   return (
     <label className={styles.checkBoxFrame}>
       {label}

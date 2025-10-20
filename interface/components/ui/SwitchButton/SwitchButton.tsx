@@ -8,6 +8,7 @@ type SwitchButtonProps = {
   textRight?: string;
   className?: string;
   switched?: boolean;
+  onChange?: (switched: boolean) => void;
   switchIconLeft?: IconName;
   switchIconRight?: IconName;
 };
@@ -17,12 +18,14 @@ export default function SwitchButton({
   textRight = "Item 2",
   className = "",
   switched = false,
+  onChange = () => {},
   switchIconLeft = "prolog",
   switchIconRight = "drools",
 }: SwitchButtonProps) {
   const [isSwitched, setIsSwitched] = React.useState(switched);
 
   const handleClick = () => {
+    onChange(!isSwitched);
     setIsSwitched(!isSwitched);
   };
 
