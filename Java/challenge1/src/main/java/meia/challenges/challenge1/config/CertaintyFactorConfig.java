@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 
 public class CertaintyFactorConfig {
-    private static final String CONFIG_FILE = "certaintyfactor.properties";
+    private static final String CONFIG_FILE = "certainty-factor.properties";
     private static final Map<String, Double> certaintyFactors = new HashMap<>();
 
     static {

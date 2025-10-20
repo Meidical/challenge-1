@@ -1,0 +1,146 @@
+{
+    "patientId": "007",
+    "age": 20,
+    "bmi": 1.20,
+    "lemonFactors": [
+        {
+            "category": "LEMON",
+            "code": "L",
+            "description": "Difficult Laryngoscopy - Look Externally",
+            "certaintyFactor": 0.5,
+            "present": true
+        },
+        {
+            "category": "LEMON",
+            "code": "E",
+            "description": "Difficult Laryngoscopy - External Factors",
+            "certaintyFactor": 0.2,
+            "present": true
+        },
+        {
+            "category": "LEMON",
+            "code": "M",
+            "description": "Difficult Laryngoscopy - Mallampati Score",
+            "certaintyFactor": 0.1,
+            "present": true
+        },
+        {
+            "category": "LEMON",
+            "code": "O",
+            "description": "Difficult Laryngoscopy - Obstruction",
+            "certaintyFactor": 0.5,
+            "present": true
+        },
+        {
+            "category": "LEMON",
+            "code": "N",
+            "description": "Difficult Laryngoscopy - Neck Mobility",
+            "certaintyFactor": 0.2,
+            "present": true
+        }
+    ],
+    "moansFactors": [
+        {
+            "category": "MOANS",
+            "code": "M",
+            "description": "Difficult Bag Mask Ventilation - Mask Seal",
+            "certaintyFactor": 0.5,
+            "present": true
+        },
+        {
+            "category": "MOANS",
+            "code": "O",
+            "description": "Difficult Bag Mask Ventilation - Obesity",
+            "certaintyFactor": 0.2,
+            "present": true
+        },
+        {
+            "category": "MOANS",
+            "code": "A",
+            "description": "Difficult Bag Mask Ventilation - Age",
+            "certaintyFactor": 0.1,
+            "present": true
+        },
+        {
+            "category": "MOANS",
+            "code": "N",
+            "description": "Difficult Bag Mask Ventilation - No Teeth",
+            "certaintyFactor": 0.5,
+            "present": true
+        },
+        {
+            "category": "MOANS",
+            "code": "S",
+            "description": "Difficult Bag Mask Ventilation - Stiff Lungs",
+            "certaintyFactor": 0.2,
+            "present": true
+        }
+    ],
+    "rodsFactors": [
+        {
+            "category": "RODS",
+            "code": "R",
+            "description": "Difficult Supraglottic Airway - Restricted Mouth Opening",
+            "certaintyFactor": 0.5,
+            "present": true
+        },
+        {
+            "category": "RODS",
+            "code": "O",
+            "description": "Difficult Supraglottic Airway - Obstruction",
+            "certaintyFactor": 0.2,
+            "present": true
+        },
+        {
+            "category": "RODS",
+            "code": "D",
+            "description": "Difficult Supraglottic Airway - Disrupted or Distorted Airway",
+            "certaintyFactor": 0.1,
+            "present": true
+        },
+        {
+            "category": "RODS",
+            "code": "S",
+            "description": "Difficult Supraglottic Airway - Stiff Lungs or Cervical Spine",
+            "certaintyFactor": 0.5,
+            "present": true
+        }
+    ],
+    "shortFactors": [
+        {
+            "category": "SHORT",
+            "code": "S",
+            "description": "Difficult Surgical Airway - Surgery or Radiation",
+            "certaintyFactor": 0.5,
+            "present": true
+        },
+        {
+            "category": "SHORT",
+            "code": "H",
+            "description": "Difficult Surgical Airway - Hematoma",
+            "certaintyFactor": 0.2,
+            "present": true
+        },
+        {
+            "category": "SHORT",
+            "code": "O",
+            "description": "Difficult Surgical Airway - Obstruction",
+            "certaintyFactor": 0.1,
+            "present": true
+        },
+        {
+            "category": "SHORT",
+            "code": "R",
+            "description": "Difficult Surgical Airway - Restricted Mouth Opening",
+            "certaintyFactor": 0.5,
+            "present": true
+        },
+        {
+            "category": "SHORT",
+            "code": "T",
+            "description": "Difficult Surgical Airway - Tumor",
+            "certaintyFactor": 0.2,
+            "present": true
+        }
+    ]
+}
