@@ -33,10 +33,17 @@ export default function InferenceForm() {
   }, [step]);
 
   const procedureLabel = useMemo(() => {
-    if (answers.q1 !== "yes") return "Procedimento: Laringoscopia";
-    if (answers.q2 === "yes") return "Procedimento: Fibroscopia intubação";
-    return "Procedimento: SUPRAGLÓTICO";
-  }, [answers.q1, answers.q2]);
+    switch (step) {
+      case "q1":
+        return "Procedimento: Laringoscopia";
+      case "q2":
+        return "Procedimento: Fibroscopia intubação";
+      case "q3Vent":
+        return "Procedimento: Fibroscopia intubação";
+      case "qEmergency":
+        return "Procedimento: SUPRAGLÓTICO";
+    }
+  }, [step]);
 
   const stepsOrder: Step[] = useMemo(() => {
     if (answers.q1 !== "yes") return ["q1"]; // ends after q1 if 'no'
@@ -121,7 +128,7 @@ export default function InferenceForm() {
       case "qEmergency":
         setStep("q2");
         setAnswers((prev) => ({ ...prev, q2: answers.q2, qEmergency: null }));
-        setIntermediateNote("Oxigenar e ventilar.");
+        setIntermediateNote(null);
         break;
     }
   };
