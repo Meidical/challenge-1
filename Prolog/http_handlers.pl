@@ -8,8 +8,9 @@ get_facts_json(_Request) :-
 :- http_handler(root(inferir_via_aerea), post_inferir_via_aerea, [method(post)]).
 post_inferir_via_aerea(Request) :-
     http_read_json_dict(Request, Dict),
-    inferir_via_aerea(Dict, CF),
-    reply_json(_{'cf': CF}).
+    inferir_via_aerea(Dict),
+    findall(Name=CF, facto(_, mnemonica_cf(Name, CF)), Pairs),
+    reply_json(json(Pairs)).
 
 % HTTP GET para explicações "como"
 :- http_handler(root(explain), get_explanation_json, []).

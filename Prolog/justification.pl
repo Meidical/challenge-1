@@ -16,15 +16,6 @@ como(N):-facto(N,F),
 	write('foi conhecido inicialmente'),nl,
 	write('********************************************************'),nl.
 
-
-escreve_factos([I|R]):-facto(I,F), !,
-	write('O facto nº '),write(I),write(' -> '),write(F),write(' é verdadeiro'),nl,
-	escreve_factos(R).
-escreve_factos([I|R]):-
-	write('A condição '),write(I),write(' é verdadeira'),nl,
-	escreve_factos(R).
-escreve_factos([]).
-
 explica([I|R]):- \+ integer(I),!,explica(R).
 explica([I|R]):-como(I),
 		explica(R).
