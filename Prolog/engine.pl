@@ -116,14 +116,19 @@ compara(V1,=<,V):-V1=<V.
 % Inferir probabilidade de via aérea difícil %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-inferir_via_aerea(Dict, CF) :-         
+inferir_via_aerea(Dict) :-         
     retractall(facto(_,_)),                      
     retractall(ultimo_facto(_)),
 
     assertz(facto(1, id_paciente(Dict.patientId))),
     assertz(facto(2, idade(Dict.age))),
     assertz(facto(3, bmi(Dict.bmi))),
-    asserta(ultimo_facto(3)), 
+    assertz(facto(4, mnemonica("LEMON", 0.5))),
+    assertz(facto(5, mnemonica("MOANS", 0.2))),
+    assertz(facto(6, mnemonica("RODS", 0.2))),
+    assertz(facto(7, mnemonica("SHORT", 0.1))),
+
+    asserta(ultimo_facto(7)), 
 
     assert_lista_fatores(Dict.lemonFactors),
     assert_lista_fatores(Dict.moansFactors),
@@ -131,7 +136,20 @@ inferir_via_aerea(Dict, CF) :-
     assert_lista_fatores(Dict.shortFactors),
 
     arranca_motor,
-    calcular_cf(CF).
+
+    forall(
+        facto(_, mnemonica(Nome, Peso)),
+        (
+            calcular_cf(Nome, CF),
+            CF1 is CF * Peso,
+            findall(X, facto(X, _), Lista),
+            length(Lista, N),
+            N1 is N + 1,
+            assertz(facto(N1, mnemonica_cf(Nome, CF1)))
+        )
+    ),
+
+    arranca_motor.
 
 
 assert_lista_fatores(null) :- !. 

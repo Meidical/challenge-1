@@ -10,11 +10,21 @@ mostra_factos_json(JSON) :-
     findall(KeyStr-FactJson, (
         facto(N, Fact),
         atom_number(KeyStr, N),
-        Fact =.. [Field, Arg1, Arg2],
-        (atom(Arg1) -> atom_string(Arg1, Arg1String) ; Arg1String = Arg1),
-        FactJson = json([Field=[Arg1String, Arg2]])
+        Fact =.. [Name | Args],           
+        FactJson = json([Name = Args])   
     ), Pairs),
     JSON = json(Pairs).
+
+%%%%%%%%%%%%%%%%%%%%%
+% Escrever factos   %  
+%%%%%%%%%%%%%%%%%%%%%
+escreve_factos([I|R]):-facto(I,F), !,
+	write('O facto nº '),write(I),write(' -> '),write(F),write(' é verdadeiro'),nl,
+	escreve_factos(R).
+escreve_factos([I|R]):-
+	write('A condição '),write(I),write(' é verdadeira'),nl,
+	escreve_factos(R).
+escreve_factos([]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Predicados para retirar factos %
@@ -34,14 +44,13 @@ retirar_lista_factos([ ]).
 % Calculo de certeza de via aérea difícil %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-calcular_cf(CFFinal) :-
+calcular_cf(Category, CF) :-
     findall(Value,
         (facto(_, Facto),
-         Facto =.. [fator, _Category, Args],
+         Facto =.. [fator, Category, Args],
          Args = [_, Value]),
         CFs),
-    calcular_cf1(CFs, 0, CF),
-    CFFinal is CF * 2 - 1.
+    calcular_cf1(CFs, 0, CF).
 
 calcular_cf1([], CF, CF) :- !.
 calcular_cf1([CF1 | Rest], CF2, CF) :-
