@@ -38,7 +38,7 @@ public class PatientAirwayAssessment {
     @Setter
     private String recommendedApproach;
     @Setter
-    private StandardLaryngoscopyStatus standardLaryngoscopyStatus = StandardLaryngoscopyStatus.NOT_STARTED;
+    private int nextFactId;
 
     public void addLemonFactor(AssessmentFactor factor) { this.lemonFactors.add(factor); }
 
@@ -62,8 +62,7 @@ public class PatientAirwayAssessment {
                 ", RODS CF=" + rodsCF +
                 ", SHORT CF=" + shortCF +
                 ", difficultAirway=" + difficultAirwayPredicted +
-                ", recommendedApproach='" + recommendedApproach +
-                ", standardLaryngoscopyStatus='" +standardLaryngoscopyStatus+ '\'' +
+                ", recommendedApproach='" + recommendedApproach + '\'' +
                 '}';
     }
 }
