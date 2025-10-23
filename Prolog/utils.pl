@@ -67,3 +67,21 @@ combine_cf(CF1, CF2, CF) :-
 
 %combine_cf(CF1, CF2, CF) :-
 %    CF is (CF1 + CF2) / (1 - min(abs(CF1), abs(CF2))), !.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Obter procedimento recomendado atual %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ultimo_rec_processo(Valor) :-
+    findall(N, facto(N, rec_processo(_)), Lista),
+    max_list(Lista, UltimoID),
+    facto(UltimoID, rec_processo(Valor)).
+
+reply_processo_json :-
+    ultimo_rec_processo(ValorRec),
+    (
+        facto(_, final(true)),
+        reply_json(_{rec_processo: ValorRec, final: true});
+        reply_json(_{rec_processo: ValorRec, final: false})
+    ).
+    
