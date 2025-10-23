@@ -4,10 +4,15 @@ import meia.challenges.challenge1.facts.PatientAirwayAssessment;
 import meia.challenges.challenge1.facts.AssessmentFactor;
 import meia.challenges.challenge1.facts.Fact;
 import meia.challenges.challenge1.facts.Status;
+import meia.challenges.challenge1.facts.Conclusion;
 import meia.challenges.challenge1.utils.CertaintyFactor;
 import meia.challenges.challenge1.config.CertaintyFactorUtil;
 import org.slf4j.Logger
 global Logger logger;
+
+query "Conclusions"
+	$conclusion : Conclusion()
+end
 
 // LEMON Rules for difficult laryngoscopy prediction
 
@@ -453,10 +458,13 @@ rule "Default Easy Airway Approach"
             setRecommendedApproach("Proceed with standard direct laryngoscopy"),
             setNextFactId(1)
         }
+        modify($fact) {
+            setStatus(Status.STARTED)
+        }
         logger.info($patient.toString());
 end
 
-rule "Set Laryngoscopy Status Started"
+rule "Laryngoscopy SUCCESSFUL"
     salience -110  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
         $patient : PatientAirwayAssessment(
@@ -464,52 +472,140 @@ rule "Set Laryngoscopy Status Started"
         )
         $fact : Fact(
             id == 1,
+            status == Status.SUCCESSFUL
+        )
+        $fact2 : Fact(
+            id == 2,
             status == Status.NOT_STARTED
         )
     then
         modify($patient) {
-            setRecommendedApproach("Start standard direct laryngoscopy")
+            setRecommendedApproach("Facial Mask Ventilation")
         }
         modify($fact) {
-            setStatus(Status.SUCCESSFUL)
-        }
-        logger.info($patient.toString());
-end
-
-rule "Set Laryngoscopy Status Successful"
-    salience -120  // Lower salience than Set Laryngoscopy Status Started
-    when
-        $patient : PatientAirwayAssessment()
-        $fact : Fact(
-            id == 1,
-            status == Status.NOT_STARTED
-        )
-    then
-        modify($patient) {
-            setRecommendedApproach("SUCCESS: Apply facial mask ventilation")
-        }
-        modify($fact) {
-            setStatus(Status.FAILED),
             setNextFactId(2)
         }
+        modify($fact2) {
+            setStatus(Status.STARTED)
+        }
         logger.info($patient.toString());
 end
 
-rule "Set Laryngoscopy Status Failed"
-    salience -130  // Lower salience than Set Laryngoscopy Status Started
+rule "Laryngoscopy FAILED"
+    salience -120  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
-        $patient : PatientAirwayAssessment()
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Proceed with standard direct laryngoscopy"
+        )
         $fact : Fact(
             id == 1,
-            status == Status.STARTED
+            status == Status.FAILED
+        )
+        $fact2 : Fact(
+            id == 3,
+            status == Status.NOT_STARTED
         )
     then
         modify($patient) {
-            setRecommendedApproach("FAILED: Difficult airway encountered, prepare for alternative techniques")
+            setRecommendedApproach("Unpredicted difficult airway - Apllying supraglottic airway device")
         }
         modify($fact) {
-            setStatus(Status.FAILED),
-            setNextFactId(10)
+            setNextFactId(3)
         }
+        modify($fact2) {
+            setStatus(Status.STARTED)
+        }
+        logger.info($patient.toString());
+end
+
+rule "Apllying supraglottic airway device SUCCESS"
+    salience -130  // Lower salience than Default Easy Airway Approach so it fires afterward
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Unpredicted difficult airway - Apllying supraglottic airway device"
+        )
+        $fact : Fact(
+            id == 3,
+            status == Status.SUCCESSFUL
+        )
+        $fact2 : Fact(
+            id == 4,
+            status == Status.NOT_STARTED
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Fibroscopic Intubation")
+        }
+        modify($fact) {
+            setNextFactId(4)
+        }
+        modify($fact2) {
+            setStatus(Status.STARTED)
+        }
+        logger.info($patient.toString());
+end
+
+rule "Apllying supraglottic airway device FAILED"
+    salience -140  // Lower salience than Default Easy Airway Approach so it fires afterward
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Unpredicted difficult airway - Apllying supraglottic airway device"
+        )
+        $fact : Fact(
+            id == 3,
+            status == Status.FAILED
+        )
+        $fact2 : Fact(
+            id == 5,
+            status == Status.NOT_STARTED
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Oxygenize and Ventilate patient - Emergency")
+        }
+        modify($fact) {
+            setNextFactId(5)
+        }
+        modify($fact2) {
+            setStatus(Status.STARTED)
+        }
+        logger.info($patient.toString());
+end
+
+rule "Fibroscopic Intubation SUCCESS"
+    salience -130  // Lower salience than Default Easy Airway Approach so it fires afterward
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Fibroscopic Intubation"
+        )
+        $fact : Fact(
+            id == 4,
+            status == Status.SUCCESSFUL
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Intubation")
+        }
+        Conclusion c = new Conclusion(Conclusion.INTUBATION);
+        insert(c);
+        logger.info($patient.toString());
+end
+
+rule "Fibroscopic Intubation FAILED"
+    salience -130  // Lower salience than Default Easy Airway Approach so it fires afterward
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Fibroscopic Intubation"
+        )
+        $fact : Fact(
+            id == 4,
+            status == Status.FAILED
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Intubation")
+        }
+        Conclusion c = new Conclusion(Conclusion.WAKE_UP_PACIENT);
+        insert(c);
         logger.info($patient.toString());
 end

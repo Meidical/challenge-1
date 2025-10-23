@@ -4,6 +4,8 @@ import meia.challenges.challenge1.facts.*;
 import org.kie.api.runtime.ClassObjectFilter;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.Row;
+import org.kie.api.runtime.rule.ViewChangedEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,10 @@ public class DroolsService {
         patientAssessments.put(patientId, assessment);
         KieSession kieSession = getOrCreateSession(patientId);
         kieSession.setGlobal("logger", logger);
+
+        // Insert predefined facts if not already present
+        insertFact(kieSession);
+
         kieSession.insert(assessment);
 
         // Insert all the individual factors
@@ -58,27 +64,6 @@ public class DroolsService {
         kieSession.fireAllRules();
 
         return assessment;
-    }
-
-    // inside DroolsService (example showing both approaches)
-    public List<Conclusion> evaluateAirwayAssessmentAndGetConclusions(PatientAirwayAssessment assessment) {
-        String patientId = assessment.getPatientId();
-        patientAssessments.put(patientId, assessment);
-        KieSession kieSession = getOrCreateSession(patientId);
-
-        // set logger global as you already do
-        kieSession.setGlobal("logger", logger);
-
-        kieSession.insert(assessment);
-        // insert other facts...
-        kieSession.fireAllRules();
-
-        Collection<?> raw = kieSession.getObjects(new ClassObjectFilter(Conclusion.class));
-
-        // choose/merge as needed; return conclusionsFromWM as example
-        return raw.stream()
-                .map(o -> (Conclusion) o)
-                .collect(Collectors.toList());
     }
 
     public Fact modifyFactById(String patientId, int facId, Fact updatedFact) {
@@ -121,8 +106,37 @@ public class DroolsService {
      * Gets an existing session or creates a new one for a patient
      */
     private KieSession getOrCreateSession(String patientId) {
-        return patientSessions.computeIfAbsent(patientId, id -> kieContainer.newKieSession());
+        return patientSessions.computeIfAbsent(patientId, id -> {
+            KieSession kSession = kieContainer.newKieSession();
+            kSession.setGlobal("logger", logger);
+
+            // Insert default facts here
+            insertFact(kSession);
+
+            // Query listener - now only added once when session is first created
+            ViewChangedEventListener listener = new ViewChangedEventListener() {
+                @Override
+                public void rowInserted(Row row) {
+                    Conclusion conclusion = (Conclusion) row.get("$conclusion");
+                    logger.info(">>>{}", conclusion.toString());
+                    // stop inference engine as soon as a conclusion is reached
+                    kSession.halt();
+                }
+
+                @Override
+                public void rowDeleted(Row row) {
+                }
+
+                @Override
+                public void rowUpdated(Row row) {
+                }
+            };
+
+            kSession.openLiveQuery("Conclusions", null, listener);
+            return kSession;
+        });
     }
+
 
     /**
      * Disposes a patient's session when no longer needed
@@ -156,16 +170,15 @@ public class DroolsService {
         }
     }
 
-    public void insertFact(String patientId) {
-        KieSession session = getOrCreateSession(patientId);
-        session.insert(new Fact(1, "Direct Laryngoscopy", "Direct Laryngoscopy", Status.NOT_STARTED));
-        session.insert(new Fact(2, "Facial Mask Ventilation", "Facial Mask Ventilation", Status.NOT_STARTED));
-        session.insert(new Fact(3, "Supraglottic Device", "Supraglottic Device", Status.NOT_STARTED));
-        session.insert(new Fact(4, "Fibroscopic Intubation", "Fibroscopic Intubation", Status.NOT_STARTED));
-        session.insert(new Fact(5, "Emergency", "Emergency", Status.NOT_STARTED));
-        session.insert(new Fact(6, "Seek other anesthetic airway management techniques", "Seek other anesthetic airway management techniques", Status.NOT_STARTED));
-        session.insert(new Fact(7, "Airway with intubation", "Airway with intubation", Status.NOT_STARTED));
-        session.insert(new Fact(8, "Success with intubation", "Success with intubation", Status.NOT_STARTED));
-        session.insert(new Fact(9, "Planned surgery", "Planned surgery", Status.NOT_STARTED));
+    public void insertFact(KieSession session) {
+        session.insert(new Fact(1, "Direct Laryngoscopy", "Direct Laryngoscopy", Status.NOT_STARTED, 0));
+        session.insert(new Fact(2, "Facial Mask Ventilation", "Facial Mask Ventilation", Status.NOT_STARTED, 0));
+        session.insert(new Fact(3, "Supraglottic Device", "Supraglottic Device", Status.NOT_STARTED, 0));
+        session.insert(new Fact(4, "Fibroscopic Intubation", "Fibroscopic Intubation", Status.NOT_STARTED, 0));
+        session.insert(new Fact(5, "Emergency", "Emergency", Status.NOT_STARTED, 0));
+        session.insert(new Fact(6, "Seek other anesthetic airway management techniques", "Seek other anesthetic airway management techniques", Status.NOT_STARTED, 0));
+        session.insert(new Fact(7, "Airway with intubation", "Airway with intubation", Status.NOT_STARTED, 0));
+        session.insert(new Fact(8, "Success with intubation", "Success with intubation", Status.NOT_STARTED, 0));
+        session.insert(new Fact(9, "Planned surgery", "Planned surgery", Status.NOT_STARTED, 0));
     }
 }

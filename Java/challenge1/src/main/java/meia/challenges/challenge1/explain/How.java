@@ -1,10 +1,8 @@
 package meia.challenges.challenge1.explain;
-
 import meia.challenges.challenge1.facts.AssessmentFactor;
-import meia.challenges.challenge1.facts.LaryngoscopyOutcomeRequest;
 import meia.challenges.challenge1.facts.PatientAirwayAssessment;
-import meia.challenges.challenge1.facts.StandardLaryngoscopyStatus;
-
+import meia.challenges.challenge1.facts.Conclusion;
+import meia.challenges.challenge1.facts.Status;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,7 +35,7 @@ public class How {
      * @param outcome optional laryngoscopy outcome fact (may be null)
      * @return explanation string
      */
-    public String getHowExplanation(PatientAirwayAssessment patient, LaryngoscopyOutcomeRequest outcome) {
+    public String getHowExplanation(PatientAirwayAssessment patient, Conclusion outcome) {
         StringBuilder sb = new StringBuilder();
 
         if (patient == null) {
@@ -99,10 +97,10 @@ public class How {
               .append(patient.getRecommendedApproach())
               .append('\n');
         }
-
+        /*
         // Laryngoscopy status reasoning (follows the rules' salience order)
         if (patient.getStandardLaryngoscopyStatus() != null) {
-            StandardLaryngoscopyStatus st = patient.getStandardLaryngoscopyStatus();
+            Status st = patient.Status();
             sb.append("Standard laryngoscopy status: ")
               .append(st)
               .append('\n');
@@ -136,7 +134,7 @@ public class How {
                 }
             }
         }
-
+        */
         return sb.toString();
     }
 
