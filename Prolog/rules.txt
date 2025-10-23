@@ -156,3 +156,16 @@ regra 27
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Via aérea dificil previsível
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+regra 28 % Procurar outra técnica
+    se [processo("OT", true)]
+    entao [cria_facto(via_aerea_dificil(true)),
+    cria_facto(rec_processo("OT", true)),
+    cria_facto(final(true))]
+
+regra 29 % Procurar outra técnica
+    se [processo("OT", true)]
+    entao [cria_facto(via_aerea_dificil(true)),
+    cria_facto(rec_processo("OT", true)),
+    cria_facto(final(true))]
