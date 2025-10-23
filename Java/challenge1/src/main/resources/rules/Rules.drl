@@ -3,9 +3,7 @@ package meia.challenges.challenge1.rules
 import meia.challenges.challenge1.facts.PatientAirwayAssessment;
 import meia.challenges.challenge1.facts.AssessmentFactor;
 import meia.challenges.challenge1.facts.Fact;
-import meia.challenges.challenge1.facts.LaryngoscopyOutcomeRequest;
 import meia.challenges.challenge1.facts.Status;
-import meia.challenges.challenge1.facts.StandardLaryngoscopyStatus;
 import meia.challenges.challenge1.utils.CertaintyFactor;
 import meia.challenges.challenge1.config.CertaintyFactorUtil;
 import org.slf4j.Logger
