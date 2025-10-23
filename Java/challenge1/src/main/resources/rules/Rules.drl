@@ -2,10 +2,14 @@ package meia.challenges.challenge1.rules
 
 import meia.challenges.challenge1.facts.PatientAirwayAssessment;
 import meia.challenges.challenge1.facts.AssessmentFactor;
+import meia.challenges.challenge1.facts.Fact;
 import meia.challenges.challenge1.facts.LaryngoscopyOutcomeRequest;
+import meia.challenges.challenge1.facts.Status;
 import meia.challenges.challenge1.facts.StandardLaryngoscopyStatus;
 import meia.challenges.challenge1.utils.CertaintyFactor;
 import meia.challenges.challenge1.config.CertaintyFactorUtil;
+import org.slf4j.Logger
+global Logger logger;
 
 // LEMON Rules for difficult laryngoscopy prediction
 
@@ -113,7 +117,7 @@ rule "Overall LEMON Assessment High"
             setDifficultAirwayPredicted(true),
             setRecommendedApproach("Consider alternative techniques to direct laryngoscopy")
         }
-        System.out.println("High LEMON score detected: CF = " + $patient.getLemonCF() +
+        logger.info("High LEMON score detected: CF = " + $patient.getLemonCF() +
             ". Difficult laryngoscopy likely.");
 end
 
@@ -222,7 +226,7 @@ rule "Difficult Mask Ventilation - BMI Over 26"
         modify($patient) {
             setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), CertaintyFactorUtil.getCertaintyFactor("moans.bmi")))
         }
-        System.out.println("Patient has BMI > 26, increasing MOANS CF");
+        logger.info("Patient has BMI > 26, increasing MOANS CF");
 end
 
 // High overall MOANS score indicates difficult mask ventilation
@@ -234,8 +238,7 @@ rule "Overall MOANS Assessment High"
             setDifficultAirwayPredicted(true),
             setRecommendedApproach("Consider alternative ventilation techniques")
         }
-        System.out.println("High MOANS score detected: CF = " + $patient.getMoansCF() +
-            ". Difficult mask ventilation likely.");
+        logger.info("High MOANS score detected: CF = {}. Difficult mask ventilation likely.",$patient.getMoansCF());
 end
 
 // SHORT Rules for difficult cricothyrotomy prediction
@@ -344,8 +347,7 @@ rule "Overall SHORT Assessment High"
             setDifficultAirwayPredicted(true),
             setRecommendedApproach("Consider alternatives to cricothyrotomy as rescue technique")
         }
-        System.out.println("High SHORT score detected: CF = " + $patient.getShortCF() +
-            ". Difficult cricothyrotomy likely.");
+        logger.info("High SHORT score detected: CF = {}. Difficult cricothyrotomy likely.",$patient.getShortCF());
 end
 
 // RODS Rules for difficult airway assessment
@@ -435,67 +437,81 @@ rule "Overall RODS Assessment High"
             setDifficultAirwayPredicted(true),
             setRecommendedApproach("Consider video laryngoscopy or fiber optic intubation")
         }
-        System.out.println("High RODS score detected: CF = " + $patient.getRodsCF() +
-            ". Difficult airway likely.");
+        logger.info("High RODS score detected: CF = {}. Difficult airway likely.",$patient.getRodsCF());
 end
 
 rule "Default Easy Airway Approach"
     salience -100
     when
         $patient : PatientAirwayAssessment(
-            difficultAirwayPredicted == false,
-            standardLaryngoscopyStatus == StandardLaryngoscopyStatus.NOT_STARTED
+            difficultAirwayPredicted == false
+        )
+        $fact : Fact(
+            id == 1,
+            status == Status.NOT_STARTED
         )
     then
         modify($patient) {
-            setRecommendedApproach("Proceed with standard direct laryngoscopy")
+            setRecommendedApproach("Proceed with standard direct laryngoscopy"),
+            setNextFactId(1)
         }
-        System.out.println($patient.toString());
+        logger.info($patient.toString());
 end
-
 
 rule "Set Laryngoscopy Status Started"
     salience -110  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
         $patient : PatientAirwayAssessment(
-            recommendedApproach == "Proceed with standard direct laryngoscopy",
-            standardLaryngoscopyStatus == StandardLaryngoscopyStatus.NOT_STARTED
+            recommendedApproach == "Proceed with standard direct laryngoscopy"
+        )
+        $fact : Fact(
+            id == 1,
+            status == Status.NOT_STARTED
         )
     then
         modify($patient) {
-            setStandardLaryngoscopyStatus(StandardLaryngoscopyStatus.STARTED)
+            setRecommendedApproach("Start standard direct laryngoscopy")
         }
-        System.out.println($patient.toString());
+        modify($fact) {
+            setStatus(Status.SUCCESSFUL)
+        }
+        logger.info($patient.toString());
 end
 
 rule "Set Laryngoscopy Status Successful"
     salience -120  // Lower salience than Set Laryngoscopy Status Started
     when
-        $patient : PatientAirwayAssessment(standardLaryngoscopyStatus == StandardLaryngoscopyStatus.STARTED)
-        $laryngoscopySuccess : LaryngoscopyOutcomeRequest(
-            patientId == $patient.patientId,
-            successful == true
+        $patient : PatientAirwayAssessment()
+        $fact : Fact(
+            id == 1,
+            status == Status.NOT_STARTED
         )
     then
         modify($patient) {
-            setStandardLaryngoscopyStatus(StandardLaryngoscopyStatus.SUCCESSFUL),
-            setRecommendedApproach("Laryngoscopy completed successfully")
+            setRecommendedApproach("SUCCESS: Apply facial mask ventilation")
         }
-        System.out.println($patient.toString());
+        modify($fact) {
+            setStatus(Status.FAILED),
+            setNextFactId(2)
+        }
+        logger.info($patient.toString());
 end
 
 rule "Set Laryngoscopy Status Failed"
     salience -130  // Lower salience than Set Laryngoscopy Status Started
     when
-        $patient : PatientAirwayAssessment(standardLaryngoscopyStatus == StandardLaryngoscopyStatus.STARTED)
-        $laryngoscopySuccess : LaryngoscopyOutcomeRequest(
-            patientId == $patient.patientId,
-            successful == false
+        $patient : PatientAirwayAssessment()
+        $fact : Fact(
+            id == 1,
+            status == Status.STARTED
         )
     then
         modify($patient) {
-            setStandardLaryngoscopyStatus(StandardLaryngoscopyStatus.FAILED),
-            setRecommendedApproach("Laryngoscopy Failed - Unanticipated difficult intubation protocol activated")
+            setRecommendedApproach("FAILED: Difficult airway encountered, prepare for alternative techniques")
         }
-        System.out.println($patient.toString());
+        modify($fact) {
+            setStatus(Status.FAILED),
+            setNextFactId(10)
+        }
+        logger.info($patient.toString());
 end

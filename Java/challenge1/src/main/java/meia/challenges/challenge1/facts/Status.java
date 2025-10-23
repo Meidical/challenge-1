@@ -1,8 +1,9 @@
 package meia.challenges.challenge1.facts;
 
-public enum StandardLaryngoscopyStatus {
+public enum Status {
     NOT_STARTED,
     STARTED,
     SUCCESSFUL,
     FAILED
 }
+
