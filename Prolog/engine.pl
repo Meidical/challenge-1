@@ -21,6 +21,10 @@ contar_factos(Cont):-
     findall(X, facto(X, _), Lista),
     length(Lista, Cont).
 
+prox_facto(N) :-
+    contar_factos(Cont),
+    N is Cont + 1.
+
 facto_dispara_regras1(Facto, LRegras):-
 	facto_dispara_regras(Facto, LRegras),
 	!.
@@ -142,10 +146,8 @@ inferir_via_aerea(Dict) :-
         (
             calcular_cf(Nome, CF),
             CF1 is CF * Peso,
-            findall(X, facto(X, _), Lista),
-            length(Lista, N),
-            N1 is N + 1,
-            assertz(facto(N1, mnemonica_cf(Nome, CF1)))
+            prox_facto(N),
+            assertz(facto(N, mnemonica_cf(Nome, CF1)))
         )
     ),
 
@@ -165,3 +167,18 @@ assert_fator(Category, Code) :-
     N is N1 + 1,
     asserta(ultimo_facto(N)),
     assertz(facto(N, fator(Category, Code))).
+
+
+%%%%%%%%%%%%%%%%%%%%
+% Via aérea normal %
+%%%%%%%%%%%%%%%%%%%%
+
+laringoscopia(Dict) :-
+    prox_facto(N),
+    assertz(facto(N, processo("LD", Dict.successful))),
+    arranca_motor.
+
+mascara_facial(Dict) :-
+    prox_facto(N),
+    assertz(facto(N, processo("MF", Dict.successful))),
+    arranca_motor.
