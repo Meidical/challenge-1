@@ -110,9 +110,6 @@ public class DroolsService {
             KieSession kSession = kieContainer.newKieSession();
             kSession.setGlobal("logger", logger);
 
-            // Insert default facts here
-            insertFact(kSession);
-
             // Query listener - now only added once when session is first created
             ViewChangedEventListener listener = new ViewChangedEventListener() {
                 @Override
