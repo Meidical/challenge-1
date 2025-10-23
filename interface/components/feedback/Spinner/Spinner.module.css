@@ -6,7 +6,7 @@
   z-index: 10;
   overflow: visible !important;
 
-  transition: var(--fade-transition);
+  transition: var(--basic-transition);
 }
 
 .rotate {

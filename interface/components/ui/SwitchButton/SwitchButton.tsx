@@ -43,8 +43,8 @@ export default function SwitchButton({
       >
         <div className={styles.switch}>
           <Icon
-            fill="black"
-            stroke="black"
+            fill="white"
+            stroke="white"
             iconName={isSwitched ? switchIconRight : switchIconLeft}
             size={16}
           />

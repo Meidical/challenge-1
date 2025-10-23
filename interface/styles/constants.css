@@ -21,24 +21,11 @@
   --micro: clamp(5.76px, 0.4688vw, 10.72px);
 
   /* Border Radius */
-  --card-radius: 40px;
+  --card-radius: 20px;
   --small-radius: 16px;
   --full-radius: 999px;
 
   /* Colors */
-  --green: #40ae47;
-
-  --red: #b82424;
-
-  --sky-blue: #2b83e8;
-  --sky-blue-60: #2b83e860;
-  --sky-blue-40: #2b83e840;
-
-  --white: white;
-  --white-60: #ffffff60;
-  --white-40: #ffffff40;
-  --white-10: #ffffff10;
-
   --grey: #c4c5cd;
   --grey-40: #c4c5cd40;
   --grey-10: #c4c5cd10;
@@ -50,24 +37,11 @@
   --deep-smoke: #1d1d1d;
   --charcoal: #181919;
 
-  /* Gradients */
-  --glass-gradient: linear-gradient(
-    135deg,
-    var(--white-40) 0%,
-    var(--grey-10) 80%
-  );
-
-  --card-background-gradient: linear-gradient(
-    0deg,
-    var(--smoke) 70%,
-    var(--deep-smoke) 100%
-  );
-
-  --inverted-card-background-gradient: linear-gradient(
-    0deg,
-    var(--grey) 70%,
-    var(--white) 100%
-  );
+  --primary-color: #a2fe9d;
+  --primary-color-disabled: #d2ffcf;
+  --secondary-color: #282828;
+  --secondary-color-disabled: #323232;
+  --background-color: #171717;
 
   /* Effects */
   --basic-drop-shadow: 0 4px 20px hsla(0, 0%, 0%, 0.3);
@@ -82,5 +56,5 @@
   --layer-blur: blur(60px);
 
   /* Transitions */
-  --fade-transition: 0.5s ease;
+  --basic-transition: 0.5s ease;
 }

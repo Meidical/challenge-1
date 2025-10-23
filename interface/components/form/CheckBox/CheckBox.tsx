@@ -7,7 +7,7 @@ type CheckBoxProps = {
 
 export default function CheckBox({ label, ...props }: CheckBoxProps) {
   return (
-    <label className={styles.checkBoxFrame}>
+    <label className={styles.checkBox}>
       {label}
       <input type="checkbox" className={styles.checkBox} {...props} />
       <span className={styles.checkMark}></span>

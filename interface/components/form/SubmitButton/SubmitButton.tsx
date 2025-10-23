@@ -8,20 +8,22 @@ type SubmitButtonProps = {
   className?: string;
   loading?: boolean;
   disabled?: boolean;
-};
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export default function SubmitButton({
   text = "Submit",
   className = "",
   loading = false,
   disabled = false,
+  ...props
 }: SubmitButtonProps) {
   return (
     <button
-      className={`${styles.submitButtonFrame} ${className}`}
+      className={`${styles.submitButton} ${className}`}
       style={loading ? { color: "transparent" } : undefined}
       type="submit"
       disabled={loading || disabled}
+      {...props}
     >
       {loading && <Spinner fill="#252525" />}
       {text}
