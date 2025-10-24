@@ -1,26 +1,30 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Mostrar factos (texto e JSON)
+% Mostrar factos    %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% --- Print all facts for a patient (console) ---
+% Mostra todos os factos de um paciente (consola)
 mostra_factos(PatientID) :-
     findall(N, facto(PatientID, N, _), LFactos),
     escreve_factos(PatientID, LFactos).
 
-% --- Return all facts for a patient as JSON ---
+% Mostra todos os factos de um paciente (JSON)
 mostra_factos_json(PatientID, JSON) :-
-    findall(N-F, facto(PatientID, N, F), Pairs),
-    dict_pairs(JSON, json, Pairs).
+    findall(_{
+        n: N,
+        fact: FText,
+        patient: PatientID
+    }, (
+        facto(PatientID, N, F),
+        term_to_atom(F, FText)   % <-- convert idade(20) → "idade(20)"
+    ), JSON).
 
 
+
+% Mostra todos os factos
 mostra_factos_json(JSON) :-
     findall(
         _{patient:PID, n:N, fact:FactString},
-        (
-            facto(PID, N, F),
-            term_string(F, FactString)   % convert Prolog term to string
-        ),
-        JSON
+        (facto(PID, N, F),term_string(F, FactString)), JSON
     ).
 
 
@@ -76,7 +80,7 @@ combine_cf(CF1, CF2, CF) :-
 
 ultimo_rec_processo(PatientID, Valor) :-
     findall(N, facto(PatientID, N, rec_processo(_)), Lista),
-    Lista \= [],                             % Prevents error if empty
+    Lista \= [],                            
     max_list(Lista, UltimoID),
     facto(PatientID, UltimoID, rec_processo(Valor)).
 
@@ -89,7 +93,7 @@ ultimo_rec_processo(PatientID, "Nenhum processo encontrado") :-
 
 reply_processo_json(PatientID) :-
     ultimo_rec_processo(PatientID, ValorRec),
-    (   facto(PatientID, _, final(true))
-    ->  reply_json(_{rec_processo: ValorRec, final: true})
-    ;   reply_json(_{rec_processo: ValorRec, final: false})
+    (   facto(PatientID, _, conclusion(true))
+    ->  reply_json(_{rec_processo: ValorRec, conclusion: true})
+    ;   reply_json(_{rec_processo: ValorRec, conclusion: false})
     ).

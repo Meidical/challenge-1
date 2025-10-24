@@ -123,39 +123,33 @@ compara(V1, =<, V)  :- V1 =< V.
 
 inferir_via_aerea(Dict) :-
     get_dict(patientId, Dict, PatientID),
+
+    % Remove dados do paciente caso seja o mesmo
     retractall(facto(PatientID, _, _)),
     retractall(ultimo_facto(PatientID, _)),
 
-    get_dict(age, Dict, Age),
-    prox_facto(PatientID, N1),
-    assertz(facto(PatientID, N1, idade(Age))),
 
-    get_dict(bmi, Dict, BMI),
-    prox_facto(PatientID, N2),
-    assertz(facto(PatientID, N2, bmi(BMI))),
+    assertz(facto(PatientID, 1, idade(Dict.age))),
+    assertz(facto(PatientID, 2, bmi(Dict.bmi))),
 
-    prox_facto(PatientID, N3),
-    assertz(facto(PatientID, N3, mnemonica("LEMON", 0.5))),
-    prox_facto(PatientID, N4),
-    assertz(facto(PatientID, N4, mnemonica("MOANS", 0.2))),
-    prox_facto(PatientID, N5),
-    assertz(facto(PatientID, N5, mnemonica("RODS", 0.2))),
-    prox_facto(PatientID, N6),
-    assertz(facto(PatientID, N6, mnemonica("SHORT", 0.1))),
+    assertz(facto(PatientID, 3, mnemonica("LEMON", 0.5))),
+    assertz(facto(PatientID, 4, mnemonica("MOANS", 0.2))),
+    assertz(facto(PatientID, 5, mnemonica("RODS", 0.2))),
+    assertz(facto(PatientID, 6, mnemonica("SHORT", 0.1))),
 
     assert_lista_fatores(PatientID, Dict.lemonFactors),
     assert_lista_fatores(PatientID, Dict.moansFactors),
     assert_lista_fatores(PatientID, Dict.rodsFactors),
     assert_lista_fatores(PatientID, Dict.shortFactors),
 
-    arranca_motor(PatientID),
+    arranca_motor(PatientID), % Inferir tipo de via aérea
 
     forall(
         facto(PatientID, _, mnemonica(Nome, Peso)),
         (   calcular_cf(PatientID, Nome, CF),
             CF1 is CF * Peso,
-            prox_facto(PatientID, N7),
-            assertz(facto(PatientID, N7, mnemonica_cf(Nome, CF1)))
+            prox_facto(PatientID, N),
+            assertz(facto(PatientID, N, mnemonica_cf(Nome, CF1)))
         )
     ),
 
@@ -177,12 +171,10 @@ assert_fator(PatientID, Category, Code) :-
 % Processos 
 %%%%%%%%%%%%%%%%%%%%
 
-laringoscopia(PatientID, Dict) :-
+get_prox_processo(PatientID, ID, Dict) :-
     prox_facto(PatientID, N),
-    assertz(facto(PatientID, N, processo("LD", Dict.successful))),
-    arranca_motor(PatientID).
+    assertz(facto(PatientID, N, facto_pedido(ID, Dict.successful))),
 
-mascara_facial(PatientID, Dict) :-
-    prox_facto(PatientID, N),
-    assertz(facto(PatientID, N, processo("MF", Dict.successful))),
-    arranca_motor(PatientID).
+    arranca_motor(PatientID),
+    
+    retractall(facto(PatientID, _, facto_pedido(_, _))).

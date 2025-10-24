@@ -6,6 +6,7 @@
 facto_dispara_regras(fator(_, _), Rules) :- numlist(1, 19, Rules).
 facto_dispara_regras(mnemonica_cf(_, _), [20, 21, 22, 23]).
 facto_dispara_regras(processo("LD", _), [24, 25]).
+facto_dispara_regras(facto_pedido(_,_), [24, 25]).
 facto_dispara_regras(processo("MF", _), [26, 27]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -107,44 +108,50 @@ regra 19
 regra 20
     se [avalia(mnemonica_cf("LEMON", >, 0.3))]
     entao [cria_facto(via_aerea_dificil(true)), 
-    cria_facto(rec_processo("Consider alternative techniques to direct laryngoscopy"))].
+    cria_facto(rec_processo("Consider alternative techniques to direct laryngoscopy")),
+    cria_facto(id_prox_facto(3))].
 
 regra 21
     se [avalia(mnemonica_cf("MOANS", >, 0.3)) e 
     nao via_aerea_dificil(true)]
     entao [cria_facto(via_aerea_dificil(true)), 
-    rec_processo("Consider alternative ventilation techniques")].
+    rec_processo("Consider alternative ventilation techniques"),
+    cria_facto(id_prox_facto(3))].
 
 regra 22
     se [avalia(mnemonica_cf("RODS", >, 0.3)) e 
     via_aerea_dificil(true)]
     entao [cria_facto(via_aerea_dificil(true)), 
-    rec_processo("Consider video laryngoscopy or fiber optic intubation")].
+    rec_processo("Consider video laryngoscopy or fiber optic intubation",
+    cria_facto(id_prox_facto(3)))].
 
 regra 23
     se [avalia(mnemonica_cf("LEMON", <, 0.3)) e 
     avalia(mnemonica_cf("MOANS", <, 0.3)) e
     avalia(mnemonica_cf("RODS", <, 0.3))]
     entao [cria_facto(via_aerea_dificil(false)),
-    cria_facto(rec_processo("Proceed with standard direct laryngoscopy"))].
+    cria_facto(rec_processo("Proceed with standard direct laryngoscopy")),
+    cria_facto(id_prox_facto(1))].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Via aérea normal
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 regra 24
-    se [processo("LD", true)]
-    entao [cria_facto(rec_processo("Apply facial mask"))].
+    se [facto_pedido("1", true)]
+    entao [cria_facto(rec_processo("Apply facial mask")),
+        cria_facto(id_prox_facto(2)),
+        cria_facto(id_prox_facto_alt(3))].
 
 regra 25
-    se [processo("LD", false)]
+    se [facto_pedido("1", false)]
     entao [cria_facto(via_aerea_dificil_nao_previsivel(true)),
     cria_facto(rec_processo("Apply supralogic device"))].
 
 regra 26
     se [processo("MF", true)]
     entao [cria_facto(rec_processo("Traqueal entubation")),
-    cria_facto(final(true))].
+    cria_facto(conclusion(true))].
 
 regra 27
     se [processo("MF", false)]
