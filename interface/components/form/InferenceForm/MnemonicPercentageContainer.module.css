@@ -1,4 +1,5 @@
-.mnemonicContainer {
+.mnemonicContainer,
+.mnemonicContainerHighlighted {
   display: flex;
   flex-direction: column;
   position: relative;
@@ -11,9 +12,13 @@
   font-weight: normal;
   color: white;
   border-radius: var(--small-radius);
-  border: solid 1px var(--primary-color);
+  border: solid 1px transparent;
 
   transition: var(--basic-transition);
+}
+
+.mnemonicContainerHighlighted {
+  border: solid 1px var(--primary-color);
 }
 
 .mnemonicText {

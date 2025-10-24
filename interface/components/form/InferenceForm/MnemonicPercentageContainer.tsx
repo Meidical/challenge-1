@@ -14,7 +14,13 @@ export default function MnemonicPercentageContainer({
   percentage = 0,
 }: MnemonicPercentageContainerProps) {
   return (
-    <div className={styles.mnemonicContainer}>
+    <div
+      className={
+        percentage != 0
+          ? styles.mnemonicContainerHighlighted
+          : styles.mnemonicContainer
+      }
+    >
       <div className={styles.topContainer}>
         <div className={styles.header}>
           <div className={styles.mnemonicText}>{title}</div>
