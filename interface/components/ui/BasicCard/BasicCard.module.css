@@ -1,7 +1,6 @@
 .basicCard {
-  padding: var(--md);
   display: flex;
-  background: var(--card-background-gradient);
+  background: #282828;
   position: relative;
   border-radius: var(--card-radius);
   border: 1px solid var(--stone);

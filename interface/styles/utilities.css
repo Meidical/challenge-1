@@ -93,3 +93,8 @@
   white-space: nowrap;
   border: 0;
 }
+
+.divisor {
+  height: 1px;
+  background-color: var(--steel);
+}

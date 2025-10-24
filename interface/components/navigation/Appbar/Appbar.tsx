@@ -1,17 +1,17 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import styles from "./Navbar.module.css";
+import styles from "./Appbar.module.css";
 
-export default function Navbar() {
+export default function Appbar() {
   return (
-    <nav className={styles.navbar}>
+    <nav className={styles.appbar}>
       <Image
         className={styles.logo}
         src="/assets/svgs/logo.svg"
         alt="Meidical Logo"
-        width={512}
-        height={113}
+        width={1941}
+        height={465}
       />
     </nav>
   );
