@@ -11,12 +11,20 @@
   font-family: "OpenSans";
   font-weight: 400;
   font-size: var(--ftiny);
-
-  transition: var(--basic-transition);
 }
 
 .button:disabled {
   cursor: default;
 
-  background-color: var(--secondary-color-disabled);
+  pointer-events: none;
+
+  transition: var(--basic-transition);
+}
+
+.button:hover {
+  background: var(--secondary-color-hover);
+}
+
+.button:active {
+  background: var(--secondary-color-click);
 }

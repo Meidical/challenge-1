@@ -7,7 +7,7 @@
   --fsm: 2.4246rem;
   --fxs: 1.4988rem;
   --ftiny: 0.9268rem;
-  --fmicro: 0.5769rem;
+  --fmicro: 0.8rem;
 
   /* Spacing */
   --massive: clamp(246.4px, 20.052vw, 554.56px);
@@ -27,20 +27,20 @@
 
   /* Colors */
   --grey: #c4c5cd;
-  --grey-40: #c4c5cd40;
-  --grey-10: #c4c5cd10;
-
   --steel: #9e9e9e;
-  --stone: #474747;
-  --dust: #2b2b2b;
-  --smoke: #252525;
-  --deep-smoke: #1d1d1d;
-  --charcoal: #181919;
 
   --primary-color: #a2fe9d;
-  --primary-color-disabled: #d2ffcf;
+  --primary-color-muted: #c8fec5;
+  --primary-color-hover: #8ffe89;
+  --primary-color-click: #7cfe75;
+
   --secondary-color: #282828;
-  --secondary-color-disabled: #323232;
+  --secondary-color-muted: #3c3c3c;
+  --secondary-color-hover: #1e1e1e;
+  --secondary-color-click: #141414;
+
+  --terciary-color: #3c3c3c;
+
   --background-color: #171717;
 
   /* Effects */
@@ -49,8 +49,6 @@
   --hard-drop-shadow: 0 4px 20px hsla(0, 0%, 0%, 0.6);
 
   --glass-inset-glow: inset 0 0 10px var(--grey);
-  --blue-glow: 0 0 200px var(--sky-blue-60);
-  --text-glow: 0 0 30px var(--white-60);
 
   --glass-blur: blur(30px);
   --layer-blur: blur(60px);

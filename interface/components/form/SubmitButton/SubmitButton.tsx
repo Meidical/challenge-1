@@ -25,7 +25,7 @@ export default function SubmitButton({
       disabled={loading || disabled}
       {...props}
     >
-      {loading && <Spinner fill="#252525" />}
+      {loading && <Spinner fill="var(--secondary-color-muted)" />}
       {text}
     </button>
   );

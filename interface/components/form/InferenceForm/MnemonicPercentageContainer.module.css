@@ -1,0 +1,80 @@
+.mnemonicContainer {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: fit-content;
+  padding: 10px;
+  gap: 10px;
+
+  font-family: "OpenSans";
+  font-size: var(--ftiny);
+  font-weight: normal;
+  color: white;
+  border-radius: var(--small-radius);
+  border: solid 1px var(--primary-color);
+
+  transition: var(--basic-transition);
+}
+
+.mnemonicText {
+  font-family: "OpenSans";
+  display: flex;
+  font-weight: 600;
+  font-size: var(--ftiny);
+  color: white;
+}
+
+.descriptionText {
+  font-family: "OpenSans";
+  display: flex;
+  font-size: var(--fmicro);
+  color: var(--steel);
+  text-wrap-mode: nowrap;
+}
+
+.percentageText {
+  font-family: "OpenSans";
+  display: flex;
+  font-weight: 600;
+  font-size: var(--fsm);
+  color: white;
+}
+
+.topContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: last baseline;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.progressBarContainer {
+  width: 100%;
+  height: 10px;
+  background-color: var(--steel);
+  border-radius: var(--full-radius);
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  background-color: var(--primary-color);
+  border-radius: var(--full-radius);
+  transform-origin: left;
+
+  animation: progressAnimation 1s ease forwards;
+}
+
+@keyframes progressAnimation {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}

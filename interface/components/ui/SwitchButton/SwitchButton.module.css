@@ -4,31 +4,31 @@
   align-items: center;
 }
 
-.switch {
+.switch,
+.switchRight {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   padding: 6px;
   border-radius: var(--full-radius);
-  background-color: #3c3c3c;
+  background-color: var(--terciary-color);
+
+  transition: 0.5s cubic-bezier(0.7, -0.24, 0.32, 1.17) left;
 }
 
-.switchButtonRight,
-.switchButtonLeft {
+.switchRight {
+  left: 50%;
+}
+
+.switchButton {
   display: flex;
   width: 70px;
-  padding: 6px;
+  height: 40px;
   border-radius: var(--full-radius);
-  background: #282828;
+  background-color: var(--secondary-color);
   position: relative;
-
-  transition: var(--basic-transition);
-}
-
-.switchButtonLeft {
-  justify-content: flex-start;
-}
-
-.switchButtonRight {
-  justify-content: flex-end;
 }
 
 .textInactive,
@@ -37,7 +37,8 @@
   display: flex;
   align-items: center;
   font-size: var(--ftiny);
-  padding-block: var(--fmicro);
+
+  transition: 0.9s ease;
 }
 
 .textInactive {

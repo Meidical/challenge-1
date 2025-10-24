@@ -2,24 +2,29 @@
   display: flex;
   padding: 10px 14px;
   border-radius: var(--full-radius);
-  /* background: #282828; */
   background: #a2fe9d;
   justify-content: center;
   align-items: center;
   position: relative;
 
-  /* color: whitesmoke; */
-  color: black;
+  color: var(--background-color);
   font-family: "OpenSans";
   font-weight: 600;
   font-size: var(--ftiny);
+}
+
+.submitButton:disabled {
+  cursor: default;
+  pointer-events: none;
+  background: var(--primary-color-muted);
 
   transition: var(--basic-transition);
 }
 
-/* todo */
-.submitButton:disabled {
-  cursor: default;
+.submitButton:hover {
+  background: var(--primary-color-hover);
+}
 
-  background: var(--primary-color-disabled);
+.submitButton:active {
+  background: var(--primary-color-click);
 }

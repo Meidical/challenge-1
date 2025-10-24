@@ -1,12 +1,11 @@
 "use client";
 import React from "react";
-import { FactForm, InferenceForm } from "@/components/form";
+import { SystemBody } from "@/components/ui";
 
 export default function MainPage() {
   return (
     <div className="main-page">
-      <FactForm />
-      {/* <InferenceForm /> */}
+      <SystemBody />
     </div>
   );
 }

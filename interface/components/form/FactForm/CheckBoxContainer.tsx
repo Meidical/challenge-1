@@ -15,9 +15,11 @@ export default function CheckBoxContainer({
 }: CheckBoxContainerProps) {
   return (
     <div className={styles.checkBoxContainer}>
-      <div className="column gap-micro">
-        <span className={styles.mnemonicText}>{title}</span>
-        <span className={styles.descriptionText}>{description}</span>
+      <div className={styles.headerContainer}>
+        <div className={styles.header}>
+          <span className={styles.mnemonicText}>{title}</span>
+          <span className={styles.descriptionText}>{description}</span>
+        </div>
         <div className="divisor" />
       </div>
       <div className={styles.checkBoxList}>{children}</div>

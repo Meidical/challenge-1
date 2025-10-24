@@ -16,7 +16,7 @@
 .linkCategoryText {
   font-family: "OpenSans";
   text-transform: uppercase;
-  font-size: var(--fmicro);
+  font-size: 0.67rem;
   font-weight: normal;
   color: var(--grey);
 }

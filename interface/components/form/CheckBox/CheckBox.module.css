@@ -13,6 +13,8 @@
   color: white;
   border-radius: var(--small-radius);
   border: solid 1px transparent;
+
+  transition: var(--basic-transition);
 }
 
 .checkBox:has(input:checked) {
@@ -35,13 +37,13 @@
   left: 10px;
   height: 20px;
   width: 20px;
-  background-color: #eee;
+  background-color: whitesmoke;
   border-radius: var(--full-radius);
 }
 
 /* On mouse-over, add a grey background color */
 .checkBox:hover input ~ .checkMark {
-  background-color: #ccc;
+  background-color: var(--grey);
 }
 
 .checkBox input:checked ~ .checkMark {

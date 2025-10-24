@@ -25,7 +25,7 @@ export default function Button({
       disabled={loading || disabled}
       onClick={onClick}
     >
-      {loading && <Spinner fill="whitesmoke" />}
+      {loading && <Spinner fill="var(--grey)" />}
       {text}
     </button>
   );
