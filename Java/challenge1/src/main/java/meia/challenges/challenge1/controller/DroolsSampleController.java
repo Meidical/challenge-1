@@ -1,5 +1,6 @@
 package meia.challenges.challenge1.controller;
 
+import meia.challenges.challenge1.explain.How;
 import meia.challenges.challenge1.facts.Fact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,9 +52,20 @@ public class DroolsSampleController {
         return new ResponseEntity<>(fact, HttpStatus.OK);
     }
 
-    @PostMapping("/assessment/{patientid}/insertfact")
+    /*@PostMapping("/assessment/{patientid}/insertfact")
     public ResponseEntity<Fact> insertFact(@PathVariable String patientid) {
         droolsService.insertFact(patientid);
         return new ResponseEntity<>(HttpStatus.OK);
+    }*/
+
+    @GetMapping("/assessment/{patientid}/how")
+    public ResponseEntity<String> getHow(@PathVariable String patientid) {
+        PatientAirwayAssessment patient = droolsService.getPatientById(patientid);
+        if (patient == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        List<Fact> facts = droolsService.getFactsByPatientId(patientid);
+        String explanation = new How().getHowExplanation(patient, facts, null);
+        return ResponseEntity.ok(explanation);
     }
 }

@@ -4,6 +4,8 @@ import meia.challenges.challenge1.facts.*;
 import org.kie.api.runtime.ClassObjectFilter;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.Row;
+import org.kie.api.runtime.rule.ViewChangedEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +28,22 @@ public class DroolsService {
     private static final Logger logger = LoggerFactory.getLogger(DroolsService.class);
 
     /**
-     * Evaluates airway assessment for a patient using certainty factors
-     * @param assessment The patient assessment with individual factors
-     * @return The evaluated assessment with overall certainty factors
+     * Evaluates airway assessment for a patient using certainty factors.
+     * Inserts the assessment and its factors into the patient's Drools session,
+     * triggers rule evaluation and returns the (possibly updated) assessment.
+     *
+     * @param assessment The patient assessment containing factor lists and patient id
+     * @return The evaluated PatientAirwayAssessment instance (may be modified by rules)
      */
     public PatientAirwayAssessment evaluateAirwayAssessment(PatientAirwayAssessment assessment) {
         String patientId = assessment.getPatientId();
         patientAssessments.put(patientId, assessment);
         KieSession kieSession = getOrCreateSession(patientId);
         kieSession.setGlobal("logger", logger);
+
+        // Insert predefined facts if not already present
+        insertFact(kieSession);
+
         kieSession.insert(assessment);
 
         // Insert all the individual factors
@@ -60,27 +69,16 @@ public class DroolsService {
         return assessment;
     }
 
-    // inside DroolsService (example showing both approaches)
-    public List<Conclusion> evaluateAirwayAssessmentAndGetConclusions(PatientAirwayAssessment assessment) {
-        String patientId = assessment.getPatientId();
-        patientAssessments.put(patientId, assessment);
-        KieSession kieSession = getOrCreateSession(patientId);
-
-        // set logger global as you already do
-        kieSession.setGlobal("logger", logger);
-
-        kieSession.insert(assessment);
-        // insert other facts...
-        kieSession.fireAllRules();
-
-        Collection<?> raw = kieSession.getObjects(new ClassObjectFilter(Conclusion.class));
-
-        // choose/merge as needed; return conclusionsFromWM as example
-        return raw.stream()
-                .map(o -> (Conclusion) o)
-                .collect(Collectors.toList());
-    }
-
+    /**
+     * Modify an existing Fact (by its id) in the patient's KIE session or insert it if not found.
+     * Only non-null fields from {@code updatedFact} are applied to the existing Fact.
+     * After modification or insertion, rules are fired.
+     *
+     * @param patientId the id of the patient owning the KIE session
+     * @param facId     the id of the fact to modify (or assign to the new fact when inserting)
+     * @param updatedFact a Fact containing updated values; only non-null properties are applied
+     * @return the modified existing Fact if found, otherwise the newly inserted Fact (with id set)
+     */
     public Fact modifyFactById(String patientId, int facId, Fact updatedFact) {
         KieSession kieSession = getOrCreateSession(patientId);
         kieSession.setGlobal("logger", logger);
@@ -118,14 +116,48 @@ public class DroolsService {
 
 
     /**
-     * Gets an existing session or creates a new one for a patient
+     * Gets an existing KieSession for the given patient id or creates a new one if absent.
+     * When a new session is created, it is initialized with a logger global and a
+     * live query listener that halts the session as soon as a conclusion is produced.
+     *
+     * @param patientId the patient identifier used as session key
+     * @return a KieSession associated with the patient
      */
     private KieSession getOrCreateSession(String patientId) {
-        return patientSessions.computeIfAbsent(patientId, id -> kieContainer.newKieSession());
+        return patientSessions.computeIfAbsent(patientId, id -> {
+            KieSession kSession = kieContainer.newKieSession();
+            kSession.setGlobal("logger", logger);
+
+            // Query listener - now only added once when session is first created
+            ViewChangedEventListener listener = new ViewChangedEventListener() {
+                @Override
+                public void rowInserted(Row row) {
+                    Conclusion conclusion = (Conclusion) row.get("$conclusion");
+                    logger.info(">>>{}", conclusion.toString());
+                    // stop inference engine as soon as a conclusion is reached
+                    kSession.halt();
+                }
+
+                @Override
+                public void rowDeleted(Row row) {
+                }
+
+                @Override
+                public void rowUpdated(Row row) {
+                }
+            };
+
+            kSession.openLiveQuery("Conclusions", null, listener);
+            return kSession;
+        });
     }
 
+
     /**
-     * Disposes a patient's session when no longer needed
+     * Disposes the KieSession associated with the given patient id, if present.
+     * This frees Drools resources for that patient.
+     *
+     * @param patientId the id of the patient whose session should be disposed
      */
     public void disposeSession(String patientId) {
         KieSession session = patientSessions.remove(patientId);
@@ -134,6 +166,12 @@ public class DroolsService {
         }
     }
 
+    /**
+     * Retrieves all Facts currently present in the patient's KieSession.
+     *
+     * @param patientid the id of the patient whose facts to return
+     * @return a list of Fact instances from the patient's session (empty list if none)
+     */
     public List<Fact> getFactsByPatientId(String patientid) {
         KieSession kieSession = getOrCreateSession(patientid);
         Collection<?> raw = kieSession.getObjects(new ClassObjectFilter(Fact.class));
@@ -142,10 +180,21 @@ public class DroolsService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns a copy of all patient assessments currently held in memory.
+     *
+     * @return list of PatientAirwayAssessment objects (may be empty)
+     */
     public List<PatientAirwayAssessment> getPatients() {
         return new ArrayList<>(patientAssessments.values());
     }
 
+    /**
+     * Returns the PatientAirwayAssessment for the given patient id if present.
+     *
+     * @param patientid the id of the patient to look up
+     * @return the PatientAirwayAssessment or null if not found
+     */
     public PatientAirwayAssessment getPatientById(String patientid) {
         PatientAirwayAssessment assessment = patientAssessments.get(patientid);
         if (assessment == null) {
@@ -156,16 +205,21 @@ public class DroolsService {
         }
     }
 
-    public void insertFact(String patientId) {
-        KieSession session = getOrCreateSession(patientId);
-        session.insert(new Fact(1, "Direct Laryngoscopy", "Direct Laryngoscopy", Status.NOT_STARTED));
-        session.insert(new Fact(2, "Facial Mask Ventilation", "Facial Mask Ventilation", Status.NOT_STARTED));
-        session.insert(new Fact(3, "Supraglottic Device", "Supraglottic Device", Status.NOT_STARTED));
-        session.insert(new Fact(4, "Fibroscopic Intubation", "Fibroscopic Intubation", Status.NOT_STARTED));
-        session.insert(new Fact(5, "Emergency", "Emergency", Status.NOT_STARTED));
-        session.insert(new Fact(6, "Seek other anesthetic airway management techniques", "Seek other anesthetic airway management techniques", Status.NOT_STARTED));
-        session.insert(new Fact(7, "Airway with intubation", "Airway with intubation", Status.NOT_STARTED));
-        session.insert(new Fact(8, "Success with intubation", "Success with intubation", Status.NOT_STARTED));
-        session.insert(new Fact(9, "Planned surgery", "Planned surgery", Status.NOT_STARTED));
+    /**
+     * Inserts a predefined set of domain Facts into the provided KieSession.
+     * These facts represent standard airway management options used by the rules.
+     *
+     * @param session the KieSession where facts will be inserted
+     */
+    public void insertFact(KieSession session) {
+        session.insert(new Fact(1, "Direct Laryngoscopy", "Direct Laryngoscopy", Status.NOT_STARTED, 0));
+        session.insert(new Fact(2, "Facial Mask Ventilation", "Facial Mask Ventilation", Status.NOT_STARTED, 0));
+        session.insert(new Fact(3, "Supraglottic Device", "Supraglottic Device", Status.NOT_STARTED, 0));
+        session.insert(new Fact(4, "Fibroscopic Intubation", "Fibroscopic Intubation", Status.NOT_STARTED, 0));
+        session.insert(new Fact(5, "Emergency", "Emergency", Status.NOT_STARTED, 0));
+        session.insert(new Fact(6, "Seek other anesthetic airway management techniques", "Seek other anesthetic airway management techniques", Status.NOT_STARTED, 0));
+        session.insert(new Fact(7, "Airway with intubation", "Airway with intubation", Status.NOT_STARTED, 0));
+        session.insert(new Fact(8, "Success with intubation", "Success with intubation", Status.NOT_STARTED, 0));
+        session.insert(new Fact(9, "Planned surgery", "Planned surgery", Status.NOT_STARTED, 0));
     }
 }

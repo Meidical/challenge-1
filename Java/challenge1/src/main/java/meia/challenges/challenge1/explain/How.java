@@ -1,10 +1,11 @@
 package meia.challenges.challenge1.explain;
 
 import meia.challenges.challenge1.facts.AssessmentFactor;
-import meia.challenges.challenge1.facts.LaryngoscopyOutcomeRequest;
+import meia.challenges.challenge1.facts.Conclusion;
+import meia.challenges.challenge1.facts.Fact;
 import meia.challenges.challenge1.facts.PatientAirwayAssessment;
-import meia.challenges.challenge1.facts.StandardLaryngoscopyStatus;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,7 +38,7 @@ public class How {
      * @param outcome optional laryngoscopy outcome fact (may be null)
      * @return explanation string
      */
-    public String getHowExplanation(PatientAirwayAssessment patient, LaryngoscopyOutcomeRequest outcome) {
+  public String getHowExplanation(PatientAirwayAssessment patient, Conclusion conclusion) {
         StringBuilder sb = new StringBuilder();
 
         if (patient == null) {
@@ -86,7 +87,7 @@ public class How {
                 "Overall SHORT Assessment High"
         );
 
-        // Overall airway difficulty and approach
+    // Overall airway difficulty and approach
         sb.append('\n');
         if (patient.isDifficultAirwayPredicted()) {
             sb.append("Difficult airway predicted = true\n");
@@ -100,45 +101,40 @@ public class How {
               .append('\n');
         }
 
-        // Laryngoscopy status reasoning (follows the rules' salience order)
-        if (patient.getStandardLaryngoscopyStatus() != null) {
-            StandardLaryngoscopyStatus st = patient.getStandardLaryngoscopyStatus();
-            sb.append("Standard laryngoscopy status: ")
-              .append(st)
-              .append('\n');
+    if (patient.getNextFactId() > 0) {
+      sb.append("Next step factId: ")
+        .append(patient.getNextFactId())
+        .append('\n');
+    }
 
-            switch (st) {
-                case NOT_STARTED -> sb.append(indent(1))
-                        .append("Set by default when no procedure has begun (see 'Default Easy Airway Approach').\n");
-                case STARTED -> sb.append(indent(1))
-                        .append("Began after default easy airway approach (rule 'Set Laryngoscopy Status Started').\n");
-                case SUCCESSFUL -> {
-                    sb.append(indent(1))
-                      .append("Marked successful due to LaryngoscopyOutcomeRequest.successful == true ")
-                      .append("(rule 'Set Laryngoscopy Status Successful').\n");
-                    if (outcome != null) {
-                        sb.append(indent(2))
-                          .append("Outcome for patient '")
-                          .append(outcome.getPatientId())
-                          .append("' was successful.\n");
-                    }
-                }
-                case FAILED -> {
-                    sb.append(indent(1))
-                      .append("Marked failed due to LaryngoscopyOutcomeRequest.successful == false ")
-                      .append("(rule 'Set Laryngoscopy Status Failed').\n");
-                    if (outcome != null) {
-                        sb.append(indent(2))
-                          .append("Outcome for patient '")
-                          .append(outcome.getPatientId())
-                          .append("' was not successful.\n");
-                    }
-                }
-            }
-        }
-
+    // Final conclusion (if provided by caller)
+    if (conclusion != null) {
+      sb.append("Conclusion reached: ")
+        .append(conclusion.getDescription())
+        .append('\n');
+    }
         return sb.toString();
     }
+
+  public String getHowExplanation(PatientAirwayAssessment patient, List<Fact> facts, Conclusion conclusion) {
+    String base = getHowExplanation(patient, conclusion);
+    StringBuilder sb = new StringBuilder(base);
+    if (facts != null && !facts.isEmpty()) {
+      sb.append('\n').append("Workflow facts:").append('\n');
+      facts.stream()
+         .sorted(Comparator.comparingInt(Fact::getId))
+         .forEach(f -> sb.append(indent(1))
+                 .append("[")
+                 .append(f.getId())
+                 .append("] ")
+                 .append(f.getName())
+                 .append(" - ")
+                 .append(f.getStatus())
+                 .append(f.getNextFactId() > 0 ? " (next->" + f.getNextFactId() + ")" : "")
+                 .append('\n'));
+    }
+    return sb.toString();
+  }
 
     private void appendCategoryExplanation(StringBuilder sb,
                                            String category,
@@ -167,7 +163,6 @@ public class How {
           .append(formatDouble(totalCf))
           .append('\n');
 
-        // Mirror the threshold logic from rules.drl
         if (totalCf > threshold) {
             sb.append(indent(2))
               .append("Threshold exceeded (>")
