@@ -28,9 +28,12 @@ public class DroolsService {
     private static final Logger logger = LoggerFactory.getLogger(DroolsService.class);
 
     /**
-     * Evaluates airway assessment for a patient using certainty factors
-     * @param assessment The patient assessment with individual factors
-     * @return The evaluated assessment with overall certainty factors
+     * Evaluates airway assessment for a patient using certainty factors.
+     * Inserts the assessment and its factors into the patient's Drools session,
+     * triggers rule evaluation and returns the (possibly updated) assessment.
+     *
+     * @param assessment The patient assessment containing factor lists and patient id
+     * @return The evaluated PatientAirwayAssessment instance (may be modified by rules)
      */
     public PatientAirwayAssessment evaluateAirwayAssessment(PatientAirwayAssessment assessment) {
         String patientId = assessment.getPatientId();
@@ -66,6 +69,16 @@ public class DroolsService {
         return assessment;
     }
 
+    /**
+     * Modify an existing Fact (by its id) in the patient's KIE session or insert it if not found.
+     * Only non-null fields from {@code updatedFact} are applied to the existing Fact.
+     * After modification or insertion, rules are fired.
+     *
+     * @param patientId the id of the patient owning the KIE session
+     * @param facId     the id of the fact to modify (or assign to the new fact when inserting)
+     * @param updatedFact a Fact containing updated values; only non-null properties are applied
+     * @return the modified existing Fact if found, otherwise the newly inserted Fact (with id set)
+     */
     public Fact modifyFactById(String patientId, int facId, Fact updatedFact) {
         KieSession kieSession = getOrCreateSession(patientId);
         kieSession.setGlobal("logger", logger);
@@ -103,7 +116,12 @@ public class DroolsService {
 
 
     /**
-     * Gets an existing session or creates a new one for a patient
+     * Gets an existing KieSession for the given patient id or creates a new one if absent.
+     * When a new session is created, it is initialized with a logger global and a
+     * live query listener that halts the session as soon as a conclusion is produced.
+     *
+     * @param patientId the patient identifier used as session key
+     * @return a KieSession associated with the patient
      */
     private KieSession getOrCreateSession(String patientId) {
         return patientSessions.computeIfAbsent(patientId, id -> {
@@ -136,7 +154,10 @@ public class DroolsService {
 
 
     /**
-     * Disposes a patient's session when no longer needed
+     * Disposes the KieSession associated with the given patient id, if present.
+     * This frees Drools resources for that patient.
+     *
+     * @param patientId the id of the patient whose session should be disposed
      */
     public void disposeSession(String patientId) {
         KieSession session = patientSessions.remove(patientId);
@@ -145,6 +166,12 @@ public class DroolsService {
         }
     }
 
+    /**
+     * Retrieves all Facts currently present in the patient's KieSession.
+     *
+     * @param patientid the id of the patient whose facts to return
+     * @return a list of Fact instances from the patient's session (empty list if none)
+     */
     public List<Fact> getFactsByPatientId(String patientid) {
         KieSession kieSession = getOrCreateSession(patientid);
         Collection<?> raw = kieSession.getObjects(new ClassObjectFilter(Fact.class));
@@ -153,10 +180,21 @@ public class DroolsService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns a copy of all patient assessments currently held in memory.
+     *
+     * @return list of PatientAirwayAssessment objects (may be empty)
+     */
     public List<PatientAirwayAssessment> getPatients() {
         return new ArrayList<>(patientAssessments.values());
     }
 
+    /**
+     * Returns the PatientAirwayAssessment for the given patient id if present.
+     *
+     * @param patientid the id of the patient to look up
+     * @return the PatientAirwayAssessment or null if not found
+     */
     public PatientAirwayAssessment getPatientById(String patientid) {
         PatientAirwayAssessment assessment = patientAssessments.get(patientid);
         if (assessment == null) {
@@ -167,6 +205,12 @@ public class DroolsService {
         }
     }
 
+    /**
+     * Inserts a predefined set of domain Facts into the provided KieSession.
+     * These facts represent standard airway management options used by the rules.
+     *
+     * @param session the KieSession where facts will be inserted
+     */
     public void insertFact(KieSession session) {
         session.insert(new Fact(1, "Direct Laryngoscopy", "Direct Laryngoscopy", Status.NOT_STARTED, 0));
         session.insert(new Fact(2, "Facial Mask Ventilation", "Facial Mask Ventilation", Status.NOT_STARTED, 0));

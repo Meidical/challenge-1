@@ -7,6 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+/**
+ * Represents a collection of assessment factors and computed certainty factors
+ * for a single patient's airway assessment. The class holds factor lists for
+ * mnemonic groups (LEMON, MOANS, RODS, SHORT) and overall computed CFs used
+ * by the rules engine.
+ */
 public class PatientAirwayAssessment {
     // Getters and setters
     // Patient basic info
@@ -40,19 +46,50 @@ public class PatientAirwayAssessment {
     @Setter
     private int nextFactId;
 
+    /**
+     * Add a factor to the LEMON category list.
+     *
+     * @param factor the AssessmentFactor to add
+     */
     public void addLemonFactor(AssessmentFactor factor) { this.lemonFactors.add(factor); }
 
+    /**
+     * Add a factor to the MOANS category list.
+     *
+     * @param factor the AssessmentFactor to add
+     */
     public void addMoansFactor(AssessmentFactor factor) { this.moansFactors.add(factor); }
 
+    /**
+     * Add a factor to the RODS category list.
+     *
+     * @param factor the AssessmentFactor to add
+     */
     public void addRodsFactor(AssessmentFactor factor) { this.rodsFactors.add(factor); }
 
+    /**
+     * Add a factor to the SHORT category list.
+     *
+     * @param factor the AssessmentFactor to add
+     */
     public void addShortFactor(AssessmentFactor factor) { this.shortFactors.add(factor); }
 
-    // Method to calculate overall CF based on individual factors
+    /**
+     * Calculate or update the overall certainty factors (LEMON, MOANS, RODS, SHORT)
+     * from the contained individual AssessmentFactor certainty values.
+     *
+     * Note: the implementation is intentionally left as a placeholder because
+     * rule evaluation typically happens inside the Drools rules in this project.
+     */
     public void calculateOverallCertaintyFactors() {
         // Implementation would combine individual CFs using certainty theory formulas
     }
 
+    /**
+     * Human-friendly representation used in logs and debugging.
+     *
+     * @return string summary of the assessment
+     */
     @Override
     public String toString() {
         return "PatientAirwayAssessment{" +
