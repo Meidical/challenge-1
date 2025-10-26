@@ -15,7 +15,7 @@ mostra_factos_json(PatientID, JSON) :-
         patient: PatientID
     }, (
         facto(PatientID, N, F),
-        term_to_atom(F, FText)   % <-- convert idade(20) → "idade(20)"
+        term_to_atom(F, FText) 
     ), JSON).
 
 
@@ -78,13 +78,10 @@ combine_cf(CF1, CF2, CF) :-
 % Obter procedimento recomendado atual
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-ultimo_rec_processo(PatientID, Valor) :-
-    findall(N, facto(PatientID, N, rec_processo(_)), Lista),
-    Lista \= [],                            
-    max_list(Lista, UltimoID),
-    facto(PatientID, UltimoID, rec_processo(Valor)).
+ultimo_rec_processo(PatientID, N, Valor) :-
+    facto(PatientID, _, rec_processo(N, Valor)).
 
-ultimo_rec_processo(PatientID, "Nenhum processo encontrado") :-
+ultimo_rec_processo(PatientID, _, "Nenhum processo encontrado") :-
     \+ facto(PatientID, _, rec_processo(_)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,8 +89,18 @@ ultimo_rec_processo(PatientID, "Nenhum processo encontrado") :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 reply_processo_json(PatientID) :-
-    ultimo_rec_processo(PatientID, ValorRec),
-    (   facto(PatientID, _, conclusion(true))
-    ->  reply_json(_{rec_processo: ValorRec, conclusion: true})
-    ;   reply_json(_{rec_processo: ValorRec, conclusion: false})
+    facto(PatientID, _, id_prox_facto(N)),
+    format(user_output, 'N: ~w~n', [N]),
+    ultimo_rec_processo(PatientID, N, Rec),
+    format(user_output, 'N4: ~w~n', [Rec]),
+    (   facto(PatientID, _, conclusao(true)),
+        reply_json(_{
+            description: Rec, 
+            conclusion: true
+        })
+    ;   reply_json(_{
+            description: Rec, 
+            conclusion: false, 
+            idProxFacto: N
+        })
     ).

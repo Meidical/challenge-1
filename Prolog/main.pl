@@ -22,5 +22,5 @@
 :- consult('utils.pl').
 
 main :-
-    http_server(http_dispatch, [port(8080)]).
+    http_server(http_dispatch, [port(8081)]).
 :- main.

@@ -102,7 +102,6 @@ cria_facto(PatientID, F, ID, LFactos) :-
 
 
 avalia(PatientID, N, P) :-
-    % Case 1: comparison on a 2-arg fact like mnemonica_cf("LEMON", >, 0.3)
     P =.. [Functor, Entidade, Operador, Valor],
     P1 =.. [Functor, Entidade, Valor1],
     facto(PatientID, N, P1),
@@ -147,9 +146,8 @@ inferir_via_aerea(Dict) :-
     forall(
         facto(PatientID, _, mnemonica(Nome, Peso)),
         (   calcular_cf(PatientID, Nome, CF),
-            CF1 is CF * Peso,
             prox_facto(PatientID, N),
-            assertz(facto(PatientID, N, mnemonica_cf(Nome, CF1)))
+            assertz(facto(PatientID, N, mnemonica_cf(Nome, CF)))
         )
     ),
 
@@ -173,8 +171,10 @@ assert_fator(PatientID, Category, Code) :-
 
 get_prox_processo(PatientID, ID, Dict) :-
     prox_facto(PatientID, N),
+    format(user_output, 'N1: ~w~n', [N]),
     assertz(facto(PatientID, N, facto_pedido(ID, Dict.successful))),
 
     arranca_motor(PatientID),
+    format(user_output, 'N2: ~w~n', [N]),
     
     retractall(facto(PatientID, _, facto_pedido(_, _))).
