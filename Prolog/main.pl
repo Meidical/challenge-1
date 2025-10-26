@@ -16,7 +16,7 @@
 
 % Incluir outros módulos
 :- consult('engine.pl').
-:- consult('justification.pl').
+%:- consult('justification.pl').
 :- consult('http_handlers.pl').
 :- consult('rules.txt').
 :- consult('utils.pl').

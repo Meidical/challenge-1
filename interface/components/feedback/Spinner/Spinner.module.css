@@ -4,9 +4,10 @@
   top: 50%;
   transform: translate(-50%, -50%);
   z-index: 10;
+  height: 18px;
   overflow: visible !important;
 
-  transition: var(--fade-transition);
+  transition: var(--basic-transition);
 }
 
 .rotate {

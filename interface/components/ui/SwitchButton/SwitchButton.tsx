@@ -35,16 +35,14 @@ export default function SwitchButton({
         {textLeft}
       </span>
       <button
-        className={`${
-          isSwitched ? styles.switchButtonRight : styles.switchButtonLeft
-        } ${className}`}
+        className={`${styles.switchButton} ${className}`}
         type="button"
         onClick={handleClick}
       >
-        <div className={styles.switch}>
+        <div className={isSwitched ? styles.switchRight : styles.switch}>
           <Icon
-            fill="black"
-            stroke="black"
+            fill="white"
+            stroke="white"
             iconName={isSwitched ? switchIconRight : switchIconLeft}
             size={16}
           />

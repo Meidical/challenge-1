@@ -1,21 +1,28 @@
-.checkBoxFrame {
+.checkBox {
   display: block;
   position: relative;
-  width: fit-content;
   height: fit-content;
-  padding-left: 35px;
-  padding-block: 2px;
+  padding-left: 40px;
+  padding-block: 10px;
   cursor: pointer;
   user-select: none;
 
   font-family: "OpenSans";
   font-size: var(--ftiny);
   font-weight: normal;
-  color: var(--white);
+  color: white;
+  border-radius: var(--small-radius);
+  border: solid 1px transparent;
+
+  transition: var(--basic-transition);
+}
+
+.checkBox:has(input:checked) {
+  border: solid 1px var(--primary-color);
 }
 
 /* Hide the browser's default checkbox */
-.checkBoxFrame input {
+.checkBox input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -23,46 +30,41 @@
   width: 0;
 }
 
-/* Create a custom checkbox */
 .checkMark {
   position: absolute;
-  top: 0;
-  left: 0;
-  height: 25px;
-  width: 25px;
-  background-color: #eee;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 10px;
+  height: 20px;
+  width: 20px;
+  background-color: whitesmoke;
   border-radius: var(--full-radius);
 }
 
 /* On mouse-over, add a grey background color */
-.checkBoxFrame:hover input ~ .checkMark {
-  background-color: #ccc;
+.checkBox:hover input ~ .checkMark {
+  background-color: var(--grey);
 }
 
-/* When the checkbox is checked, add a blue background */
-.checkBoxFrame input:checked ~ .checkMark {
-  background-color: var(--green);
+.checkBox input:checked ~ .checkMark {
+  background-color: var(--primary-color);
 }
 
-/* Create the checkMark/indicator (hidden when not checked) */
 .checkMark:after {
   content: "";
   position: absolute;
   display: none;
 }
-
-/* Show the checkMark when checked */
-.checkBoxFrame input:checked ~ .checkMark:after {
+.checkBox input:checked ~ .checkMark:after {
   display: block;
 }
 
-/* Style the checkMark/indicator */
-.checkBoxFrame .checkMark:after {
-  left: 9px;
-  top: 5px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  transform: rotate(45deg);
+.checkMark:after {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 9px;
+  height: 9px;
+  background-color: var(--secondary-color);
+  border-radius: var(--full-radius);
 }

@@ -1,26 +1,30 @@
-.submitButtonFrame {
+.submitButton {
   display: flex;
-  padding: 20px 20px;
-  border-radius: var(--small-radius);
-  background: linear-gradient(0deg, var(--grey) 49%, var(--white) 100%);
-  box-shadow: inset 0 0 20px var(--white);
-  border: 1px solid var(--stone);
+  padding: 10px 14px;
+  border-radius: var(--full-radius);
+  background: #a2fe9d;
   justify-content: center;
+  align-items: center;
   position: relative;
 
-  color: var(--smoke);
-  font-family: "Coolvetica";
-  text-transform: uppercase;
+  color: var(--background-color);
+  font-family: "OpenSans";
+  font-weight: 600;
   font-size: var(--ftiny);
-
-  transition: var(--fade-transition);
 }
 
-.submitButtonFrame:disabled {
+.submitButton:disabled {
   cursor: default;
+  pointer-events: none;
+  background: var(--primary-color-muted);
 
-  background: linear-gradient(0deg, var(--steel) 49%, var(--white-60) 100%);
-  box-shadow: inset 0 0 20px var(--white-60);
+  transition: var(--basic-transition);
+}
 
-  transition: var(--fade-transition);
+.submitButton:hover {
+  background: var(--primary-color-hover);
+}
+
+.submitButton:active {
+  background: var(--primary-color-click);
 }

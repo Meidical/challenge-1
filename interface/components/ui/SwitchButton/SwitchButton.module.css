@@ -4,35 +4,31 @@
   align-items: center;
 }
 
-.switch {
+.switch,
+.switchRight {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
-  padding: 10px;
-  border-radius: var(--small-radius);
-  background: linear-gradient(0deg, var(--grey) 49%, var(--white) 100%);
-  box-shadow: inset 0 0 20px var(--white);
-  border: 1px solid var(--stone);
-}
-
-.switchButtonRight,
-.switchButtonLeft {
-  display: flex;
-  width: 80px;
   padding: 6px;
-  border-radius: 22px;
-  background-color: var(--dust);
-  box-shadow: var(--basic-inset-shadow);
-  border: 1px solid var(--stone);
+  border-radius: var(--full-radius);
+  background-color: var(--terciary-color);
+
+  transition: 0.5s cubic-bezier(0.7, -0.24, 0.32, 1.17) left;
+}
+
+.switchRight {
+  left: 50%;
+}
+
+.switchButton {
+  display: flex;
+  width: 70px;
+  height: 40px;
+  border-radius: var(--full-radius);
+  background-color: var(--secondary-color);
   position: relative;
-
-  transition: var(--fade-transition);
-}
-
-.switchButtonLeft {
-  justify-content: flex-start;
-}
-
-.switchButtonRight {
-  justify-content: flex-end;
 }
 
 .textInactive,
@@ -41,7 +37,8 @@
   display: flex;
   align-items: center;
   font-size: var(--ftiny);
-  padding-block: var(--fmicro);
+
+  transition: 0.9s ease;
 }
 
 .textInactive {
@@ -49,5 +46,5 @@
 }
 
 .textActive {
-  color: var(--white);
+  color: white;
 }

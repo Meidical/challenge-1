@@ -1,15 +1,18 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import styles from "./InferenceForm.module.css";
-import { BasicCard, Button } from "@/components/ui";
-import { useRouter } from "next/navigation";
+import MnemonicPercentageContainer from "./MnemonicPercentageContainer";
 
 export default function InferenceForm() {
-  const router = useRouter();
   type Answer = "yes" | "no" | null;
   type Step = "q1" | "q2" | "q3Vent" | "qEmergency";
 
-  const [answers, setAnswers] = useState<{ q1: Answer; q2: Answer; q3Vent: Answer; qEmergency: Answer }>({
+  const [answers, setAnswers] = useState<{
+    q1: Answer;
+    q2: Answer;
+    q3Vent: Answer;
+    qEmergency: Answer;
+  }>({
     q1: null,
     q2: null,
     q3Vent: null,
@@ -86,13 +89,21 @@ export default function InferenceForm() {
       case "q3Vent": {
         const q3Vent = value;
         setAnswers((prev) => ({ ...prev, q3Vent }));
-        setFinalOutcome(q3Vent === "yes" ? "Tente entubar o paciente." : "Tentar acordar o paciente.");
+        setFinalOutcome(
+          q3Vent === "yes"
+            ? "Tente entubar o paciente."
+            : "Tentar acordar o paciente."
+        );
         break;
       }
       case "qEmergency": {
         const qEmergency = value;
         setAnswers((prev) => ({ ...prev, qEmergency }));
-        setFinalOutcome(qEmergency === "yes" ? "Técnica Invasiva (Cricotirotomia)." : "Acordar o paciente.");
+        setFinalOutcome(
+          qEmergency === "yes"
+            ? "Técnica Invasiva (Cricotirotomia)."
+            : "Acordar o paciente."
+        );
         break;
       }
     }
@@ -114,11 +125,15 @@ export default function InferenceForm() {
 
     switch (step) {
       case "q1":
-        router.back();
         break;
       case "q2":
         setStep("q1");
-        setAnswers({ q1: answers.q1, q2: null, q3Vent: null, qEmergency: null });
+        setAnswers({
+          q1: answers.q1,
+          q2: null,
+          q3Vent: null,
+          qEmergency: null,
+        });
         setIntermediateNote(null);
         break;
       case "q3Vent":
@@ -134,86 +149,97 @@ export default function InferenceForm() {
   };
 
   return (
-    <BasicCard className={styles.cardFrame}>
-      <form className={styles.formFrame} onSubmit={(e) => e.preventDefault()}>
-        <div className={styles.systemBar}>
-          <h3 className={styles.formText}>DAP - Dificult Airway Predictor</h3>
-          <Button text="Back" type="button" onClick={handleBack} />
-        </div>
-
-        <div className={`${styles.qaContainer} row gap-md`}>
-          {/* Left: Percentages placeholders */}
-          <div className={`${styles.qaColumn} ${styles.questionsCol}`}>
-            <div className={styles.questionItem}>
-              <span className={styles.questionIndex}>LEMON</span>
-              <span className={styles.questionText}>—%</span>
-            </div>
-            <div className={styles.questionItem}>
-              <span className={styles.questionIndex}>MOANS</span>
-              <span className={styles.questionText}>—%</span>
-            </div>
-            <div className={styles.questionItem}>
-              <span className={styles.questionIndex}>RODS</span>
-              <span className={styles.questionText}>—%</span>
-            </div>
-            <div className={styles.questionItem}>
-              <span className={styles.questionIndex}>SHORT</span>
-              <span className={styles.questionText}>—%</span>
-            </div>
+    <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
+      <MnemonicPercentageContainer
+        title="LEMON"
+        description="Difficulty when doing laryngoscopy"
+        percentage={45}
+      />
+      <MnemonicPercentageContainer
+        title="MOANS"
+        description="Difficulty when using oxygen mask"
+        percentage={0}
+      />
+      <MnemonicPercentageContainer
+        title="RODS"
+        description="Difficulty when using supraglottic device"
+        percentage={20}
+      />
+      <MnemonicPercentageContainer
+        title="SHORT"
+        description="Difficulty when executing a cricothyrotomy"
+        percentage={30}
+      />
+      {/* <div className={`${styles.qaContainer} row gap-md`}>
+        <div className={`${styles.qaColumn} ${styles.questionsCol}`}>
+          <div className={styles.questionItem}>
+            <span className={styles.questionIndex}>LEMON</span>
+            <span className={styles.questionText}>—%</span>
           </div>
-
-          {/* Right: Single question view and final result */}
-          <div className={`${styles.qaColumn} ${styles.answersCol}`}>
-            {!finalOutcome ? (
-              <>
-                <div className={styles.procedureTitle}>{procedureLabel}</div>
-                <div className={styles.questionHeader}>
-                  <div className={styles.questionText}>{questionLabel}</div>
-                </div>
-                {intermediateNote && (
-                  <div className={styles.infoPanel}>
-                    <div className={styles.panelTitle}>Indicação</div>
-                    <div>{intermediateNote}</div>
-                  </div>
-                )}
-                <div
-                  className={styles.radioGroupCentered}
-                  role="radiogroup"
-                  aria-label={`Resposta da pergunta ${stepIndex + 1}`}
-                >
-                  <label className={styles.radioOption}>
-                    <input
-                      type="radio"
-                      name={`q-${step}`}
-                      value="yes"
-                      checked={currentAnswer === "yes"}
-                      onChange={() => handleAnswer("yes")}
-                    />
-                    <span>Sim</span>
-                  </label>
-                  <label className={styles.radioOption}>
-                    <input
-                      type="radio"
-                      name={`q-${step}`}
-                      value="no"
-                      checked={currentAnswer === "no"}
-                      onChange={() => handleAnswer("no")}
-                    />
-                    <span>Não</span>
-                  </label>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className={styles.procedureTitle}>Resultado</div>
-                <div className={styles.resultPanel}>
-                  <div className={styles.resultText}>{finalOutcome}</div>
-                </div>
-              </>
-            )}
+          <div className={styles.questionItem}>
+            <span className={styles.questionIndex}>MOANS</span>
+            <span className={styles.questionText}>—%</span>
+          </div>
+          <div className={styles.questionItem}>
+            <span className={styles.questionIndex}>RODS</span>
+            <span className={styles.questionText}>—%</span>
+          </div>
+          <div className={styles.questionItem}>
+            <span className={styles.questionIndex}>SHORT</span>
+            <span className={styles.questionText}>—%</span>
           </div>
         </div>
-      </form>
-    </BasicCard>
+
+        <div className={`${styles.qaColumn} ${styles.answersCol}`}>
+          {!finalOutcome ? (
+            <>
+              <div className={styles.procedureTitle}>{procedureLabel}</div>
+              <div className={styles.questionHeader}>
+                <div className={styles.questionText}>{questionLabel}</div>
+              </div>
+              {intermediateNote && (
+                <div className={styles.infoPanel}>
+                  <div className={styles.panelTitle}>Indicação</div>
+                  <div>{intermediateNote}</div>
+                </div>
+              )}
+              <div
+                className={styles.radioGroupCentered}
+                role="radiogroup"
+                aria-label={`Resposta da pergunta ${stepIndex + 1}`}
+              >
+                <label className={styles.radioOption}>
+                  <input
+                    type="radio"
+                    name={`q-${step}`}
+                    value="yes"
+                    checked={currentAnswer === "yes"}
+                    onChange={() => handleAnswer("yes")}
+                  />
+                  <span>Sim</span>
+                </label>
+                <label className={styles.radioOption}>
+                  <input
+                    type="radio"
+                    name={`q-${step}`}
+                    value="no"
+                    checked={currentAnswer === "no"}
+                    onChange={() => handleAnswer("no")}
+                  />
+                  <span>Não</span>
+                </label>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={styles.procedureTitle}>Resultado</div>
+              <div className={styles.resultPanel}>
+                <div className={styles.resultText}>{finalOutcome}</div>
+              </div>
+            </>
+          )}
+        </div>
+      </div> */}
+    </form>
   );
 }

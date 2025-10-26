@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Navbar, Footer } from "@/components/navigation";
+import { Appbar, Footer } from "@/components/navigation";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Navbar />
+        <Appbar />
         <main>
           <h1 className="sr-only">Expert System</h1>
           {children}

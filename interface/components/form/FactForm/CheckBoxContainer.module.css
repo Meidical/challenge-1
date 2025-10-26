@@ -1,0 +1,42 @@
+.checkBoxContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tiny);
+  flex: 1;
+}
+
+.checkBoxList {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 10px;
+}
+
+.headerContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--micro);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-left: 10px;
+}
+
+.mnemonicText {
+  font-family: "OpenSans";
+  display: flex;
+  font-weight: 600;
+  font-size: var(--ftiny);
+  color: white;
+}
+
+.descriptionText {
+  font-family: "OpenSans";
+  display: flex;
+  font-size: var(--fmicro);
+  color: var(--steel);
+  text-wrap-mode: nowrap;
+}

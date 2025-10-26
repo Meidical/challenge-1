@@ -5,5 +5,5 @@
   gap: var(--fmicro);
   font-size: var(--ftiny);
   padding-block: var(--fmicro);
-  color: var(--white);
+  color: white;
 }

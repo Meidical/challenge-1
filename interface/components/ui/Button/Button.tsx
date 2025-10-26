@@ -8,7 +8,6 @@ type ButtonProps = {
   className?: string;
   loading?: boolean;
   disabled?: boolean;
-  type?: "button" | "submit" | "reset";
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
 
@@ -17,18 +16,16 @@ export default function Button({
   className = "",
   loading = false,
   disabled = false,
-  type = "submit",
   onClick,
 }: ButtonProps) {
   return (
     <button
-      className={`${styles.submitButtonFrame} ${className}`}
+      className={`${styles.button} ${className}`}
       style={loading ? { color: "transparent" } : undefined}
-      type={type}
       disabled={loading || disabled}
       onClick={onClick}
     >
-      {loading && <Spinner fill="#252525" />}
+      {loading && <Spinner fill="var(--grey)" />}
       {text}
     </button>
   );
