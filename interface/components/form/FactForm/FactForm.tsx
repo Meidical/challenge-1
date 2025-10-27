@@ -3,11 +3,15 @@ import React, { useRef } from "react";
 import styles from "./FactForm.module.css";
 import { CheckBox } from "@/components/form";
 
-import { Factor, FactorCategory } from "@/types";
+import { Factor, FactorCategory, PrevisionPost } from "@/types";
 import CheckBoxContainer from "./CheckBoxContainer";
+import { useDataContext } from "@/contexts";
 
 export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
-  const requestBody = useRef({
+  const { currentAddress, resetData, setIsLoading, setIsSuccess, setIsError } =
+    useDataContext();
+
+  const requestBody = useRef<PrevisionPost>({
     lemonFactors: [],
     moansFactors: [],
     rodsFactors: [],
@@ -42,9 +46,40 @@ export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
     }
   };
 
+  async function postData() {
+    resetData();
+    setIsLoading(true);
+    const url = `${currentAddress.current}/assessement`;
+    try {
+      const response = await fetch(url, {
+        mode: "no-cors",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody.current),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      setIsLoading(false);
+      setIsSuccess(true);
+
+      console.log(result);
+    } catch (error) {
+      setIsError(true);
+      console.log(error.message);
+    }
+  }
+
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({ ...requestBody.current });
+    postData();
+    // console.log({ ...requestBody.current });
   };
 
   return (

@@ -1,4 +1,4 @@
-.checkBox {
+.radioButton {
   display: block;
   position: relative;
   height: fit-content;
@@ -17,12 +17,12 @@
   transition: var(--basic-transition);
 }
 
-.checkBox:has(input:checked) {
+.radioButton:has(input:checked) {
   border: solid 1px var(--primary-color);
 }
 
 /* Hide the browser's default checkbox */
-.checkBox input {
+.radioButton input {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -38,15 +38,15 @@
   height: 20px;
   width: 20px;
   background-color: whitesmoke;
-  border-radius: 6px;
+  border-radius: var(--full-radius);
 }
 
 /* On mouse-over, add a grey background color */
-.checkBox:hover input ~ .checkMark {
+.radioButton:hover input ~ .checkMark {
   background-color: var(--grey);
 }
 
-.checkBox input:checked ~ .checkMark {
+.radioButton input:checked ~ .checkMark {
   background-color: var(--primary-color);
 }
 
@@ -55,7 +55,7 @@
   position: absolute;
   display: none;
 }
-.checkBox input:checked ~ .checkMark:after {
+.radioButton input:checked ~ .checkMark:after {
   display: block;
 }
 
@@ -66,5 +66,5 @@
   width: 9px;
   height: 9px;
   background-color: var(--secondary-color);
-  border-radius: 1px;
+  border-radius: var(--full-radius);
 }

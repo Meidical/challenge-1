@@ -2,8 +2,8 @@
 import React, { useMemo, useState } from "react";
 import styles from "./InferenceForm.module.css";
 import MnemonicPercentageContainer from "./MnemonicPercentageContainer";
-import { CheckBox } from "../CheckBox";
-import { SubmitButton } from "../SubmitButton";
+
+import { SubmitButton, RadioButton, CheckBox } from "@/components/form";
 
 export default function InferenceForm() {
   type Answer = "yes" | "no" | null;
@@ -181,10 +181,9 @@ export default function InferenceForm() {
         <span className={styles.questionText}>
           Did the entubation went well?
         </span>
-        {/* Trocar para radio button para selecionar apenas uma opçao */}
         <div className={styles.radiogroup}>
-          <CheckBox label="Yes" className="flex" />
-          <CheckBox label="No" className="flex" />
+          <RadioButton label="Yes" className="flex" name="question_response" />
+          <RadioButton label="No" className="flex" name="question_response" />
         </div>
         <SubmitButton text="Continue" />
       </form>

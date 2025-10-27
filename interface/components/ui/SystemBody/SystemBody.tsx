@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import styles from "./SystemBody.module.css";
 import { FactForm, InferenceForm, SubmitButton } from "@/components/form";
 import { BasicCard, Button, SwitchButton } from "@/components/ui";
@@ -7,17 +7,18 @@ import { BasicCard, Button, SwitchButton } from "@/components/ui";
 import { GetSystemAddress } from "@/lib";
 import Image from "next/image";
 import delay from "@/utils/delay";
+import { useDataContext } from "@/contexts";
 
 export default function SystemBody() {
-  const [isFirstFase, setIsFirstFase] = React.useState(true);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isFirstFase, setIsFirstFase] = useState(true);
+  const { currentAddress, resetData, isLoading } = useDataContext();
 
-  const systemAddress = useRef(GetSystemAddress("PROLOG"));
+  currentAddress.current = GetSystemAddress("PROLOG");
 
-  const formRef = React.useRef<HTMLFormElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const switchAddress = (switched: boolean) => {
-    systemAddress.current = switched
+    currentAddress.current = switched
       ? GetSystemAddress("DROLLS")
       : GetSystemAddress("PROLOG");
   };
@@ -27,13 +28,12 @@ export default function SystemBody() {
     formRef.current?.dispatchEvent(
       new Event("submit", { bubbles: true, cancelable: true })
     );
-    setIsLoading(true);
     await delay(2000);
     setIsFirstFase(false);
-    setIsLoading(false);
   };
 
   const handleBack = () => {
+    resetData();
     setIsFirstFase(true);
   };
 
