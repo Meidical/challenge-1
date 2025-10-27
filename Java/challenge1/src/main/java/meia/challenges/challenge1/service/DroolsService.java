@@ -79,39 +79,36 @@ public class DroolsService {
      * @param updatedFact a Fact containing updated values; only non-null properties are applied
      * @return the modified existing Fact if found, otherwise the newly inserted Fact (with id set)
      */
-    public Fact modifyFactById(String patientId, int facId, Fact updatedFact) {
+    public Fact modifyFactById(String patientId, int facId, Evidence updatedEvidence) {
         KieSession kieSession = getOrCreateSession(patientId);
         kieSession.setGlobal("logger", logger);
 
         // Check if the fact with the given ID already exists
-        Collection<?> existingFacts = kieSession.getObjects(new ClassObjectFilter(Fact.class));
-        for (Object obj : existingFacts) {
-            Fact fact = (Fact) obj;
-            if (fact.getId() == facId) {
+        Collection<?> existingEvidences = kieSession.getObjects(new ClassObjectFilter(Evidence.class));
+        for (Object obj : existingEvidences) {
+            Evidence evidence = (Evidence) obj;
+            if (evidence.getId() == facId) {
                 // Modify only the properties that are provided in the payload
-                if (updatedFact.getName() != null) {
-                    fact.setName(updatedFact.getName());
+                if (updatedEvidence.getEvidence() != null) {
+                    evidence.setEvidence(updatedEvidence.getEvidence());
                 }
-                if (updatedFact.getDescription() != null) {
-                    fact.setDescription(updatedFact.getDescription());
+                if (updatedEvidence.getValue() != null) {
+                    Object incomingStatus = updatedEvidence.getValue();
+                    evidence.setValue(Status.valueOf(incomingStatus.toString().trim()));
                 }
-                if (updatedFact.getStatus() != null) {
-                    Object incomingStatus = updatedFact.getStatus();
-                    fact.setStatus(Status.valueOf(incomingStatus.toString().trim()));
-                }
-                kieSession.update(kieSession.getFactHandle(fact), fact);
+                kieSession.update(kieSession.getFactHandle(evidence), evidence);
                 kieSession.fireAllRules();
-                return fact;
+                return evidence;
             }
 
         }
 
         // If we reached here, no matching fact was found
         logger.info("Fact with ID {} not found. Inserting new fact.", facId);
-        updatedFact.setId(facId);
-        kieSession.insert(updatedFact);
+        updatedEvidence.setId(facId);
+        kieSession.insert(updatedEvidence);
         kieSession.fireAllRules();
-        return updatedFact;
+        return updatedEvidence;
     }
 
 
@@ -212,14 +209,14 @@ public class DroolsService {
      * @param session the KieSession where facts will be inserted
      */
     public void insertFact(KieSession session) {
-        session.insert(new Fact(1, "Direct Laryngoscopy", "Direct Laryngoscopy", Status.NOT_STARTED, 0));
-        session.insert(new Fact(2, "Facial Mask Ventilation", "Facial Mask Ventilation", Status.NOT_STARTED, 0));
-        session.insert(new Fact(3, "Supraglottic Device", "Supraglottic Device", Status.NOT_STARTED, 0));
-        session.insert(new Fact(4, "Fibroscopic Intubation", "Fibroscopic Intubation", Status.NOT_STARTED, 0));
-        session.insert(new Fact(5, "Emergency", "Emergency", Status.NOT_STARTED, 0));
-        session.insert(new Fact(6, "Seek other anesthetic airway management techniques", "Seek other anesthetic airway management techniques", Status.NOT_STARTED, 0));
-        session.insert(new Fact(7, "Airway with intubation", "Airway with intubation", Status.NOT_STARTED, 0));
-        session.insert(new Fact(8, "Success with intubation", "Success with intubation", Status.NOT_STARTED, 0));
-        session.insert(new Fact(9, "Planned surgery", "Planned surgery", Status.NOT_STARTED, 0));
+        session.insert(new Evidence(1, "Direct Laryngoscopy", "Direct Laryngoscopy", Status.NOT_STARTED, 0));
+        session.insert(new Evidence(2, "Facial Mask Ventilation", "Facial Mask Ventilation", Status.NOT_STARTED, 0));
+        session.insert(new Evidence(3, "Supraglottic Device", "Supraglottic Device", Status.NOT_STARTED, 0));
+        session.insert(new Evidence(4, "Fibroscopic Intubation", "Fibroscopic Intubation", Status.NOT_STARTED, 0));
+        session.insert(new Evidence(5, "Emergency", "Emergency", Status.NOT_STARTED, 0));
+        session.insert(new Evidence(6, "Seek other anesthetic airway management techniques", "Seek other anesthetic airway management techniques", Status.NOT_STARTED, 0));
+        session.insert(new Evidence(7, "Airway with intubation", "Airway with intubation", Status.NOT_STARTED, 0));
+        session.insert(new Evidence(8, "Success with intubation", "Success with intubation", Status.NOT_STARTED, 0));
+        session.insert(new Evidence(9, "Planned surgery", "Planned surgery", Status.NOT_STARTED, 0));
     }
 }

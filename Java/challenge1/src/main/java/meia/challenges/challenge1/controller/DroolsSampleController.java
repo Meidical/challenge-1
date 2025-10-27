@@ -19,24 +19,12 @@ public class DroolsSampleController {
     @Autowired
     private DroolsService droolsService;
 
-    @PostMapping("/assessment")
-    public ResponseEntity<PatientAirwayAssessment> getRate(@RequestBody PatientAirwayAssessment request){
-        PatientAirwayAssessment assessment = droolsService.evaluateAirwayAssessment(request);
-        return new ResponseEntity<>(assessment, HttpStatus.OK);
-    }
-
     @GetMapping("/assessment/patients/{patientid}")
     public ResponseEntity<PatientAirwayAssessment> getPatient(@PathVariable String patientid) {
         PatientAirwayAssessment patient = droolsService.getPatientById(patientid);
         if (patient == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(patient);
-    }
-
-    @GetMapping("/assessment/patients")
-    public  ResponseEntity<List<PatientAirwayAssessment>> getPatients() {
-        List<PatientAirwayAssessment> patients = droolsService.getPatients();
         return new ResponseEntity<>(patients, HttpStatus.OK);
     }
 
@@ -46,23 +34,12 @@ public class DroolsSampleController {
         return new ResponseEntity<>(facts, HttpStatus.OK);
     }
 
-    @PostMapping("/assessment/{patientid}/facts/{id}")
-    public ResponseEntity<Fact> modifyFactById(@PathVariable String patientid, @PathVariable int id, @RequestBody Fact updatedFact) {
-        Fact fact = droolsService.modifyFactById(patientid, id, updatedFact);
-        return new ResponseEntity<>(fact, HttpStatus.OK);
-    }
 
     /*@PostMapping("/assessment/{patientid}/insertfact")
     public ResponseEntity<Fact> insertFact(@PathVariable String patientid) {
         droolsService.insertFact(patientid);
         return new ResponseEntity<>(HttpStatus.OK);
     }*/
-
-    @GetMapping("/assessment/{patientid}/how")
-    public ResponseEntity<String> getHow(@PathVariable String patientid) {
-        PatientAirwayAssessment patient = droolsService.getPatientById(patientid);
-        if (patient == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         List<Fact> facts = droolsService.getFactsByPatientId(patientid);
         String explanation = new How().getHowExplanation(patient, facts, null);

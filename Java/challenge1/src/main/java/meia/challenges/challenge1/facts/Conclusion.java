@@ -4,7 +4,7 @@ package meia.challenges.challenge1.facts;
  * A rule engine conclusion produced by the Drools rules. Contains a
  * single textual description and some well-known constant conclusions.
  */
-public class Conclusion {
+public class Conclusion extends Fact{
     public static final String OTHER_TECNIQUE = "Other Technique";
     public static final String GENERAL_ANESTHESIA = "General Anesthesia";
     public static final String CANCEL_PROCEDURE = "Cancel Procedure";

@@ -2,7 +2,7 @@ package meia.challenges.challenge1.rules
 
 import meia.challenges.challenge1.facts.PatientAirwayAssessment;
 import meia.challenges.challenge1.facts.AssessmentFactor;
-import meia.challenges.challenge1.facts.Fact;
+import meia.challenges.challenge1.facts.Evidence;
 import meia.challenges.challenge1.facts.Status;
 import meia.challenges.challenge1.facts.Conclusion;
 import meia.challenges.challenge1.utils.CertaintyFactor;
@@ -449,9 +449,9 @@ rule "Default Easy Airway Approach"
         $patient : PatientAirwayAssessment(
             difficultAirwayPredicted == false
         )
-        $fact : Fact(
+        $evidence : Evidence(
             id == 1,
-            status == Status.NOT_STARTED
+            value == Status.NOT_STARTED
         )
     then
         modify($patient) {
