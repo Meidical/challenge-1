@@ -1,6 +1,8 @@
 package meia.challenges.challenge1.service;
 
-import meia.challenges.challenge1.facts.*;
+import meia.challenges.challenge1.config.TrackingAgendaEventListener;
+import meia.challenges.challenge1.explain.How;
+import meia.challenges.challenge1.model.*;
 import org.kie.api.runtime.ClassObjectFilter;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -10,10 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -24,6 +23,8 @@ public class DroolsService {
     private final Map<String, PatientAirwayAssessment> patientAssessments = new ConcurrentHashMap<>();
     private final Map<String, KieSession> patientSessions = new ConcurrentHashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(DroolsService.class);
+    public static Map<Integer, Justification> justifications;
+    public static TrackingAgendaEventListener agendaEventListener;
 
     public DroolsService(KieContainer kieContainer) {
         this.kieContainer = kieContainer;
@@ -125,7 +126,10 @@ public class DroolsService {
     private KieSession getOrCreateSession(String patientId) {
         return patientSessions.computeIfAbsent(patientId, id -> {
             KieSession kSession = kieContainer.newKieSession();
+            DroolsService.justifications = new TreeMap<Integer, Justification>();
             kSession.setGlobal("logger", logger);
+            DroolsService.agendaEventListener = new TrackingAgendaEventListener();
+            kSession.addEventListener(agendaEventListener);
 
             // Query listener - now only added once when session is first created
             ViewChangedEventListener listener = new ViewChangedEventListener() {
@@ -133,6 +137,10 @@ public class DroolsService {
                 public void rowInserted(Row row) {
                     Conclusion conclusion = (Conclusion) row.get("$conclusion");
                     logger.info(">>>{}", conclusion.toString());
+
+                    How how = new How(DroolsService.justifications);
+                    System.out.println(how.getHowExplanation(conclusion.getId()));
+
                     // stop inference engine as soon as a conclusion is reached
                     kSession.halt();
                 }

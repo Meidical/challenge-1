@@ -1,4 +1,4 @@
-package meia.challenges.challenge1.facts;
+package meia.challenges.challenge1.model;
 
 /**
  * Simple holder for a named certainty factor value used by rules and configuration.

@@ -1,4 +1,4 @@
-package meia.challenges.challenge1.facts;
+package meia.challenges.challenge1.model;
 
 import lombok.Getter;
 import lombok.Setter;

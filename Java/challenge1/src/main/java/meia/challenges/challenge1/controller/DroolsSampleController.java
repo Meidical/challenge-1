@@ -1,13 +1,12 @@
 package meia.challenges.challenge1.controller;
 
-import meia.challenges.challenge1.explain.How;
-import meia.challenges.challenge1.facts.Evidence;
+import meia.challenges.challenge1.model.Evidence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import meia.challenges.challenge1.facts.PatientAirwayAssessment;
+import meia.challenges.challenge1.model.PatientAirwayAssessment;
 import meia.challenges.challenge1.service.DroolsService;
 
 import java.util.List;
