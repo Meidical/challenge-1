@@ -49,7 +49,7 @@ export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
   async function postData() {
     resetData();
     setIsLoading(true);
-    const url = `${currentAddress.current}/assessement`;
+    const url = `${currentAddress.current}/assessment`;
     try {
       const response = await fetch(url, {
         mode: "no-cors",

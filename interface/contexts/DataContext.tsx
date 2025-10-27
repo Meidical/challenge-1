@@ -5,7 +5,9 @@ type DataContextProps = {
   currentAddress: React.MutableRefObject<string | null>;
 
   data: PrevisionResponse | InstructionResponse | null;
-  setData: React.Dispatch<React.SetStateAction<any>>;
+  setData: React.Dispatch<
+    React.SetStateAction<PrevisionResponse | InstructionResponse | null>
+  >;
 
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -34,11 +36,13 @@ export default function DataProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const currentAddress = useRef(null);
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const currentAddress = useRef<string | null>(null);
+  const [data, setData] = useState<
+    PrevisionResponse | InstructionResponse | null
+  >(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
 
   return (
     <DataContext.Provider
