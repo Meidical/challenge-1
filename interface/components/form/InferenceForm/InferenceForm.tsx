@@ -2,6 +2,8 @@
 import React, { useMemo, useState } from "react";
 import styles from "./InferenceForm.module.css";
 import MnemonicPercentageContainer from "./MnemonicPercentageContainer";
+import { CheckBox } from "../CheckBox";
+import { SubmitButton } from "../SubmitButton";
 
 export default function InferenceForm() {
   type Answer = "yes" | "no" | null;
@@ -149,27 +151,43 @@ export default function InferenceForm() {
   };
 
   return (
-    <form className={styles.form} onSubmit={(e) => e.preventDefault()}>
-      <MnemonicPercentageContainer
-        title="LEMON"
-        description="Difficulty when doing laryngoscopy"
-        percentage={45}
-      />
-      <MnemonicPercentageContainer
-        title="MOANS"
-        description="Difficulty when using oxygen mask"
-        percentage={0}
-      />
-      <MnemonicPercentageContainer
-        title="RODS"
-        description="Difficulty when using supraglottic device"
-        percentage={20}
-      />
-      <MnemonicPercentageContainer
-        title="SHORT"
-        description="Difficulty when executing a cricothyrotomy"
-        percentage={30}
-      />
+    <div className={styles.form}>
+      <div className={styles.leftContainer}>
+        <MnemonicPercentageContainer
+          title="LEMON"
+          description="Difficulty when doing laryngoscopy"
+          percentage={45}
+        />
+        <MnemonicPercentageContainer
+          title="MOANS"
+          description="Difficulty when using oxygen mask"
+          percentage={0}
+        />
+        <MnemonicPercentageContainer
+          title="RODS"
+          description="Difficulty when using supraglottic device"
+          percentage={20}
+        />
+        <MnemonicPercentageContainer
+          title="SHORT"
+          description="Difficulty when executing a cricothyrotomy"
+          percentage={30}
+        />
+      </div>
+      <form
+        className={styles.rightContainer}
+        onSubmit={(e) => e.preventDefault()}
+      >
+        <span className={styles.questionText}>
+          Did the entubation went well?
+        </span>
+        {/* Trocar para radio button para selecionar apenas uma opçao */}
+        <div className={styles.radiogroup}>
+          <CheckBox label="Yes" className="flex" />
+          <CheckBox label="No" className="flex" />
+        </div>
+        <SubmitButton text="Continue" />
+      </form>
       {/* <div className={`${styles.qaContainer} row gap-md`}>
         <div className={`${styles.qaColumn} ${styles.questionsCol}`}>
           <div className={styles.questionItem}>
@@ -240,6 +258,6 @@ export default function InferenceForm() {
           )}
         </div>
       </div> */}
-    </form>
+    </div>
   );
 }

@@ -5,9 +5,13 @@ type CheckBoxProps = {
   label: string;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
-export default function CheckBox({ label, ...props }: CheckBoxProps) {
+export default function CheckBox({
+  label,
+  className,
+  ...props
+}: CheckBoxProps) {
   return (
-    <label className={styles.checkBox}>
+    <label className={`${styles.checkBox} ${className}`}>
       {label}
       <input type="checkbox" className={styles.checkBox} {...props} />
       <span className={styles.checkMark}></span>
