@@ -459,7 +459,7 @@ rule "Default Easy Airway Approach"
             setNextFactId(1)
         }
         modify($evidence) {
-            setStatus(Status.STARTED)
+            setValue(Status.STARTED)
         }
         logger.info($patient.toString());
 end
@@ -472,11 +472,11 @@ rule "Laryngoscopy SUCCESSFUL"
         )
         $evidence : Evidence(
             id == 1,
-            status == Status.SUCCESSFUL
+            value == Status.SUCCESSFUL
         )
         $evidence2 : Evidence(
             id == 2,
-            status == Status.NOT_STARTED
+            value == Status.NOT_STARTED
         )
     then
         modify($patient) {
@@ -486,7 +486,7 @@ rule "Laryngoscopy SUCCESSFUL"
             setNextFactId(2)
         }
         modify($evidence2) {
-            setStatus(Status.STARTED)
+            setValue(Status.STARTED)
         }
         logger.info($patient.toString());
 end
@@ -499,11 +499,11 @@ rule "Laryngoscopy FAILED"
         )
         $evidence : Evidence(
             id == 1,
-            status == Status.FAILED
+            value == Status.FAILED
         )
         $evidence2 : Evidence(
             id == 3,
-            status == Status.NOT_STARTED
+            value == Status.NOT_STARTED
         )
     then
         modify($patient) {
@@ -513,7 +513,7 @@ rule "Laryngoscopy FAILED"
             setNextFactId(3)
         }
         modify($evidence2) {
-            setStatus(Status.STARTED)
+            setValue(Status.STARTED)
         }
         logger.info($patient.toString());
 end
@@ -526,11 +526,11 @@ rule "Apllying supraglottic airway device SUCCESS"
         )
         $evidence : Evidence(
             id == 3,
-            status == Status.SUCCESSFUL
+            value == Status.SUCCESSFUL
         )
         $evidence2 : Evidence(
             id == 4,
-            status == Status.NOT_STARTED
+            value == Status.NOT_STARTED
         )
     then
         modify($patient) {
@@ -540,7 +540,7 @@ rule "Apllying supraglottic airway device SUCCESS"
             setNextFactId(4)
         }
         modify($evidence2) {
-            setStatus(Status.STARTED)
+            setValue(Status.STARTED)
         }
         logger.info($patient.toString());
 end
@@ -553,11 +553,11 @@ rule "Apllying supraglottic airway device FAILED"
         )
         $evidence : Evidence(
             id == 3,
-            status == Status.FAILED
+            value == Status.FAILED
         )
         $evidence2 : Evidence(
             id == 5,
-            status == Status.NOT_STARTED
+            value == Status.NOT_STARTED
         )
     then
         modify($patient) {
@@ -567,7 +567,7 @@ rule "Apllying supraglottic airway device FAILED"
             setNextFactId(5)
         }
         modify($evidence2) {
-            setStatus(Status.STARTED)
+            setValue(Status.STARTED)
         }
         logger.info($patient.toString());
 end
@@ -580,7 +580,7 @@ rule "Fibroscopic Intubation SUCCESS"
         )
         $evidence : Evidence(
             id == 4,
-            status == Status.SUCCESSFUL
+            value == Status.SUCCESSFUL
         )
     then
         modify($patient) {
@@ -599,7 +599,7 @@ rule "Fibroscopic Intubation FAILED"
         )
         $evidence : Evidence(
             id == 4,
-            status == Status.FAILED
+            value == Status.FAILED
         )
     then
         modify($patient) {
