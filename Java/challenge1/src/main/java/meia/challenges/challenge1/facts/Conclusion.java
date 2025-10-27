@@ -41,11 +41,15 @@ public class Conclusion {
         this.description = description;
     }
 
-    /**
+}
+
+    /*
      * String form used in logs/debug output.
      *
      * @return a short diagnostic string
     public String toString() {
         return "Diagnosis: " + description;
     }
-}
+     */
+
+
