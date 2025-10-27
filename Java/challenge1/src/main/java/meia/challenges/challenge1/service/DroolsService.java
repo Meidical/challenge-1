@@ -8,7 +8,6 @@ import org.kie.api.runtime.rule.Row;
 import org.kie.api.runtime.rule.ViewChangedEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,11 +20,14 @@ import java.util.stream.Collectors;
 @Service
 public class DroolsService {
 
-    @Autowired
-    private KieContainer kieContainer;
+    private final KieContainer kieContainer;
     private final Map<String, PatientAirwayAssessment> patientAssessments = new ConcurrentHashMap<>();
     private final Map<String, KieSession> patientSessions = new ConcurrentHashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(DroolsService.class);
+
+    public DroolsService(KieContainer kieContainer) {
+        this.kieContainer = kieContainer;
+    }
 
     /**
      * Evaluates airway assessment for a patient using certainty factors.
@@ -33,7 +35,7 @@ public class DroolsService {
      * triggers rule evaluation and returns the (possibly updated) assessment.
      *
      * @param assessment The patient assessment containing factor lists and patient id
-     * @return The evaluated PatientAirwayAssessment instance (may be modified by rules)
+     * @return The evaluated PatientAirwayAssessment instance (maybe modified by rules)
      */
     public PatientAirwayAssessment evaluateAirwayAssessment(PatientAirwayAssessment assessment) {
         String patientId = assessment.getPatientId();
@@ -76,10 +78,10 @@ public class DroolsService {
      *
      * @param patientId the id of the patient owning the KIE session
      * @param facId     the id of the fact to modify (or assign to the new fact when inserting)
-     * @param updatedFact a Fact containing updated values; only non-null properties are applied
+     * @param updatedEvidence a Fact containing updated values; only non-null properties are applied
      * @return the modified existing Fact if found, otherwise the newly inserted Fact (with id set)
      */
-    public Fact modifyFactById(String patientId, int facId, Evidence updatedEvidence) {
+    public Evidence modifyFactById(String patientId, int facId, Evidence updatedEvidence) {
         KieSession kieSession = getOrCreateSession(patientId);
         kieSession.setGlobal("logger", logger);
 
@@ -89,7 +91,7 @@ public class DroolsService {
             Evidence evidence = (Evidence) obj;
             if (evidence.getId() == facId) {
                 // Modify only the properties that are provided in the payload
-                if (updatedEvidence.getEvidence() != null) {
+                if (updatedEvidence.getEvidence() != 0) {
                     evidence.setEvidence(updatedEvidence.getEvidence());
                 }
                 if (updatedEvidence.getValue() != null) {
@@ -169,11 +171,11 @@ public class DroolsService {
      * @param patientid the id of the patient whose facts to return
      * @return a list of Fact instances from the patient's session (empty list if none)
      */
-    public List<Fact> getFactsByPatientId(String patientid) {
+    public List<Evidence> getFactsByPatientId(String patientid) {
         KieSession kieSession = getOrCreateSession(patientid);
-        Collection<?> raw = kieSession.getObjects(new ClassObjectFilter(Fact.class));
+        Collection<?> raw = kieSession.getObjects(new ClassObjectFilter(Evidence.class));
         return raw.stream()
-                .map(o -> (Fact) o)
+                .map(o -> (Evidence) o)
                 .collect(Collectors.toList());
     }
 
@@ -209,14 +211,14 @@ public class DroolsService {
      * @param session the KieSession where facts will be inserted
      */
     public void insertFact(KieSession session) {
-        session.insert(new Evidence(1, "Direct Laryngoscopy", "Direct Laryngoscopy", Status.NOT_STARTED, 0));
-        session.insert(new Evidence(2, "Facial Mask Ventilation", "Facial Mask Ventilation", Status.NOT_STARTED, 0));
-        session.insert(new Evidence(3, "Supraglottic Device", "Supraglottic Device", Status.NOT_STARTED, 0));
-        session.insert(new Evidence(4, "Fibroscopic Intubation", "Fibroscopic Intubation", Status.NOT_STARTED, 0));
-        session.insert(new Evidence(5, "Emergency", "Emergency", Status.NOT_STARTED, 0));
-        session.insert(new Evidence(6, "Seek other anesthetic airway management techniques", "Seek other anesthetic airway management techniques", Status.NOT_STARTED, 0));
-        session.insert(new Evidence(7, "Airway with intubation", "Airway with intubation", Status.NOT_STARTED, 0));
-        session.insert(new Evidence(8, "Success with intubation", "Success with intubation", Status.NOT_STARTED, 0));
-        session.insert(new Evidence(9, "Planned surgery", "Planned surgery", Status.NOT_STARTED, 0));
+        session.insert(new Evidence(1, Status.NOT_STARTED, Evidence.DIRECT_LARYNGOSCOPY));
+        session.insert(new Evidence(2, Status.NOT_STARTED, Evidence.FACIAL_MASK_VENTILATION));
+        session.insert(new Evidence(3, Status.NOT_STARTED, Evidence.SUPRAGLOTTIC_DEVICE));
+        session.insert(new Evidence(4, Status.NOT_STARTED, Evidence.FIBROSCOPIC_INTUBATION));
+        session.insert(new Evidence(5, Status.NOT_STARTED, Evidence.EMERGENCY));
+        session.insert(new Evidence(6, Status.NOT_STARTED, Evidence.OTHER_TECHNIQUES));
+        session.insert(new Evidence(7, Status.NOT_STARTED, Evidence.AIRWAY_INTUBATION));
+        session.insert(new Evidence(8, Status.NOT_STARTED, Evidence.SUCCESS_INTUBATION));
+        session.insert(new Evidence(9, Status.NOT_STARTED, Evidence.PLANNED_SURGERY));
     }
 }
