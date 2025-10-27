@@ -458,7 +458,7 @@ rule "Default Easy Airway Approach"
             setRecommendedApproach("Proceed with standard direct laryngoscopy"),
             setNextFactId(1)
         }
-        modify($fact) {
+        modify($evidence) {
             setStatus(Status.STARTED)
         }
         logger.info($patient.toString());
@@ -470,11 +470,11 @@ rule "Laryngoscopy SUCCESSFUL"
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Proceed with standard direct laryngoscopy"
         )
-        $fact : Fact(
+        $evidence : Evidence(
             id == 1,
             status == Status.SUCCESSFUL
         )
-        $fact2 : Fact(
+        $evidence2 : Evidence(
             id == 2,
             status == Status.NOT_STARTED
         )
@@ -482,10 +482,10 @@ rule "Laryngoscopy SUCCESSFUL"
         modify($patient) {
             setRecommendedApproach("Facial Mask Ventilation")
         }
-        modify($fact) {
+        modify($evidence) {
             setNextFactId(2)
         }
-        modify($fact2) {
+        modify($evidence2) {
             setStatus(Status.STARTED)
         }
         logger.info($patient.toString());
@@ -497,11 +497,11 @@ rule "Laryngoscopy FAILED"
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Proceed with standard direct laryngoscopy"
         )
-        $fact : Fact(
+        $evidence : Evidence(
             id == 1,
             status == Status.FAILED
         )
-        $fact2 : Fact(
+        $evidence2 : Evidence(
             id == 3,
             status == Status.NOT_STARTED
         )
@@ -509,10 +509,10 @@ rule "Laryngoscopy FAILED"
         modify($patient) {
             setRecommendedApproach("Unpredicted difficult airway - Apllying supraglottic airway device")
         }
-        modify($fact) {
+        modify($evidence) {
             setNextFactId(3)
         }
-        modify($fact2) {
+        modify($evidence2) {
             setStatus(Status.STARTED)
         }
         logger.info($patient.toString());
@@ -524,11 +524,11 @@ rule "Apllying supraglottic airway device SUCCESS"
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Unpredicted difficult airway - Apllying supraglottic airway device"
         )
-        $fact : Fact(
+        $evidence : Evidence(
             id == 3,
             status == Status.SUCCESSFUL
         )
-        $fact2 : Fact(
+        $evidence2 : Evidence(
             id == 4,
             status == Status.NOT_STARTED
         )
@@ -536,10 +536,10 @@ rule "Apllying supraglottic airway device SUCCESS"
         modify($patient) {
             setRecommendedApproach("Fibroscopic Intubation")
         }
-        modify($fact) {
+        modify($evidence) {
             setNextFactId(4)
         }
-        modify($fact2) {
+        modify($evidence2) {
             setStatus(Status.STARTED)
         }
         logger.info($patient.toString());
@@ -551,11 +551,11 @@ rule "Apllying supraglottic airway device FAILED"
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Unpredicted difficult airway - Apllying supraglottic airway device"
         )
-        $fact : Fact(
+        $evidence : Evidence(
             id == 3,
             status == Status.FAILED
         )
-        $fact2 : Fact(
+        $evidence2 : Evidence(
             id == 5,
             status == Status.NOT_STARTED
         )
@@ -563,10 +563,10 @@ rule "Apllying supraglottic airway device FAILED"
         modify($patient) {
             setRecommendedApproach("Oxygenize and Ventilate patient - Emergency")
         }
-        modify($fact) {
+        modify($evidence) {
             setNextFactId(5)
         }
-        modify($fact2) {
+        modify($evidence2) {
             setStatus(Status.STARTED)
         }
         logger.info($patient.toString());
@@ -578,7 +578,7 @@ rule "Fibroscopic Intubation SUCCESS"
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Fibroscopic Intubation"
         )
-        $fact : Fact(
+        $evidence : Evidence(
             id == 4,
             status == Status.SUCCESSFUL
         )
@@ -597,7 +597,7 @@ rule "Fibroscopic Intubation FAILED"
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Fibroscopic Intubation"
         )
-        $fact : Fact(
+        $evidence : Evidence(
             id == 4,
             status == Status.FAILED
         )
