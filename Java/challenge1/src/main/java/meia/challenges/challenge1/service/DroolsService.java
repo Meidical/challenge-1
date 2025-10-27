@@ -97,7 +97,7 @@ public class DroolsService {
                 }
                 if (updatedEvidence.getValue() != null) {
                     Object incomingStatus = updatedEvidence.getValue();
-                    evidence.setValue(Status.valueOf(incomingStatus.toString().trim()));
+                    evidence.setStatus(Status.valueOf(incomingStatus.toString().trim()));
                 }
                 kieSession.update(kieSession.getFactHandle(evidence), evidence);
                 kieSession.fireAllRules();
@@ -219,14 +219,14 @@ public class DroolsService {
      * @param session the KieSession where facts will be inserted
      */
     public void insertFact(KieSession session) {
-        session.insert(new Evidence(1, Status.NOT_STARTED, Evidence.DIRECT_LARYNGOSCOPY));
-        session.insert(new Evidence(2, Status.NOT_STARTED, Evidence.FACIAL_MASK_VENTILATION));
-        session.insert(new Evidence(3, Status.NOT_STARTED, Evidence.SUPRAGLOTTIC_DEVICE));
-        session.insert(new Evidence(4, Status.NOT_STARTED, Evidence.FIBROSCOPIC_INTUBATION));
-        session.insert(new Evidence(5, Status.NOT_STARTED, Evidence.EMERGENCY));
-        session.insert(new Evidence(6, Status.NOT_STARTED, Evidence.OTHER_TECHNIQUES));
-        session.insert(new Evidence(7, Status.NOT_STARTED, Evidence.AIRWAY_INTUBATION));
-        session.insert(new Evidence(8, Status.NOT_STARTED, Evidence.SUCCESS_INTUBATION));
-        session.insert(new Evidence(9, Status.NOT_STARTED, Evidence.PLANNED_SURGERY));
+        session.insert(new Evidence(1, Status.NOT_STARTED, Evidence.DIRECT_LARYNGOSCOPY, 0));
+        session.insert(new Evidence(2, Status.NOT_STARTED, Evidence.FACIAL_MASK_VENTILATION, 0));
+        session.insert(new Evidence(3, Status.NOT_STARTED, Evidence.SUPRAGLOTTIC_DEVICE, 0));
+        session.insert(new Evidence(4, Status.NOT_STARTED, Evidence.FIBROSCOPIC_INTUBATION, 0));
+        session.insert(new Evidence(5, Status.NOT_STARTED, Evidence.EMERGENCY, 0));
+        session.insert(new Evidence(6, Status.NOT_STARTED, Evidence.OTHER_TECHNIQUES, 0));
+        session.insert(new Evidence(7, Status.NOT_STARTED, Evidence.AIRWAY_INTUBATION,0));
+        session.insert(new Evidence(8, Status.NOT_STARTED, Evidence.SUCCESS_INTUBATION,0));
+        session.insert(new Evidence(9, Status.NOT_STARTED, Evidence.PLANNED_SURGERY,0));
     }
 }

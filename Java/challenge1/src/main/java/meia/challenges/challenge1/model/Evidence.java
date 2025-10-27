@@ -18,14 +18,17 @@ public class Evidence extends Fact{
     @Setter
     private int evidence;
     @Setter
-    private Status value;
+    private Status status;
+    @Setter
+    private String value;
     @Setter
     private int nextFactId;
 
-    public Evidence(int ev, Status v, String nf) {
-        evidence = ev;
-        value = v;
-        nextFactId = Integer.parseInt(nf);
+    public Evidence(int id, Status status, String value, int nextFactId) {
+        this.evidence = id;
+        this.status = status;
+        this.value = value;
+        this.nextFactId = nextFactId;
     }
 
     public String toString() {

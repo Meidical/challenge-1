@@ -1,5 +1,6 @@
 package meia.challenges.challenge1.controller;
 
+import meia.challenges.challenge1.explain.How;
 import meia.challenges.challenge1.model.Evidence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,9 +65,8 @@ public class DroolsSampleController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         List<Evidence> evidences = droolsService.getFactsByPatientId(patientid);
-        String explanation = new How().getHowExplanation(patient, evidences, null);
+        String explanation = new How(DroolsService.justifications).getHowExplanation(patient, evidences, null);
         return ResponseEntity.ok(explanation);
     }
-
-     */
+    */
 }
