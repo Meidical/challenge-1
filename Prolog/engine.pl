@@ -3,6 +3,7 @@
 :- op(240, fx, regra).
 :- op(500, fy, nao).
 :- op(600, xfy, e).
+:- op(36, xfy, descricao).
 
 :- dynamic facto/3.
 :- dynamic justifica/4.
@@ -171,10 +172,8 @@ assert_fator(PatientID, Category, Code) :-
 
 get_prox_processo(PatientID, ID, Dict) :-
     prox_facto(PatientID, N),
-    format(user_output, 'N1: ~w~n', [N]),
     assertz(facto(PatientID, N, facto_pedido(ID, Dict.successful))),
 
     arranca_motor(PatientID),
-    format(user_output, 'N2: ~w~n', [N]),
     
     retractall(facto(PatientID, _, facto_pedido(_, _))).

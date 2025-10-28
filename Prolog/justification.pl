@@ -1,58 +1,60 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Geração de explicações do tipo "Como"
 
-como(N):-ultimo_facto(Last),Last<N,!,
+como(PatientID, N):-contar_factos(PatientID, Last),Last<N,!,
 	write('Essa conclusão não foi tirada'),nl,nl.
-como(N):-justifica(N,ID,LFactos),!,
-	facto(N,F),
+como(PatientID, N):-justifica(PatientID, N, ID, LFactos),!,
+	facto(PatientID,N,F),
 	write('Conclui o facto nº '),write(N),write(' -> '),write(F),nl,
 	write('pela regra '),write(ID),nl,
 	write('por se ter verificado que:'),nl,
-	escreve_factos(LFactos),
-	write('********************************************************'),nl,
-	explica(LFactos).
-como(N):-facto(N,F),
+	escreve_factos(PatientID, LFactos),
+	write(''),nl,
+	explica(PatientID, LFactos).
+como(PatientID, N):-facto(PatientID, N, F),
 	write('O facto nº '),write(N),write(' -> '),write(F),nl,
 	write('foi conhecido inicialmente'),nl,
-	write('********************************************************'),nl.
+	write(''),nl.
 
-explica([I|R]):- \+ integer(I),!,explica(R).
-explica([I|R]):-como(I),
-		explica(R).
-explica([]):-	write('********************************************************'),nl.
+explica(PatientID, [I|R]):- \+ integer(I),!,explica(PatientID, R).
+explica(PatientID, [I|R]):-como(PatientID, I),
+		explica(PatientID, R).
+explica(_, []):-	write(''),nl.
 
 
 % Como JSON
-como_json(N, json([error="Conclusion not reached"])) :-
-    ultimo_facto(Last), 
+como_json(PatientID, N, json([error="Conclusion not reached"])) :-
+    contar_factos(PatientID, Last), 
     Last < N, !.
 
-como_json(N, JSON) :-
-    justifica(N, ID, LFactos), !,
-    facto(N, F),
+como_json(PatientID, N, JSON) :-
+    justifica(PatientID, N, ID, LFactos), !,
+    facto(PatientID, N, F),
     F =.. [Predicate|Args],
     
     % Get supporting facts - FIXED to collect all facts
     findall(json([
         id=FactID,
         predicate=Pred,
+		patientId=PatientID1, 
         arguments=Args2,
         type=Type
     ]), (
         member(FactID, LFactos),
         integer(FactID),          
-        facto(FactID, Fact),      % Get the actual fact
+        facto(PatientID1, FactID, Fact),      % Get the actual fact
         Fact =.. [Pred|Args2],    % Extract predicate and arguments
-        (justifica(FactID, _, _) -> Type = "derived_fact" ; Type = "initial_fact")
+        (justifica(PatientID1, FactID, _, _) -> Type = "derived_fact" ; Type = "initial_fact")
     ), SupportingFacts),
     
     % Get rule description if available
-    (regra ID se LHS entao _RHS ->
+    (regra ID descricao Desc se LHS entao _RHS ->
         term_string(LHS, LHSString)
     ;
-        LHSString = ""
+		LHSString = "",
+        Desc = "No description"
     ),
-    
+
     JSON = json([
         conclusion=json([
             id=N,
@@ -61,13 +63,14 @@ como_json(N, JSON) :-
         ]),
         rule=json([
             id=ID,
-            description=LHSString
+            description=Desc,
+			lhs=LHSString
         ]),
         supporting_facts=SupportingFacts
     ]).
 
-como_json(N, JSON) :-
-    facto(N, F),
+como_json(PatientID, N, JSON) :-
+    facto(PatientID, N, F),
     F =.. [Predicate|Args],
     JSON = json([
         conclusion=json([
@@ -83,31 +86,31 @@ como_json(N, JSON) :-
 % Geração de explicações do tipo "Porque nao"
 % Exemplo: ?- whynot(classe(meu_veículo,ligeiro)).
 
-whynot(Facto):-
-	whynot(Facto,1).
+whynot(PatientID, Facto):-
+	whynot(PatientID, Facto,1).
 
-whynot(Facto,_):-
-	facto(_, Facto),
+whynot(PatientID, Facto,_):-
+	facto(PatientID, _, Facto),
 	!,
 	write('O facto '),write(Facto),write(' não é falso!'),nl.
-whynot(Facto,Nivel):-
-	encontra_regras_whynot(Facto,LLPF),
+whynot(PatientID, Facto,Nivel):-
+	encontra_regras_whynot(PatientID,Facto,LLPF),
 	whynot1(LLPF,Nivel).
-whynot(nao Facto,Nivel):-
+whynot(_, nao Facto,Nivel):-
 	formata(Nivel),write('Porque:'),write(' O facto '),write(Facto),
 	write(' é verdadeiro'),nl.
-whynot(Facto,Nivel):-
+whynot(_, Facto,Nivel):-
 	formata(Nivel),write('Porque:'),write(' O facto '),write(Facto),
 	write(' não está definido na base de conhecimento'),nl.
 
 %  As explicações do whynot(Facto) devem considerar todas as regras que poderiam dar origem a conclusão relativa ao facto Facto
 
-encontra_regras_whynot(Facto,LLPF):-
+encontra_regras_whynot(PatientID,Facto,LLPF):-
 	findall((ID,LPF),
 		(
 		regra ID se LHS entao RHS,
 		member(cria_facto(Facto),RHS),
-		encontra_premissas_falsas(LHS,LPF),
+		encontra_premissas_falsas(PatientID,LHS,LPF),
 		LPF \== []
 		),
 		LLPF).
@@ -119,29 +122,29 @@ whynot1([(ID,LPF)|LLPF],Nivel):-
 	explica_porque_nao(LPF,Nivel1),
 	whynot1(LLPF,Nivel).
 
-encontra_premissas_falsas([nao X e Y], LPF):-
-	verifica_condicoes([nao X], _),
+encontra_premissas_falsas(PatientID,[nao X e Y], LPF):-
+	verifica_condicoes(PatientID,[nao X], _),
 	!,
-	encontra_premissas_falsas([Y], LPF).
-encontra_premissas_falsas([X e Y], LPF):-
-	verifica_condicoes([X], _),
+	encontra_premissas_falsas(PatientID,[Y], LPF).
+encontra_premissas_falsas(PatientID,[X e Y], LPF):-
+	verifica_condicoes(PatientID,[X], _),
 	!,
-	encontra_premissas_falsas([Y], LPF).
-encontra_premissas_falsas([nao X], []):-
-	verifica_condicoes([nao X], _),
+	encontra_premissas_falsas(PatientID,[Y], LPF).
+encontra_premissas_falsas(PatientID,[nao X], []):-
+	verifica_condicoes(PatientID,[nao X], _),
 	!.
-encontra_premissas_falsas([X], []):-
-	verifica_condicoes([X], _),
+encontra_premissas_falsas(PatientID,[X], []):-
+	verifica_condicoes(PatientID,[X], _),
 	!.
-encontra_premissas_falsas([nao X e Y], [nao X|LPF]):-
+encontra_premissas_falsas(PatientID,[nao X e Y], [nao X|LPF]):-
 	!,
-	encontra_premissas_falsas([Y], LPF).
-encontra_premissas_falsas([X e Y], [X|LPF]):-
+	encontra_premissas_falsas(PatientID,[Y], LPF).
+encontra_premissas_falsas(PatientID,[X e Y], [X|LPF]):-
 	!,
-	encontra_premissas_falsas([Y], LPF).
-encontra_premissas_falsas([nao X], [nao X]):-!.
-encontra_premissas_falsas([X], [X]).
-encontra_premissas_falsas([]).
+	encontra_premissas_falsas(PatientID,[Y], LPF).
+encontra_premissas_falsas(_,[nao X], [nao X]):-!.
+encontra_premissas_falsas(_,[X], [X]).
+encontra_premissas_falsas(_,[]).
 
 explica_porque_nao([],_).
 explica_porque_nao([nao avalia(X)|LPF],Nivel):-
@@ -159,4 +162,4 @@ explica_porque_nao([P|LPF],Nivel):-
 	explica_porque_nao(LPF,Nivel).
 
 formata(Nivel):-
-	Esp is (Nivel-1)*5, tab(Esp).
+	Esp is (Nivel-1)*5, tab(Esp).

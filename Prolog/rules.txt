@@ -19,7 +19,8 @@ facto_dispara_regras(facto_pedido("16", _), [40, 41]).
 % LEMON
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-regra 1
+regra 1 
+    descricao "Fator L de LEMON presente"
     se [fator("LEMON", "L")]    % Look externally
     entao [cria_facto(fator("LEMON", ["L", 0.5]))].
 
@@ -133,6 +134,7 @@ regra 22
     cria_facto(id_prox_facto(4)))].
 
 regra 23
+    descricao "Boas"
     se [avalia(mnemonica_cf("LEMON", <, 0.7)) e 
     avalia(mnemonica_cf("MOANS", <, 0.7)) e
     avalia(mnemonica_cf("RODS", <, 0.7)) e nao 
@@ -151,6 +153,7 @@ regra 24
         cria_facto(id_prox_facto(2))].
 
 regra 25
+    descricao "Insucesso na Laringoscopia Direta"
     se [facto_pedido("1", false)]
     entao [cria_facto(via_aerea_dificil_nao_previsivel(true)),
     cria_facto(rec_processo(12 , "Apply supraglotic device")),     

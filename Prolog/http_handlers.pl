@@ -44,7 +44,7 @@ build_inferir_via_aerea_json(PatientID, JSONFinal) :-
     facto(PatientID, _, id_prox_facto(N)),
     ultimo_rec_processo(PatientID, N, ValorRec),
     append(JSON2, [recommendedApproach=ValorRec], JSON3),
- 
+
     % Encontrar id do próximo processo
     facto(PatientID, _, id_prox_facto(NFacto)),
     append(JSON3, [nextFactId=NFacto], JSONFinal),
@@ -60,16 +60,16 @@ build_inferir_via_aerea_json(PatientID, JSONFinal) :-
 get_explanation_json(Request) :-
     http_parameters(Request, [
         id(ID, [integer]),
-        patientId(PatientID, [optional('unknown')])
+        patientId(PatientID, [string])
     ]),
-    %como_json(PatientID, ID, JSON),
+    como_json(PatientID, ID, JSON),
     reply_json(JSON).
 
 
 
 
 
-% HTTP POST para Laringoscopia Direta
+% HTTP POST para processos médicos
 :- http_handler(root(api/assessment/PatientIDA/facts/IDA), post_prox_processo(PatientIDA, IDA), [method(post)]).
 post_prox_processo(PatientIDA, IDA, Request) :-
 
@@ -78,7 +78,6 @@ post_prox_processo(PatientIDA, IDA, Request) :-
 
     http_read_json_dict(Request, Dict),
     get_prox_processo(PatientID, ID, Dict),
-    format(user_output, 'N3: ~w~n', [ID]),
     reply_processo_json(PatientID),
     
     retractall(facto(PatientID, _, id_prox_facto(_))).
@@ -101,4 +100,3 @@ delete_retirar_paciente(Request) :-
 delete_retirar_factos(Request) :-
     retractall(facto(_, _, _)),
     reply_json(_{status:"Facts removed successfully"}).
-    

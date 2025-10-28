@@ -90,17 +90,15 @@ ultimo_rec_processo(PatientID, _, "Nenhum processo encontrado") :-
 
 reply_processo_json(PatientID) :-
     facto(PatientID, _, id_prox_facto(N)),
-    format(user_output, 'N: ~w~n', [N]),
     ultimo_rec_processo(PatientID, N, Rec),
-    format(user_output, 'N4: ~w~n', [Rec]),
     (   facto(PatientID, _, conclusao(true)),
         reply_json(_{
-            description: Rec, 
+            nextFactDescription: Rec, 
             conclusion: true
         })
     ;   reply_json(_{
-            description: Rec, 
+            nextFactDescription: Rec, 
             conclusion: false, 
-            idProxFacto: N
+            nextFactId: N
         })
     ).
