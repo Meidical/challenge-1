@@ -6,14 +6,11 @@ import { BasicCard, Button, SwitchButton } from "@/components/ui";
 
 import { GetSystemAddress } from "@/lib";
 import Image from "next/image";
-import delay from "@/utils/delay";
 import { useDataContext } from "@/contexts";
 
 export default function SystemBody() {
-  const [isFirstFase, setIsFirstFase] = useState(true);
-  const { currentAddress, resetData, isLoading } = useDataContext();
-
-  currentAddress.current = GetSystemAddress("PROLOG");
+  const { currentAddress, fullReset, isLoading, isPredictionDone } =
+    useDataContext();
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -28,13 +25,10 @@ export default function SystemBody() {
     formRef.current?.dispatchEvent(
       new Event("submit", { bubbles: true, cancelable: true })
     );
-    await delay(2000);
-    setIsFirstFase(false);
   };
 
   const handleBack = () => {
-    resetData();
-    setIsFirstFase(true);
+    fullReset();
   };
 
   return (
@@ -53,7 +47,7 @@ export default function SystemBody() {
             textRight="Drools"
             onChange={(switched) => switchAddress(switched)}
           />
-          {isFirstFase ? (
+          {!isPredictionDone ? (
             <SubmitButton
               text="Confirm"
               form="fact-form"
@@ -65,7 +59,7 @@ export default function SystemBody() {
           )}
         </div>
       </div>
-      {isFirstFase ? <FactForm ref={formRef} /> : <InferenceForm />}
+      {!isPredictionDone ? <FactForm ref={formRef} /> : <InferenceForm />}
     </BasicCard>
   );
 }

@@ -6,10 +6,20 @@ import { CheckBox } from "@/components/form";
 import { Factor, FactorCategory, PrevisionPost } from "@/types";
 import CheckBoxContainer from "./CheckBoxContainer";
 import { useDataContext } from "@/contexts";
+import { Delay } from "@/utils";
+
+import TEST_PAYLOAD from "@/test/payload.json";
 
 export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
-  const { currentAddress, resetData, setIsLoading, setIsSuccess, setIsError } =
-    useDataContext();
+  const {
+    currentAddress,
+    resetData,
+    setIsLoading,
+    setIsSuccess,
+    setIsError,
+    setIsPredictionDone,
+    setData,
+  } = useDataContext();
 
   const requestBody = useRef<PrevisionPost>({
     lemonFactors: [],
@@ -49,15 +59,15 @@ export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
   async function postData() {
     resetData();
     setIsLoading(true);
+    await Delay(500);
     const url = `${currentAddress.current}/assessment`;
     try {
       const response = await fetch(url, {
-        mode: "no-cors",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestBody.current),
+        body: JSON.stringify(TEST_PAYLOAD),
       });
 
       if (!response.ok) {
@@ -66,20 +76,22 @@ export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
 
       const result = await response.json();
 
+      setData(result);
       setIsLoading(false);
       setIsSuccess(true);
+      setIsPredictionDone(true);
 
       console.log(result);
     } catch (error) {
+      setIsLoading(false);
       setIsError(true);
-      console.log(error.message);
+      console.error(error.message);
     }
   }
 
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     postData();
-    // console.log({ ...requestBody.current });
   };
 
   return (

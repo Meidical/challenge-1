@@ -8,10 +8,10 @@ export type PrevisionPost = {
 };
 
 export type PrevisionResponse = {
-  lemonCf: number;
-  moansCf: number;
-  rodsCf: number;
-  shortCf: number;
+  lemonCF: number;
+  moansCF: number;
+  rodsCF: number;
+  shortCF: number;
   difficultAirwayPredicted: boolean;
   recommendedApproach: string;
   nextFactId: number;

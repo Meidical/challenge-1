@@ -1,8 +1,12 @@
+import { GetSystemAddress } from "@/lib";
 import { InstructionResponse, PrevisionResponse } from "@/types";
 import { createContext, useContext, useRef, useState } from "react";
 
 type DataContextProps = {
   currentAddress: React.MutableRefObject<string | null>;
+
+  isPredictionDone: boolean;
+  setIsPredictionDone: React.Dispatch<React.SetStateAction<boolean>>;
 
   data: PrevisionResponse | InstructionResponse | null;
   setData: React.Dispatch<
@@ -21,6 +25,8 @@ type DataContextProps = {
 
 const DataContext = createContext<DataContextProps>({
   currentAddress: null,
+  isPredictionDone: false,
+  setIsPredictionDone: () => {},
   data: null,
   setData: () => {},
   isLoading: false,
@@ -36,10 +42,11 @@ export default function DataProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const currentAddress = useRef<string | null>(null);
+  const currentAddress = useRef<string | null>(GetSystemAddress("PROLOG"));
   const [data, setData] = useState<
     PrevisionResponse | InstructionResponse | null
   >(null);
+  const [isPredictionDone, setIsPredictionDone] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
@@ -47,6 +54,8 @@ export default function DataProvider({
   return (
     <DataContext.Provider
       value={{
+        isPredictionDone,
+        setIsPredictionDone,
         currentAddress,
         data,
         setData,
@@ -65,6 +74,8 @@ export default function DataProvider({
 
 export const useDataContext = () => {
   const {
+    isPredictionDone,
+    setIsPredictionDone,
     currentAddress,
     data,
     setData,
@@ -76,6 +87,14 @@ export const useDataContext = () => {
     setIsError,
   } = useContext(DataContext);
 
+  const fullReset = () => {
+    setIsPredictionDone(false);
+    setData(null);
+    setIsLoading(false);
+    setIsSuccess(false);
+    setIsError(false);
+  };
+
   const resetData = () => {
     setData(null);
     setIsLoading(false);
@@ -84,6 +103,9 @@ export const useDataContext = () => {
   };
 
   return {
+    fullReset,
+    isPredictionDone,
+    setIsPredictionDone,
     currentAddress,
     resetData,
     data,
