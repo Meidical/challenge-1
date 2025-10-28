@@ -7,6 +7,7 @@ facto_dispara_regras(fator(_, _), Regras1) :- numlist(1, 19, Regras1).
 facto_dispara_regras(mnemonica_cf(_, _), Regras2) :- numlist(20, 23, Regras2).
 facto_dispara_regras(facto_pedido("1", _), [24, 25]).
 facto_dispara_regras(facto_pedido("2", _), [26, 27]).
+facto_dispara_regras(processo(_, _), [42]).
 facto_dispara_regras(facto_pedido("4", _), [28, 29]).
 facto_dispara_regras(facto_pedido("6", _), [30, 31]).
 facto_dispara_regras(facto_pedido("7", _), [32, 33]).
@@ -25,6 +26,7 @@ regra 1
     entao [cria_facto(fator("LEMON", ["L", 0.5]))].
 
 regra 2
+    descricao "Fator E de LEMON presente"
     se [fator("LEMON", "E")]    % Evaluate 3-3-2 rule
     entao [cria_facto(fator("LEMON", ["E", 0.2]))].
 
@@ -113,6 +115,7 @@ regra 19
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 regra 20
+    descricao "Descricao sdads"
     se [avalia(mnemonica_cf("LEMON", >, 0.7)) e 
     nao via_aerea_dificil(true)]
     entao [cria_facto(via_aerea_dificil(true)), 
@@ -127,6 +130,7 @@ regra 21
     cria_facto(id_prox_facto(4))].
 
 regra 22
+    descricao "asdas"
     se [avalia(mnemonica_cf("RODS", >, 0.7)) e 
     via_aerea_dificil(true)]
     entao [cria_facto(via_aerea_dificil(true)), 
@@ -161,6 +165,10 @@ regra 25
 
 regra 26
     se [facto_pedido("2", true)]
+    entao [cria_facto(processo("Facial Mask", "SUCCESSFUL"))].
+
+regra 42
+    se [processo("Facial Mask", "SUCCESSFUL")]
     entao [cria_facto(rec_processo(3, "Traqueal entubation")),
     cria_facto(id_prox_facto(3)),
     cria_facto(conclusao(true))].

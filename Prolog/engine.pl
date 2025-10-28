@@ -9,6 +9,13 @@
 :- dynamic justifica/4.
 :- dynamic ultimo_facto/2.
 
+
+mnemonica("LEMON", 0.5).
+mnemonica("MOANS", 0.2).
+mnemonica("RODS", 0.2).
+mnemonica("SHORT", 0.1).
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%
 % Motor de inferência  %
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,11 +139,6 @@ inferir_via_aerea(Dict) :-
     assertz(facto(PatientID, 1, idade(Dict.age))),
     assertz(facto(PatientID, 2, bmi(Dict.bmi))),
 
-    assertz(facto(PatientID, 3, mnemonica("LEMON", 0.5))),
-    assertz(facto(PatientID, 4, mnemonica("MOANS", 0.2))),
-    assertz(facto(PatientID, 5, mnemonica("RODS", 0.2))),
-    assertz(facto(PatientID, 6, mnemonica("SHORT", 0.1))),
-
     assert_lista_fatores(PatientID, Dict.lemonFactors),
     assert_lista_fatores(PatientID, Dict.moansFactors),
     assert_lista_fatores(PatientID, Dict.rodsFactors),
@@ -144,13 +146,21 @@ inferir_via_aerea(Dict) :-
 
     arranca_motor(PatientID), % Inferir tipo de via aérea
 
+    % Calcular CFs individuais
     forall(
-        facto(PatientID, _, mnemonica(Nome, Peso)),
-        (   calcular_cf(PatientID, Nome, CF),
+        mnemonica(Nome, _),
+        (   
+            calcular_cf(PatientID, Nome, CF),
             prox_facto(PatientID, N),
             assertz(facto(PatientID, N, mnemonica_cf(Nome, CF)))
         )
     ),
+
+    % Calcular total de CFs
+    findall([Nome,CF], facto(PatientID, _, mnemonica_cf(Nome, CF)), CFs),
+    calcular_total_cf(CFs, Total),
+    prox_facto(PatientID, N2),
+    assertz(facto(PatientID, N2, mnemonica_cf("Total", Total))),
 
     arranca_motor(PatientID).
 

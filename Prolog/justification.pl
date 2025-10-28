@@ -1,25 +1,31 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Geração de explicações do tipo "Como"
 
-como(PatientID, N):-contar_factos(PatientID, Last),Last<N,!,
-	write('Essa conclusão não foi tirada'),nl,nl.
-como(PatientID, N):-justifica(PatientID, N, ID, LFactos),!,
-	facto(PatientID,N,F),
-	write('Conclui o facto nº '),write(N),write(' -> '),write(F),nl,
-	write('pela regra '),write(ID),nl,
-	write('por se ter verificado que:'),nl,
-	escreve_factos(PatientID, LFactos),
-	write(''),nl,
-	explica(PatientID, LFactos).
-como(PatientID, N):-facto(PatientID, N, F),
-	write('O facto nº '),write(N),write(' -> '),write(F),nl,
-	write('foi conhecido inicialmente'),nl,
-	write(''),nl.
+como(PatientID, N) :-
+    contar_factos(PatientID, Last),
+    Last < N, !,
+    write('Essa conclusão não foi tirada'), nl, nl.
 
-explica(PatientID, [I|R]):- \+ integer(I),!,explica(PatientID, R).
-explica(PatientID, [I|R]):-como(PatientID, I),
-		explica(PatientID, R).
-explica(_, []):-	write(''),nl.
+como(PatientID, N) :-
+    justifica(PatientID, N, Regra, LFactos), !,
+    facto(PatientID, N, F),
+    F =.. [Pred|Args],
+    format('Conclusion: ~w(~w) was obtained by rule ~w because~n', [Pred, Args, Regra]),
+    explica(PatientID, LFactos, 1).
+
+como(PatientID, N) :-
+    facto(PatientID, N, F),
+    F =.. [Pred|Args],
+    format('~t~*|~w = ~w~n', [0, Pred, Args]).  % base case
+
+explica(_, [], _).
+explica(PatientID, [I|R], Depth) :-
+    (   integer(I)
+    ->  tab(Depth * 4),  % indentation
+        como(PatientID, I)
+    ;   true
+    ),
+    explica(PatientID, R, Depth).
 
 
 % Como JSON

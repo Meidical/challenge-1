@@ -74,6 +74,12 @@ combine_cf(CF1, CF2, CF) :-
     CF1 >= 0, CF2 >= 0,
     CF is CF1 + CF2 * (1 - CF1), !.
 
+calcular_total_cf([], 0) :- !.
+calcular_total_cf([[N,CF]|CFs], Total) :-
+    mnemonica(N, Peso),
+    calcular_total_cf(CFs, Subtotal),
+    Total is CF * Peso + Subtotal.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Obter procedimento recomendado atual
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
