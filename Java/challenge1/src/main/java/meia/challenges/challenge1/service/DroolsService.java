@@ -25,6 +25,7 @@ public class DroolsService {
     private static final Logger logger = LoggerFactory.getLogger(DroolsService.class);
     public static Map<Integer, Justification> justifications;
     public static TrackingAgendaEventListener agendaEventListener;
+    public static KieSession KS;
 
     public DroolsService(KieContainer kieContainer) {
         this.kieContainer = kieContainer;
@@ -92,11 +93,15 @@ public class DroolsService {
             Evidence evidence = (Evidence) obj;
             if (evidence.getId() == facId) {
                 // Modify only the properties that are provided in the payload
-                if (updatedEvidence.getEvidence() != 0) {
+                if (updatedEvidence.getEvidence() != null) {
                     evidence.setEvidence(updatedEvidence.getEvidence());
                 }
-                if (updatedEvidence.getValue() != null) {
-                    Object incomingStatus = updatedEvidence.getValue();
+                if (updatedEvidence.getId() != 0) {
+                    Object incomingStatus = updatedEvidence.getId();
+                    evidence.setId(updatedEvidence.getId());
+                }
+                if (updatedEvidence.getStatus() != null) {
+                    Object incomingStatus = updatedEvidence.getStatus();
                     evidence.setStatus(Status.valueOf(incomingStatus.toString().trim()));
                 }
                 kieSession.update(kieSession.getFactHandle(evidence), evidence);

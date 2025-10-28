@@ -16,23 +16,23 @@ public class Evidence extends Fact{
     public static final String PLANNED_SURGERY = "Planned surgery";
 
     @Setter
-    private int evidence;
-    @Setter
     private Status status;
     @Setter
     private String value;
     @Setter
+    private String evidence;
+    @Setter
     private int nextFactId;
 
     public Evidence(int id, Status status, String value, int nextFactId) {
-        this.evidence = id;
+        setId(id);
         this.status = status;
         this.value = value;
         this.nextFactId = nextFactId;
     }
 
     public String toString() {
-        return (evidence + " = " + value);
+        return (super.getId() + " = " + value);
     }
 
 }
