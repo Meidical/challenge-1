@@ -136,6 +136,28 @@ public class How {
     return sb.toString();
   }
 
+  public String getFactsOnlyExplanation(PatientAirwayAssessment patient) {
+    if (patient == null) {
+      return "No patient assessment to explain.";
+    }
+    List<Fact> seq = patient.getTriggeredFacts();
+    if (seq == null || seq.isEmpty()) {
+      return "No workflow facts recorded for patient " + patient.getPatientId() + ".";
+    }
+    StringBuilder sb = new StringBuilder();
+    sb.append("Workflow for patient ").append(patient.getPatientId()).append(':').append('\n');
+    seq.stream()
+       .sorted(Comparator.comparingInt(Fact::getId))
+       .forEach(f -> sb.append(indent(1))
+           .append('[').append(f.getId()).append("] ")
+           .append(f.getName())
+           .append(" - ")
+           .append(f.getStatus())
+           .append(f.getNextFactId() > 0 ? " (next->" + f.getNextFactId() + ")" : "")
+           .append('\n'));
+    return sb.toString();
+  }
+
     private void appendCategoryExplanation(StringBuilder sb,
                                            String category,
                                            List<AssessmentFactor> factors,

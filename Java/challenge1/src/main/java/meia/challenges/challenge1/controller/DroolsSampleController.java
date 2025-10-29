@@ -46,6 +46,15 @@ public class DroolsSampleController {
         return new ResponseEntity<>(facts, HttpStatus.OK);
     }
 
+    @GetMapping("/assessment/{patientid}/facts-history")
+    public ResponseEntity<List<Fact>> getPatientFactsHistory(@PathVariable String patientid) {
+        PatientAirwayAssessment patient = droolsService.getPatientById(patientid);
+        if (patient == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(patient.getTriggeredFacts());
+    }
+
     @PostMapping("/assessment/{patientid}/facts/{id}")
     public ResponseEntity<Fact> modifyFactById(@PathVariable String patientid, @PathVariable int id, @RequestBody Fact updatedFact) {
         Fact fact = droolsService.modifyFactById(patientid, id, updatedFact);
@@ -64,8 +73,7 @@ public class DroolsSampleController {
         if (patient == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        List<Fact> facts = droolsService.getFactsByPatientId(patientid);
-        String explanation = new How().getHowExplanation(patient, facts, null);
+        String explanation = new How().getFactsOnlyExplanation(patient);
         return ResponseEntity.ok(explanation);
     }
 }
