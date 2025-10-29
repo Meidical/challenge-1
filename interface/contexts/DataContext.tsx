@@ -8,9 +8,12 @@ type DataContextProps = {
   isPredictionDone: boolean;
   setIsPredictionDone: React.Dispatch<React.SetStateAction<boolean>>;
 
-  data: PrevisionResponse | InstructionResponse | null;
-  setData: React.Dispatch<
-    React.SetStateAction<PrevisionResponse | InstructionResponse | null>
+  data: PrevisionResponse | null;
+  setData: React.Dispatch<React.SetStateAction<PrevisionResponse | null>>;
+
+  instructionData: InstructionResponse | null;
+  setInstructionData: React.Dispatch<
+    React.SetStateAction<InstructionResponse | null>
   >;
 
   isLoading: boolean;
@@ -27,6 +30,8 @@ const DataContext = createContext<DataContextProps>({
   currentAddress: null,
   isPredictionDone: false,
   setIsPredictionDone: () => {},
+  instructionData: null,
+  setInstructionData: () => {},
   data: null,
   setData: () => {},
   isLoading: false,
@@ -43,9 +48,9 @@ export default function DataProvider({
   children: React.ReactNode;
 }) {
   const currentAddress = useRef<string | null>(GetSystemAddress("PROLOG"));
-  const [data, setData] = useState<
-    PrevisionResponse | InstructionResponse | null
-  >(null);
+  const [data, setData] = useState<PrevisionResponse | null>(null);
+  const [instructionData, setInstructionData] =
+    useState<InstructionResponse | null>(null);
   const [isPredictionDone, setIsPredictionDone] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -59,6 +64,8 @@ export default function DataProvider({
         currentAddress,
         data,
         setData,
+        instructionData,
+        setInstructionData,
         isLoading,
         setIsLoading,
         isSuccess,
@@ -80,6 +87,8 @@ export const useDataContext = () => {
     data,
     setData,
     isLoading,
+    instructionData,
+    setInstructionData,
     setIsLoading,
     isSuccess,
     setIsSuccess,
@@ -89,14 +98,12 @@ export const useDataContext = () => {
 
   const fullReset = () => {
     setIsPredictionDone(false);
-    setData(null);
-    setIsLoading(false);
-    setIsSuccess(false);
-    setIsError(false);
+    resetData();
   };
 
   const resetData = () => {
     setData(null);
+    setInstructionData(null);
     setIsLoading(false);
     setIsSuccess(false);
     setIsError(false);
@@ -110,6 +117,8 @@ export const useDataContext = () => {
     resetData,
     data,
     setData,
+    instructionData,
+    setInstructionData,
     isLoading,
     setIsLoading,
     isSuccess,

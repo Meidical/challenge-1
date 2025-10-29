@@ -1,0 +1,30 @@
+.justificationContainer {
+  display: flex;
+  position: relative;
+  padding: 10px;
+  border-radius: var(--small-radius);
+  border: 1px solid var(--terciary-color);
+  flex: 1;
+}
+
+.title {
+  position: absolute;
+  padding: 5px 10px;
+  top: 10px;
+  right: 10px;
+  font-family: "OpenSans";
+  display: flex;
+  font-size: var(--fmicro);
+  color: var(--steel);
+  border: 1px solid var(--terciary-color);
+  background-color: var(--secondary-color);
+  border-radius: 6px;
+}
+
+.text {
+  font-family: "OpenSans";
+  display: flex;
+  /* font-weight: 600; */
+  font-size: var(--ftiny);
+  color: white;
+}

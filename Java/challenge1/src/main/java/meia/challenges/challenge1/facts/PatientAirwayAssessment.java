@@ -38,6 +38,8 @@ public class PatientAirwayAssessment {
     private final List<AssessmentFactor> rodsFactors = new ArrayList<>();
     private final List<AssessmentFactor> shortFactors = new ArrayList<>();
 
+    private final List<Fact> triggeredFacts = new ArrayList<>();
+
     // Assessment results
     @Setter
     private boolean difficultAirwayPredicted = false;
@@ -47,6 +49,8 @@ public class PatientAirwayAssessment {
     private int nextFactId;
     @Setter
     private String nextFactDescription;
+
+    private String initialRecommendedApproach;
 
     /**
      * Add a factor to the LEMON category list.
@@ -75,6 +79,26 @@ public class PatientAirwayAssessment {
      * @param factor the AssessmentFactor to add
      */
     public void addShortFactor(AssessmentFactor factor) { this.shortFactors.add(factor); }
+
+    public void addTriggeredFact(Fact fact) {
+        if (fact == null) return;
+        for (Fact f : triggeredFacts) {
+            if (f.getId() == fact.getId()) {
+                return; // already recorded
+            }
+        }
+        this.triggeredFacts.add(fact);
+    }
+    
+    /**
+     * Custom setter to capture the first recommended approach assigned by rules.
+     */
+    public void setRecommendedApproach(String recommendedApproach) {
+        this.recommendedApproach = recommendedApproach;
+        if (this.initialRecommendedApproach == null) {
+            this.initialRecommendedApproach = recommendedApproach;
+        }
+    }
 
     /**
      * Calculate or update the overall certainty factors (LEMON, MOANS, RODS, SHORT)

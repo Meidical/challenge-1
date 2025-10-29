@@ -15,7 +15,7 @@ export default function Notification({
   title,
   description,
   connotation = "Neutral",
-  durationInMs = 3000,
+  durationInMs = 5000,
   key,
 }: NotificationProps) {
   const [visible, setVisible] = useState(true);

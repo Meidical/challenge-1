@@ -1,86 +1,127 @@
 {
+  "patientId": "007",
+  "age": 20,
+  "bmi": 1.2,
   "lemonFactors": [
     {
+      "category": "LEMON",
       "code": "L",
-      "present": true
+      "description": "Difficult Laryngoscopy - Look Externally",
+      "present": false
     },
     {
+      "category": "LEMON",
       "code": "E",
-      "present": true
+      "description": "Difficult Laryngoscopy - External Factors",
+      "present": false
     },
     {
+      "category": "LEMON",
       "code": "M",
-      "present": true
+      "description": "Difficult Laryngoscopy - Mallampati Score",
+      "present": false
     },
     {
+      "category": "LEMON",
       "code": "O",
-      "present": true
+      "description": "Difficult Laryngoscopy - Obstruction",
+      "present": false
     },
     {
+      "category": "LEMON",
       "code": "N",
-      "present": true
+      "description": "Difficult Laryngoscopy - Neck Mobility",
+      "present": false
     }
   ],
   "moansFactors": [
     {
+      "category": "MOANS",
       "code": "M",
-      "present": true
+      "description": "Difficult Bag Mask Ventilation - Mask Seal",
+      "present": false
     },
     {
+      "category": "MOANS",
       "code": "O",
-      "present": true
+      "description": "Difficult Bag Mask Ventilation - Obesity",
+      "present": false
     },
     {
+      "category": "MOANS",
       "code": "A",
-      "present": true
+      "description": "Difficult Bag Mask Ventilation - Age",
+      "present": false
     },
     {
+      "category": "MOANS",
       "code": "N",
-      "present": true
+      "description": "Difficult Bag Mask Ventilation - No Teeth",
+      "present": false
     },
     {
+      "category": "MOANS",
       "code": "S",
-      "present": true
+      "description": "Difficult Bag Mask Ventilation - Stiff Lungs",
+      "present": false
     }
   ],
   "rodsFactors": [
     {
+      "category": "RODS",
       "code": "R",
-      "present": true
+      "description": "Difficult Supraglottic Airway - Restricted Mouth Opening",
+      "present": false
     },
     {
+      "category": "RODS",
       "code": "O",
-      "present": true
+      "description": "Difficult Supraglottic Airway - Obstruction",
+      "present": false
     },
     {
+      "category": "RODS",
       "code": "D",
-      "present": true
+      "description": "Difficult Supraglottic Airway - Disrupted or Distorted Airway",
+      "present": false
     },
     {
+      "category": "RODS",
       "code": "S",
-      "present": true
+      "description": "Difficult Supraglottic Airway - Stiff Lungs or Cervical Spine",
+      "present": false
     }
   ],
   "shortFactors": [
     {
+      "category": "SHORT",
       "code": "S",
-      "present": true
+      "description": "Difficult Surgical Airway - Surgery or Radiation",
+      "present": false
     },
     {
+      "category": "SHORT",
       "code": "H",
-      "present": true
+      "description": "Difficult Surgical Airway - Hematoma",
+      "present": false
     },
     {
+      "category": "SHORT",
       "code": "O",
-      "present": true
+      "description": "Difficult Surgical Airway - Obstruction",
+      "present": false
     },
     {
+      "category": "SHORT",
       "code": "R",
-      "present": true
+      "description": "Difficult Surgical Airway - Restricted Mouth Opening",
+      "present": false
     },
     {
+      "category": "SHORT",
       "code": "T",
-      "present": true
+      "description": "Difficult Surgical Airway - Tumor",
+      "present": false
     }
   ]
 }

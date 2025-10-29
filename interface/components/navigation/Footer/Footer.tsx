@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Footer.module.css";
 import Image from "next/image";
-import { ExternalLink, GithubLink, TextLink } from "@/components/ui";
+import { ExternalLink, GithubLink } from "@/components/ui";
 import { DotLoader } from "@/components/feedback";
 import BlogLink from "@/components/ui/IconLink/BlogLink";
 
