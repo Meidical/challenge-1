@@ -24,9 +24,10 @@ export default function SystemBody() {
     pushNotification(
       <Notification
         title="Engine Switched"
-        description={`The rules engine was changed to ${
+        description={`Rule engine changed to ${
           switched ? "DROOLS" : "PROLOG"
         }!`}
+        durationInMs={4000}
       />
     );
   };
