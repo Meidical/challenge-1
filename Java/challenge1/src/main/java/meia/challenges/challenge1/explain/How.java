@@ -145,6 +145,29 @@ public class How {
       return "No workflow facts recorded for patient " + patient.getPatientId() + ".";
     }
     StringBuilder sb = new StringBuilder();
+    // Header summary with prediction, approach and CF values
+    sb.append("Patient ").append(patient.getPatientId()).append(" summary:").append('\n');
+    sb.append(indent(1))
+      .append("Difficult airway predicted: ")
+      .append(patient.isDifficultAirwayPredicted())
+      .append('\n');
+    String approach = patient.getInitialRecommendedApproach() != null
+            ? patient.getInitialRecommendedApproach()
+            : patient.getRecommendedApproach();
+    if (approach != null) {
+      sb.append(indent(1))
+        .append("Recommended approach: ")
+        .append(approach)
+        .append('\n');
+    }
+    sb.append(indent(1))
+      .append("CFs: ")
+      .append("LEMON=").append(formatDouble(patient.getLemonCF()))
+      .append(", MOANS=").append(formatDouble(patient.getMoansCF()))
+      .append(", RODS=").append(formatDouble(patient.getRodsCF()))
+      .append(", SHORT=").append(formatDouble(patient.getShortCF()))
+      .append('\n');
+    sb.append('\n');
     sb.append("Workflow for patient ").append(patient.getPatientId()).append(':').append('\n');
 
     for (int i = 0; i < seq.size(); i++) {
