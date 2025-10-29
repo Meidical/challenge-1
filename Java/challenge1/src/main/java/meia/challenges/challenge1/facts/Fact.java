@@ -16,6 +16,7 @@ public class Fact {
     private String description;
     private Status status;
     private int nextFactId;
+    private String nextFactDescription;
 
     /**
      * Default constructor for frameworks and serialization.
@@ -30,13 +31,15 @@ public class Fact {
      * @param description longer description of the fact
      * @param status the current processing Status for the fact
      * @param nextFactId optional id for a following fact/action (0 if none)
+     * @param nextFactDescription optional description for the next fact/action
      */
-    public Fact(int id, String name, String description, Status status, int nextFactId) {
+    public Fact(int id, String name, String description, Status status, int nextFactId, String nextFactDescription) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
         this.nextFactId = nextFactId;
+        this.nextFactDescription = nextFactDescription;
     }
 
     /**

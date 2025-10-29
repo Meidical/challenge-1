@@ -52,6 +52,12 @@ public class DroolsSampleController {
         return new ResponseEntity<>(fact, HttpStatus.OK);
     }
 
+    @GetMapping("/assessment/{patientid}/facts/{id}")
+    public ResponseEntity<Fact> getFactById(@PathVariable String patientid, @PathVariable int id) {
+        Fact fact = droolsService.getFactById(patientid, id);
+        return new ResponseEntity<>(fact, HttpStatus.OK);
+    }
+
     /*@PostMapping("/assessment/{patientid}/insertfact")
     public ResponseEntity<Fact> insertFact(@PathVariable String patientid) {
         droolsService.insertFact(patientid);
