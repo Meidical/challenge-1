@@ -136,6 +136,58 @@ public class How {
     return sb.toString();
   }
 
+  public String getFactsOnlyExplanation(PatientAirwayAssessment patient) {
+    if (patient == null) {
+      return "No patient assessment to explain.";
+    }
+    List<Fact> seq = patient.getTriggeredFacts();
+    if (seq == null || seq.isEmpty()) {
+      return "No workflow facts recorded for patient " + patient.getPatientId() + ".";
+    }
+    StringBuilder sb = new StringBuilder();
+    sb.append("Workflow for patient ").append(patient.getPatientId()).append(':').append('\n');
+
+    for (int i = 0; i < seq.size(); i++) {
+      Fact current = seq.get(i);
+
+      Fact next = (i + 1 < seq.size()) ? seq.get(i + 1) : null;
+
+      if (next != null
+          && current.getNextFactId() == next.getId()
+          && next.getNextFactId() == 0
+          && next.getNextFactDescription() != null
+          && !next.getNextFactDescription().isEmpty()) {
+        sb.append(indent(1))
+          .append('[').append(current.getId()).append("] ")
+          .append(current.getName())
+          .append(" - ")
+          .append(current.getStatus())
+          .append(" (next->Conclusion)")
+          .append('\n');
+        sb.append(indent(1))
+          .append("Conclusion - ")
+          .append(next.getNextFactDescription())
+          .append('\n');
+        // Skip printing the terminal fact row
+        i++;
+        continue;
+      }
+
+      // Default rendering
+      sb.append(indent(1))
+        .append('[').append(current.getId()).append("] ")
+        .append(current.getName())
+        .append(" - ")
+        .append(current.getStatus());
+      if (current.getNextFactId() > 0) {
+        sb.append(" (next->").append(current.getNextFactId()).append(")");
+      }
+      sb.append('\n');
+    }
+
+    return sb.toString();
+  }
+
     private void appendCategoryExplanation(StringBuilder sb,
                                            String category,
                                            List<AssessmentFactor> factors,
