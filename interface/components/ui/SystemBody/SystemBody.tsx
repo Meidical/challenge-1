@@ -1,16 +1,18 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import styles from "./SystemBody.module.css";
 import { FactForm, InferenceForm, SubmitButton } from "@/components/form";
 import { BasicCard, Button, SwitchButton } from "@/components/ui";
 
 import { GetSystemAddress } from "@/lib";
 import Image from "next/image";
-import { useDataContext } from "@/contexts";
+import { useDataContext, useNotificationContext } from "@/contexts";
+import { Notification } from "@/components/feedback";
 
 export default function SystemBody() {
   const { currentAddress, fullReset, isLoading, isPredictionDone } =
     useDataContext();
+  const { pushNotification } = useNotificationContext();
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -18,6 +20,15 @@ export default function SystemBody() {
     currentAddress.current = switched
       ? GetSystemAddress("DROLLS")
       : GetSystemAddress("PROLOG");
+
+    pushNotification(
+      <Notification
+        title="Engine Switched"
+        description={`The rules engine was changed to ${
+          switched ? "DROOLS" : "PROLOG"
+        }!`}
+      />
+    );
   };
 
   const handleSubmit = async () => {

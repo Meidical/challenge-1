@@ -5,10 +5,11 @@ import { CheckBox } from "@/components/form";
 
 import { Factor, FactorCategory, PrevisionPost } from "@/types";
 import CheckBoxContainer from "./CheckBoxContainer";
-import { useDataContext } from "@/contexts";
+import { useDataContext, useNotificationContext } from "@/contexts";
 import { Delay } from "@/utils";
 
 import TEST_PAYLOAD from "@/test/payload.json";
+import { Notification } from "@/components/feedback";
 
 export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
   const {
@@ -20,6 +21,8 @@ export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
     setIsPredictionDone,
     setData,
   } = useDataContext();
+
+  const { pushNotification } = useNotificationContext();
 
   const requestBody = useRef<PrevisionPost>({
     lemonFactors: [],
@@ -85,7 +88,14 @@ export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
     } catch (error) {
       setIsLoading(false);
       setIsError(true);
-      console.error(error.message);
+      pushNotification(
+        <Notification
+          title="Error"
+          description={error.message + "."}
+          connotation="Negative"
+          durationInMs={5000}
+        />
+      );
     }
   }
 
