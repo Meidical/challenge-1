@@ -27,19 +27,17 @@ arranca_motor(PatientID) :-
     ).
 
 arranca_motor1(PatientID, N, Facto) :-
-    contar_factos(PatientID, Cont),
+    ultimo_facto(PatientID, Cont),
     retractall(ultimo_facto(PatientID, _)),
     assertz(ultimo_facto(PatientID, Cont)),
     facto_dispara_regras1(PatientID, Facto, LRegras),
     dispara_regras(PatientID, N, Facto, LRegras).
 
-contar_factos(PatientID, Cont) :-
-    findall(X, facto(PatientID, X, _), Lista),
-    length(Lista, Cont).
-
 prox_facto(PatientID, N) :-
-    contar_factos(PatientID, Cont),
-    N is Cont + 1.
+    ultimo_facto(PatientID, N),
+    retractall(ultimo_facto(_,_)),
+    N1 is N + 1,
+    assertz(ultimo_facto(PatientID, N1)).
 
 facto_dispara_regras1(_, Facto, LRegras) :-
     facto_dispara_regras(Facto, LRegras),
@@ -138,6 +136,7 @@ inferir_via_aerea(Dict) :-
 
     assertz(facto(PatientID, 1, idade(Dict.age))),
     assertz(facto(PatientID, 2, bmi(Dict.bmi))),
+    assertz(ultimo_facto(PatientID, 3)),
 
     assert_lista_fatores(PatientID, Dict.lemonFactors),
     assert_lista_fatores(PatientID, Dict.moansFactors),

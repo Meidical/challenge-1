@@ -117,54 +117,57 @@ regra 19
 regra 20
     descricao "Descricao sdads"
     se [avalia(mnemonica_cf("LEMON", >, 0.7)) e 
-    nao via_aerea_dificil(true)]
+        nao via_aerea_dificil(true)]
     entao [cria_facto(via_aerea_dificil(true)), 
-    cria_facto(rec_processo(4, "Consider alternative techniques to direct laryngoscopy")),
-    cria_facto(id_prox_facto(4))].
+        cria_facto(rec_processo(4, "Consider alternative techniques to direct laryngoscopy")),
+        cria_facto(id_prox_facto(4))].
 
 regra 21
     se [avalia(mnemonica_cf("MOANS", >, 0.7)) e 
-    nao via_aerea_dificil(true)]
+        nao via_aerea_dificil(true)]
     entao [cria_facto(via_aerea_dificil(true)), 
-    cria_facto(rec_processo(4, "Consider alternative ventilation techniques")),
-    cria_facto(id_prox_facto(4))].
+        cria_facto(rec_processo(4, "Consider alternative ventilation techniques")),
+        cria_facto(id_prox_facto(4))].
 
 regra 22
     descricao "asdas"
     se [avalia(mnemonica_cf("RODS", >, 0.7)) e 
-    via_aerea_dificil(true)]
+        via_aerea_dificil(true)]
     entao [cria_facto(via_aerea_dificil(true)), 
-    cria_facto(rec_processo(4, "Consider video laryngoscopy or fiber optic intubation"),
-    cria_facto(id_prox_facto(4)))].
+        cria_facto(rec_processo(4, "Consider video laryngoscopy or fiber optic intubation"),
+        cria_facto(id_prox_facto(4)))].
 
 regra 23
-    descricao "Boas"
     se [avalia(mnemonica_cf("LEMON", <, 0.7)) e 
-    avalia(mnemonica_cf("MOANS", <, 0.7)) e
-    avalia(mnemonica_cf("RODS", <, 0.7)) e nao 
-    via_aerea_dificil(false)]
-    entao [cria_facto(via_aerea_dificil(false)),
-    cria_facto(rec_processo(1, "Proceed with standard direct laryngoscopy")),
-    cria_facto(id_prox_facto(1))].
+        avalia(mnemonica_cf("MOANS", <, 0.7)) e
+        avalia(mnemonica_cf("RODS", <, 0.7)) e nao 
+        via_aerea_dificil(false)]
+    entao [cria_facto(processo("Direct Laryngoscopy", "STARTED")),
+        cria_facto(via_aerea_dificil(false)),
+        cria_facto(rec_processo(1, "Proceed with standard direct laryngoscopy")),
+        cria_facto(id_prox_facto(1))].
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Via aérea normal
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 regra 24
-    se [facto_pedido("1", true)]
+    se [processo("Direct Laryngoscopy", "STARTED") e 
+        facto_pedido("1", true)]
     entao [cria_facto(rec_processo(2, "Apply facial mask")),
-        cria_facto(id_prox_facto(2))].
+        cria_facto(id_prox_facto(2)),
+        cria_facto(processo("Facial Mask", "STARTED"))].
 
 regra 25
-    descricao "Insucesso na Laringoscopia Direta"
     se [facto_pedido("1", false)]
-    entao [cria_facto(via_aerea_dificil_nao_previsivel(true)),
+    entao [cria_facto(via_aerea_dificil_nao_previsivel(true)),   
     cria_facto(rec_processo(12 , "Apply supraglotic device")),     
     cria_facto(id_prox_facto(12))].      
 
 regra 26
-    se [facto_pedido("2", true)]
+    se [processo("Facial Mask", "STARTED") e 
+    facto_pedido("2", true) e 
+    via_aerea_dificil(false)]
     entao [cria_facto(processo("Facial Mask", "SUCCESSFUL"))].
 
 regra 42

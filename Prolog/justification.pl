@@ -1,91 +1,102 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Geração de explicações do tipo "Como"
 
+como_json(PatientID, N, JSON) :-
+    with_output_to(atom(TextAtom),
+        (   (   como(PatientID, N)
+            ->  true                   % printed successfully
+            ;   true                   % printed nothing, still succeed
+            )
+        )
+    ),
+    atom_string(TextAtom, TextStr),
+    JSON = json([justification=TextStr]).
+
+
+% Caso base
 como(PatientID, N) :-
-    contar_factos(PatientID, Last),
+    como(PatientID, N, 0).
+
+% Caso o facto não exista
+como(PatientID, N, _) :-
+    ultimo_facto(PatientID, Last),
     Last < N, !,
-    write('Essa conclusão não foi tirada'), nl, nl.
+    nl, write('Essa conclusão não foi tirada.'), nl, nl.
 
-como(PatientID, N) :-
-    justifica(PatientID, N, Regra, LFactos), !,
+% Caso o facto seja derivado
+como(PatientID, N, Depth) :-
+    justifica(PatientID, N, RegraID, LFactos), !,
     facto(PatientID, N, F),
-    F =.. [Pred|Args],
-    format('Conclusion: ~w(~w) was obtained by rule ~w because~n', [Pred, Args, Regra]),
-    explica(PatientID, LFactos, 1).
+    F =.. [Pred | Args],
+    junta_argumentos(Args, ArgsStr),
+    tab(Depth * 2),
+    format('Conclusion: ~w ~w was obtained by rule ~w because~n', [Pred, ArgsStr, RegraID]),
+    NextDepth is Depth + 1,
+    explica(PatientID, LFactos, NextDepth),
 
-como(PatientID, N) :-
+    % ALSO show mnemonic factors when the derived fact is a mnemonica_cf(Name, CF)
+    (   Pred == mnemonica_cf,
+        Args = [Mnemonica, _CF]
+    ->  mostra_fatores(PatientID, Mnemonica, NextDepth)
+    ;   true
+    ).
+
+% Caso o facto seja inicial
+como(PatientID, N, Depth) :-
     facto(PatientID, N, F),
-    F =.. [Pred|Args],
-    format('~t~*|~w = ~w~n', [0, Pred, Args]).  % base case
+    F =.. [Pred | Args],
+    junta_argumentos(Args, ArgsStr),
+    tab(Depth * 2),
+    format('~w = ~w~n', [Pred, ArgsStr]),
+
+    % Caso o predicado seja mnemonica_cf então explicar fatores
+    (   Pred == mnemonica_cf,
+        Args = [Mnemonica, _CF]
+    ->  NextDepth is Depth + 1,
+        mostra_fatores(PatientID, Mnemonica, NextDepth)
+    ;   true
+    ).
+
 
 explica(_, [], _).
-explica(PatientID, [I|R], Depth) :-
-    (   integer(I)
-    ->  tab(Depth * 4),  % indentation
-        como(PatientID, I)
-    ;   true
-    ),
+explica(PatientID, [I | R], Depth) :-
+    integer(I), !,
+    como(PatientID, I, Depth),
+    explica(PatientID, R, Depth).
+
+explica(PatientID, [_ | R], Depth) :-
     explica(PatientID, R, Depth).
 
 
-% Como JSON
-como_json(PatientID, N, json([error="Conclusion not reached"])) :-
-    contar_factos(PatientID, Last), 
-    Last < N, !.
-
-como_json(PatientID, N, JSON) :-
-    justifica(PatientID, N, ID, LFactos), !,
-    facto(PatientID, N, F),
-    F =.. [Predicate|Args],
+% Obter todos os fatores de cada mnemonica
+mostra_fatores(PatientID, Mnemonica0, Depth) :-
+    term_to_atom(Mnemonica0, Mn),
     
-    % Get supporting facts - FIXED to collect all facts
-    findall(json([
-        id=FactID,
-        predicate=Pred,
-		patientId=PatientID1, 
-        arguments=Args2,
-        type=Type
-    ]), (
-        member(FactID, LFactos),
-        integer(FactID),          
-        facto(PatientID1, FactID, Fact),      % Get the actual fact
-        Fact =.. [Pred|Args2],    % Extract predicate and arguments
-        (justifica(PatientID1, FactID, _, _) -> Type = "derived_fact" ; Type = "initial_fact")
-    ), SupportingFacts),
-    
-    % Get rule description if available
-    (regra ID descricao Desc se LHS entao _RHS ->
-        term_string(LHS, LHSString)
-    ;
-		LHSString = "",
-        Desc = "No description"
-    ),
+    findall(Let-Val,
+        (   facto(PatientID, _,
+                fator(MnX, [Let, Val])),
+            term_to_atom(MnX, Mn)
+        ),
+        RawPairs),
+    sort(RawPairs, Pairs),
+    forall(member(Let-Val, Pairs),
+        (   tab(Depth * 4),
+            format('~w -> ~w~n', [Let, Val])
+        )).
 
-    JSON = json([
-        conclusion=json([
-            id=N,
-            predicate=Predicate,
-            arguments=Args
-        ]),
-        rule=json([
-            id=ID,
-            description=Desc,
-			lhs=LHSString
-        ]),
-        supporting_facts=SupportingFacts
-    ]).
 
-como_json(PatientID, N, JSON) :-
-    facto(PatientID, N, F),
-    F =.. [Predicate|Args],
-    JSON = json([
-        conclusion=json([
-            id=N,
-            predicate=Predicate,
-            arguments=Args
-        ]),
-        type="initial_fact"
-    ]).
+% Obter lista de argumentos no caso dos fatores
+junta_argumentos(Argumentos, TextoSaida) :-
+    maplist(arg_para_texto, Argumentos, ListaAtomos),
+    atomic_list_concat(ListaAtomos, ' ', TextoSaida).
+
+arg_para_texto(Arg, Texto) :-
+    (   is_list(Arg)
+    ->  maplist(term_to_atom, Arg, Internos),
+        atomic_list_concat(Internos, ', ', InternosTxt),
+        format(atom(Texto), '[~w]', [InternosTxt])
+    ;   term_to_atom(Arg, Texto)
+    ).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
