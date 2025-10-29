@@ -14,12 +14,18 @@
   flex: 0.3;
 }
 
+.centerContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 0.4;
+}
+
 .rightContainer {
   display: flex;
   flex-direction: column;
   /* justify-content: center; */
   gap: 10px;
-  flex: 0.7;
+  flex: 0.3;
 }
 
 .questionText {
@@ -47,7 +53,7 @@
   border: 1px solid var(--stone);
 }
 
-.conclusionContainer {
+/* .conclusionContainer {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -55,9 +61,9 @@
   background-color: var(--dust);
   box-shadow: var(--basic-inset-shadow);
   border: 1px solid var(--stone);
-}
+} */
 
-.justificationContainer {
+/* .justificationContainer {
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -65,7 +71,7 @@
   background-color: var(--dust);
   box-shadow: var(--basic-inset-shadow);
   border: 1px solid var(--stone);
-}
+} */
 
 .formText {
   font-size: var(--fsm);

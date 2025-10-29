@@ -10,10 +10,18 @@ import { PrevisionResponse } from "@/types";
 export default function InferenceForm() {
   const { data } = useDataContext();
 
-  const LEMON_PERCENT: number = (data as PrevisionResponse).lemonCF * 100;
-  const MOANS_PERCENT: number = (data as PrevisionResponse).moansCF * 100;
-  const RODS_PERCENT: number = (data as PrevisionResponse).rodsCF * 100;
-  const SHORT_PERCENT: number = (data as PrevisionResponse).shortCF * 100;
+  const LEMON_PERCENT: number = Math.floor(
+    (data as PrevisionResponse).lemonCF * 100
+  );
+  const MOANS_PERCENT: number = Math.floor(
+    (data as PrevisionResponse).moansCF * 100
+  );
+  const RODS_PERCENT: number = Math.floor(
+    (data as PrevisionResponse).rodsCF * 100
+  );
+  const SHORT_PERCENT: number = Math.floor(
+    (data as PrevisionResponse).shortCF * 100
+  );
 
   //##########################################################
   type Answer = "yes" | "no" | null;
@@ -185,6 +193,7 @@ export default function InferenceForm() {
           percentage={SHORT_PERCENT}
         />
       </div>
+      <div className={styles.centerContainer}></div>
       <form
         className={styles.rightContainer}
         onSubmit={(e) => e.preventDefault()}
