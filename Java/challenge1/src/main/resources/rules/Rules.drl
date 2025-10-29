@@ -614,3 +614,247 @@ rule "Fibroscopic Intubation FAILED"
         insert(c);
         logger.info($patient.toString());
 end
+
+// "Via Aérea Difícil Previsível"
+
+rule "Predictable Difficult Airway"
+    salience -10
+    when
+        $patient : PatientAirwayAssessment(
+            difficultAirwayPredicted == true
+        )
+        $fact : Fact(
+            id == 10,
+            status == Status.NOT_STARTED
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Predictable difficult airway - seek alternative anesthetic technique"),
+            setNextFactId(10)
+        }
+        modify($fact) {
+            setStatus(Status.STARTED)
+        }
+        logger.info($patient.toString());
+end
+
+// Etapa 10: Procurar alternativa com outra técnica anestésica
+// - SUCCESSFUL => "Outra técnica" (segue com a técnica alternativa)
+// - FAILED     => não foi possível; partir para abordagem de VA com intubação
+
+rule "Alternative anesthetic technique SUCCESS"
+    salience -20
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Predictable difficult airway - seek alternative anesthetic technique"
+        )
+        $fact : Fact(
+            id == 10,
+            status == Status.SUCCESSFUL
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Proceed with alternative technique (no direct laryngoscopy)")
+        }
+        logger.info($patient.toString());
+end
+
+rule "Alternative anesthetic technique FAILED -> Airway with intubation"
+    salience -30
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Predictable difficult airway - seek alternative anesthetic technique"
+        )
+        $fact : Fact(
+            id == 10,
+            status == Status.FAILED
+        )
+        $fact2 : Fact(
+            id == 11,
+            status == Status.NOT_STARTED
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Airway approach with intubation - decide technique (non-invasive vs invasive)")
+        }
+        modify($fact) {
+            setNextFactId(11)
+        }
+        modify($fact2) {
+            setStatus(Status.STARTED)
+        }
+        logger.info($patient.toString());
+end
+
+// Etapa 11: Abordagem de via aérea com intubação?
+// - SUCCESSFUL => Sim -> Técnica não invasiva
+// - FAILED     => Não  -> Cricotireotomia
+rule "Airway with intubation = YES -> Non-invasive technique"
+    salience -40
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Airway approach with intubation - decide technique (non-invasive vs invasive)"
+        )
+        $fact : Fact(
+            id == 11,
+            status == Status.SUCCESSFUL
+        )
+        $fact2 : Fact(
+            id == 12,
+            status == Status.NOT_STARTED
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Non-invasive technique for intubation")
+        }
+        modify($fact) {
+            setNextFactId(12)
+        }
+        modify($fact2) {
+            setStatus(Status.STARTED)
+        }
+        logger.info($patient.toString());
+end
+
+rule "Airway with intubation = NO -> Invasive technique (Cricothyrotomy)"
+    salience -50
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Airway approach with intubation - decide technique (non-invasive vs invasive)"
+        )
+        $fact : Fact(
+            id == 11,
+            status == Status.FAILED
+        )
+        $fact2 : Fact(
+            id == 13,
+            status == Status.NOT_STARTED
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Invasive technique (Cricothyrotomy)")
+        }
+        modify($fact) {
+            setNextFactId(13)
+        }
+        modify($fact2) {
+            setStatus(Status.STARTED)
+        }
+        logger.info($patient.toString());
+end
+
+// Etapa 12: Técnica NÃO invasiva
+// - SUCCESSFUL => Intubação bem-sucedida -> realizar procedimento com AG
+// - FAILED     => Cricotireotomia
+
+rule "Non-invasive technique SUCCESS -> Proceed with GA and surgery"
+    salience -60
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Non-invasive technique for intubation"
+        )
+        $fact : Fact(
+            id == 12,
+            status == Status.SUCCESSFUL
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Intubation successful - perform procedure under general anesthesia")
+        }
+        Conclusion c = new Conclusion(Conclusion.INTUBATION);
+        insert(c);
+        logger.info($patient.toString());
+end
+
+rule "Non-invasive technique FAILED -> Go to invasive technique"
+    salience -70
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Non-invasive technique for intubation"
+        )
+        $fact : Fact(
+            id == 12,
+            status == Status.FAILED
+        )
+        $fact2 : Fact(
+            id == 13,
+            status == Status.NOT_STARTED
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Invasive technique (Cricothyrotomy)")
+        }
+        modify($fact) {
+            setNextFactId(13)
+        }
+        modify($fact2) {
+            setStatus(Status.STARTED)
+        }
+        logger.info($patient.toString());
+end
+
+// Etapa 13: Técnica INVASIVA (Cricotireotomia)
+rule "Invasive technique START -> Ask if surgery planned"
+    salience -80
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Invasive technique (Cricothyrotomy)"
+        )
+        $fact : Fact(
+            id == 13,
+            status == Status.STARTED
+        )
+        $fact2 : Fact(
+            id == 14,
+            status == Status.NOT_STARTED
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Invasive technique (Cricothyrotomy) - Is surgery planned?")
+        }
+        modify($fact2) {
+            setStatus(Status.STARTED)
+        }
+        logger.info($patient.toString());
+end
+
+
+// Etapa 14: Cirurgia planeada?
+// - SUCCESSFUL => Sim  -> Cancelar procedimento
+// - FAILED     => Não  -> Prosseguir com AG
+
+rule "Planned surgery = YES -> Cancel procedure"
+    salience -90
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Invasive technique (Cricothyrotomy) - Is surgery planned?"
+        )
+        $fact : Fact(
+            id == 14,
+            status == Status.SUCCESSFUL
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Cancel procedure")
+        }
+        logger.info($patient.toString());
+end
+
+rule "Planned surgery = NO -> Proceed with GA and surgery"
+    salience -100
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Invasive technique (Cricothyrotomy) - Is surgery planned?"
+        )
+        $fact : Fact(
+            id == 14,
+            status == Status.FAILED
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Airway secured via invasive technique - perform procedure under general anesthesia")
+        }
+        Conclusion c = new Conclusion(Conclusion.INTUBATION);
+        insert(c);
+        logger.info($patient.toString());
+end
