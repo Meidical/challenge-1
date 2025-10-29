@@ -21,7 +21,7 @@ como(PatientID, N) :-
 como(PatientID, N, _) :-
     ultimo_facto(PatientID, Last),
     Last < N, !,
-    nl, write('Essa conclusão não foi tirada.'), nl, nl.
+    nl, write('That conclusion was not yet reached.'), nl, nl.
 
 % Caso o facto seja derivado
 como(PatientID, N, Depth) :-
@@ -30,7 +30,7 @@ como(PatientID, N, Depth) :-
     F =.. [Pred | Args],
     junta_argumentos(Args, ArgsStr),
     tab(Depth * 2),
-    format('Conclusion: ~w ~w was obtained by rule ~w because~n', [Pred, ArgsStr, RegraID]),
+    format('[~w] (rule ~w) -> ~n', [ArgsStr, RegraID]),
     NextDepth is Depth + 1,
     explica(PatientID, LFactos, NextDepth),
 
@@ -77,8 +77,7 @@ mostra_fatores(PatientID, Mnemonica0, Depth) :-
                 fator(MnX, [Let, Val])),
             term_to_atom(MnX, Mn)
         ),
-        RawPairs),
-    sort(RawPairs, Pairs),
+        Pairs),
     forall(member(Let-Val, Pairs),
         (   tab(Depth * 4),
             format('~w -> ~w~n', [Let, Val])
@@ -88,7 +87,7 @@ mostra_fatores(PatientID, Mnemonica0, Depth) :-
 % Obter lista de argumentos no caso dos fatores
 junta_argumentos(Argumentos, TextoSaida) :-
     maplist(arg_para_texto, Argumentos, ListaAtomos),
-    atomic_list_concat(ListaAtomos, ' ', TextoSaida).
+    atomic_list_concat(ListaAtomos, ' = ', TextoSaida).
 
 arg_para_texto(Arg, Texto) :-
     (   is_list(Arg)

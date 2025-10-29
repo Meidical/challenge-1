@@ -133,6 +133,7 @@ inferir_via_aerea(Dict) :-
     % Remove dados do paciente caso seja o mesmo
     retractall(facto(PatientID, _, _)),
     retractall(ultimo_facto(PatientID, _)),
+    retractall(justifica(PatientID,_,_,_)),
 
 
     assertz(facto(PatientID, 1, idade(Dict.age))),
