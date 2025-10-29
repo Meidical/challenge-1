@@ -456,7 +456,8 @@ rule "Default Easy Airway Approach"
     then
         modify($patient) {
             setRecommendedApproach("Proceed with standard direct laryngoscopy"),
-            setNextFactId(1)
+            setNextFactId(1),
+            setNextFactDescription($fact.getDescription())
         }
         modify($fact) {
             setStatus(Status.STARTED)
@@ -485,7 +486,8 @@ rule "Laryngoscopy SUCCESSFUL"
             setRecommendedApproach("Facial Mask Ventilation")
         }
         modify($fact) {
-            setNextFactId(2)
+            setNextFactId(2),
+            setNextFactDescription($fact2.getDescription())
         }
         modify($fact2) {
             setStatus(Status.STARTED)
@@ -514,7 +516,8 @@ rule "Laryngoscopy FAILED"
             setRecommendedApproach("Unpredicted difficult airway - Apllying supraglottic airway device")
         }
         modify($fact) {
-            setNextFactId(3)
+            setNextFactId(3),
+            setNextFactDescription($fact.getDescription())
         }
         modify($fact2) {
             setStatus(Status.STARTED)
@@ -543,7 +546,8 @@ rule "Apllying supraglottic airway device SUCCESS"
             setRecommendedApproach("Fibroscopic Intubation")
         }
         modify($fact) {
-            setNextFactId(4)
+            setNextFactId(4),
+            setNextFactDescription($fact.getDescription())
         }
         modify($fact2) {
             setStatus(Status.STARTED)
@@ -572,7 +576,8 @@ rule "Apllying supraglottic airway device FAILED"
             setRecommendedApproach("Oxygenize and Ventilate patient - Emergency")
         }
         modify($fact) {
-            setNextFactId(5)
+            setNextFactId(5),
+            setNextFactDescription($fact.getDescription())
         }
         modify($fact2) {
             setStatus(Status.STARTED)

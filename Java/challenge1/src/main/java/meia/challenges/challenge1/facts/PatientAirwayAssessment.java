@@ -47,6 +47,8 @@ public class PatientAirwayAssessment {
     private String recommendedApproach;
     @Setter
     private int nextFactId;
+    @Setter
+    private String nextFactDescription;
 
     /**
      * Add a factor to the LEMON category list.
