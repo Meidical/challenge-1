@@ -50,6 +50,8 @@ public class PatientAirwayAssessment {
     @Setter
     private String nextFactDescription;
 
+    private String initialRecommendedApproach;
+
     /**
      * Add a factor to the LEMON category list.
      *
@@ -86,6 +88,16 @@ public class PatientAirwayAssessment {
             }
         }
         this.triggeredFacts.add(fact);
+    }
+    
+    /**
+     * Custom setter to capture the first recommended approach assigned by rules.
+     */
+    public void setRecommendedApproach(String recommendedApproach) {
+        this.recommendedApproach = recommendedApproach;
+        if (this.initialRecommendedApproach == null) {
+            this.initialRecommendedApproach = recommendedApproach;
+        }
     }
 
     /**
