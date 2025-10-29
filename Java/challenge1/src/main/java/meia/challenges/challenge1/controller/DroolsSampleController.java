@@ -1,6 +1,7 @@
 package meia.challenges.challenge1.controller;
 
 import meia.challenges.challenge1.explain.How;
+import meia.challenges.challenge1.explain.Why;
 import meia.challenges.challenge1.facts.Fact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -81,5 +82,15 @@ public class DroolsSampleController {
         }
         String explanation = new How().getFactsOnlyExplanation(patient);
         return ResponseEntity.ok(explanation);
+    }
+
+    @GetMapping("/assessment/{patientid}/why/{factId}")
+    public ResponseEntity<String> getWhy(@PathVariable String patientid, @PathVariable int factId) {
+        PatientAirwayAssessment patient = droolsService.getPatientById(patientid);
+        if (patient == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        String why = new Why().getWhyForFact(patient, factId);
+        return ResponseEntity.ok(why);
     }
 }
