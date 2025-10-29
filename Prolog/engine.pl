@@ -10,6 +10,7 @@
 :- dynamic ultimo_facto/2.
 
 
+% mnemonica(Nome, Peso)
 mnemonica("LEMON", 0.5).
 mnemonica("MOANS", 0.2).
 mnemonica("RODS", 0.2).
@@ -184,5 +185,6 @@ get_prox_processo(PatientID, ID, Dict) :-
     assertz(facto(PatientID, N, facto_pedido(ID, Dict.successful))),
 
     arranca_motor(PatientID),
-    
+    arranca_motor(PatientID),
+
     retractall(facto(PatientID, _, facto_pedido(_, _))).
