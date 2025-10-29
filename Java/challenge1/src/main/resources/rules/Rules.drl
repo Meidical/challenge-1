@@ -517,7 +517,7 @@ rule "Laryngoscopy FAILED"
         }
         modify($fact) {
             setNextFactId(3),
-            setNextFactDescription($fact.getDescription())
+            setNextFactDescription($fact2.getDescription())
         }
         modify($fact2) {
             setStatus(Status.STARTED)
@@ -547,7 +547,7 @@ rule "Apllying supraglottic airway device SUCCESS"
         }
         modify($fact) {
             setNextFactId(4),
-            setNextFactDescription($fact.getDescription())
+            setNextFactDescription($fact2.getDescription())
         }
         modify($fact2) {
             setStatus(Status.STARTED)
@@ -577,7 +577,7 @@ rule "Apllying supraglottic airway device FAILED"
         }
         modify($fact) {
             setNextFactId(5),
-            setNextFactDescription($fact.getDescription())
+            setNextFactDescription($fact2.getDescription())
         }
         modify($fact2) {
             setStatus(Status.STARTED)
