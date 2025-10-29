@@ -3,9 +3,27 @@ import React, { useMemo, useState } from "react";
 import styles from "./InferenceForm.module.css";
 import MnemonicPercentageContainer from "./MnemonicPercentageContainer";
 
-import { SubmitButton, RadioButton, CheckBox } from "@/components/form";
+import { SubmitButton, RadioButton } from "@/components/form";
+import { useDataContext } from "@/contexts";
+import { PrevisionResponse } from "@/types";
 
 export default function InferenceForm() {
+  const { data } = useDataContext();
+
+  const LEMON_PERCENT: number = Math.floor(
+    (data as PrevisionResponse).lemonCF * 100
+  );
+  const MOANS_PERCENT: number = Math.floor(
+    (data as PrevisionResponse).moansCF * 100
+  );
+  const RODS_PERCENT: number = Math.floor(
+    (data as PrevisionResponse).rodsCF * 100
+  );
+  const SHORT_PERCENT: number = Math.floor(
+    (data as PrevisionResponse).shortCF * 100
+  );
+
+  //##########################################################
   type Answer = "yes" | "no" | null;
   type Step = "q1" | "q2" | "q3Vent" | "qEmergency";
 
@@ -150,30 +168,32 @@ export default function InferenceForm() {
     }
   };
 
+  //##########################################################
   return (
     <div className={styles.form}>
       <div className={styles.leftContainer}>
         <MnemonicPercentageContainer
           title="LEMON"
           description="Difficulty when doing laryngoscopy"
-          percentage={45}
+          percentage={LEMON_PERCENT}
         />
         <MnemonicPercentageContainer
           title="MOANS"
           description="Difficulty when using oxygen mask"
-          percentage={0}
+          percentage={MOANS_PERCENT}
         />
         <MnemonicPercentageContainer
           title="RODS"
           description="Difficulty when using supraglottic device"
-          percentage={20}
+          percentage={RODS_PERCENT}
         />
         <MnemonicPercentageContainer
           title="SHORT"
           description="Difficulty when executing a cricothyrotomy"
-          percentage={30}
+          percentage={SHORT_PERCENT}
         />
       </div>
+      <div className={styles.centerContainer}></div>
       <form
         className={styles.rightContainer}
         onSubmit={(e) => e.preventDefault()}

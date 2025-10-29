@@ -1,0 +1,52 @@
+.notification {
+  display: flex;
+  flex-direction: column;
+  gap: var(--micro);
+  padding: 20px 40px;
+  background-color: var(--terciary-color);
+  border-radius: var(--small-radius);
+  box-shadow: var(--basic-drop-shadow);
+
+  animation: slide-in 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.neutral {
+  color: white;
+  border: 1px solid var(--steel);
+}
+
+.negative {
+  color: rgb(216, 51, 51);
+  border: 1px solid rgb(216, 51, 51);
+}
+
+.positive {
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.title {
+  font-family: "OpenSans";
+  display: flex;
+  font-weight: 600;
+  font-size: var(--ftiny);
+}
+
+.description {
+  font-family: "OpenSans";
+  display: flex;
+  font-size: var(--fmicro);
+  color: var(--grey);
+  text-wrap-mode: nowrap;
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateX(1000px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

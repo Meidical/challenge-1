@@ -1,0 +1,11 @@
+.notificationHandler {
+  z-index: 999;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  right: 20px;
+  bottom: 100px;
+
+  /* border: 1px solid red; */
+}

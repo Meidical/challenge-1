@@ -3,10 +3,18 @@
 :- op(240, fx, regra).
 :- op(500, fy, nao).
 :- op(600, xfy, e).
+:- op(36, xfy, descricao).
 
 :- dynamic facto/3.
 :- dynamic justifica/4.
 :- dynamic ultimo_facto/2.
+
+
+mnemonica("LEMON", 0.5).
+mnemonica("MOANS", 0.2).
+mnemonica("RODS", 0.2).
+mnemonica("SHORT", 0.1).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 % Motor de inferência  %
@@ -19,19 +27,17 @@ arranca_motor(PatientID) :-
     ).
 
 arranca_motor1(PatientID, N, Facto) :-
-    contar_factos(PatientID, Cont),
+    ultimo_facto(PatientID, Cont),
     retractall(ultimo_facto(PatientID, _)),
     assertz(ultimo_facto(PatientID, Cont)),
     facto_dispara_regras1(PatientID, Facto, LRegras),
     dispara_regras(PatientID, N, Facto, LRegras).
 
-contar_factos(PatientID, Cont) :-
-    findall(X, facto(PatientID, X, _), Lista),
-    length(Lista, Cont).
-
 prox_facto(PatientID, N) :-
-    contar_factos(PatientID, Cont),
-    N is Cont + 1.
+    ultimo_facto(PatientID, N),
+    retractall(ultimo_facto(_,_)),
+    N1 is N + 1,
+    assertz(ultimo_facto(PatientID, N1)).
 
 facto_dispara_regras1(_, Facto, LRegras) :-
     facto_dispara_regras(Facto, LRegras),
@@ -130,11 +136,7 @@ inferir_via_aerea(Dict) :-
 
     assertz(facto(PatientID, 1, idade(Dict.age))),
     assertz(facto(PatientID, 2, bmi(Dict.bmi))),
-
-    assertz(facto(PatientID, 3, mnemonica("LEMON", 0.5))),
-    assertz(facto(PatientID, 4, mnemonica("MOANS", 0.2))),
-    assertz(facto(PatientID, 5, mnemonica("RODS", 0.2))),
-    assertz(facto(PatientID, 6, mnemonica("SHORT", 0.1))),
+    assertz(ultimo_facto(PatientID, 3)),
 
     assert_lista_fatores(PatientID, Dict.lemonFactors),
     assert_lista_fatores(PatientID, Dict.moansFactors),
@@ -143,13 +145,21 @@ inferir_via_aerea(Dict) :-
 
     arranca_motor(PatientID), % Inferir tipo de via aérea
 
+    % Calcular CFs individuais
     forall(
-        facto(PatientID, _, mnemonica(Nome, Peso)),
-        (   calcular_cf(PatientID, Nome, CF),
+        mnemonica(Nome, _),
+        (   
+            calcular_cf(PatientID, Nome, CF),
             prox_facto(PatientID, N),
             assertz(facto(PatientID, N, mnemonica_cf(Nome, CF)))
         )
     ),
+
+    % Calcular total de CFs
+    findall([Nome,CF], facto(PatientID, _, mnemonica_cf(Nome, CF)), CFs),
+    calcular_total_cf(CFs, Total),
+    prox_facto(PatientID, N2),
+    assertz(facto(PatientID, N2, mnemonica_cf("Total", Total))),
 
     arranca_motor(PatientID).
 
@@ -171,10 +181,8 @@ assert_fator(PatientID, Category, Code) :-
 
 get_prox_processo(PatientID, ID, Dict) :-
     prox_facto(PatientID, N),
-    format(user_output, 'N1: ~w~n', [N]),
     assertz(facto(PatientID, N, facto_pedido(ID, Dict.successful))),
 
     arranca_motor(PatientID),
-    format(user_output, 'N2: ~w~n', [N]),
     
     retractall(facto(PatientID, _, facto_pedido(_, _))).

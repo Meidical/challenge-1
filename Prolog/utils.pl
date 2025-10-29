@@ -74,6 +74,12 @@ combine_cf(CF1, CF2, CF) :-
     CF1 >= 0, CF2 >= 0,
     CF is CF1 + CF2 * (1 - CF1), !.
 
+calcular_total_cf([], 0) :- !.
+calcular_total_cf([[N,CF]|CFs], Total) :-
+    mnemonica(N, Peso),
+    calcular_total_cf(CFs, Subtotal),
+    Total is CF * Peso + Subtotal.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Obter procedimento recomendado atual
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,17 +96,15 @@ ultimo_rec_processo(PatientID, _, "Nenhum processo encontrado") :-
 
 reply_processo_json(PatientID) :-
     facto(PatientID, _, id_prox_facto(N)),
-    format(user_output, 'N: ~w~n', [N]),
     ultimo_rec_processo(PatientID, N, Rec),
-    format(user_output, 'N4: ~w~n', [Rec]),
     (   facto(PatientID, _, conclusao(true)),
         reply_json(_{
-            description: Rec, 
+            nextFactDescription: Rec, 
             conclusion: true
         })
     ;   reply_json(_{
-            description: Rec, 
+            nextFactDescription: Rec, 
             conclusion: false, 
-            idProxFacto: N
+            nextFactId: N
         })
     ).
