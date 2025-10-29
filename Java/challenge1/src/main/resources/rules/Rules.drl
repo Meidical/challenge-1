@@ -605,6 +605,11 @@ rule "Fibroscopic Intubation SUCCESS"
         $patient.addTriggeredFact($fact);
         Conclusion c = new Conclusion(Conclusion.INTUBATION);
         insert(c);
+        // Mark this fact as terminal leading to the given conclusion
+        modify($fact) {
+            setNextFactId(0),
+            setNextFactDescription(c.getDescription())
+        }
         logger.info($patient.toString());
 end
 
@@ -626,5 +631,10 @@ rule "Fibroscopic Intubation FAILED"
         $patient.addTriggeredFact($fact);
         Conclusion c = new Conclusion(Conclusion.WAKE_UP_PACIENT);
         insert(c);
+        // Mark this fact as terminal leading to the given conclusion
+        modify($fact) {
+            setNextFactId(0),
+            setNextFactDescription(c.getDescription())
+        }
         logger.info($patient.toString());
 end
