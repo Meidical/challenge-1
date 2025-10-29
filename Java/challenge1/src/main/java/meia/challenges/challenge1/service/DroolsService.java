@@ -231,7 +231,7 @@ public class DroolsService {
         session.insert(new Fact(3, "Supraglottic Device", "Supraglottic Device", Status.NOT_STARTED, 0, ""));
         session.insert(new Fact(4, "Fibroscopic Intubation", "Fibroscopic Intubation", Status.NOT_STARTED, 0, ""));
         session.insert(new Fact(5, "Emergency", "Emergency", Status.NOT_STARTED,0, ""));
-        session.insert(new Fact(6, "Seek other anesthetic airway management techniques", Status.NOT_STARTED,0, ""));
+        session.insert(new Fact(6, "Seek other anesthetic airway management techniques", "Seek other anesthetic airway management techniques", Status.NOT_STARTED,0, ""));
         session.insert(new Fact(7, "Airway with intubation", "Airway with intubation", Status.NOT_STARTED,0,""));
         session.insert(new Fact(8, "Success with intubation", "Success with intubation", Status.NOT_STARTED,0,""));
         session.insert(new Fact(9, "Planned surgery", "Planned surgery", Status.NOT_STARTED,0,""));
