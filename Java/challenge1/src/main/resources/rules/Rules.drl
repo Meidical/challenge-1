@@ -461,6 +461,8 @@ rule "Default Easy Airway Approach"
         modify($fact) {
             setStatus(Status.STARTED)
         }
+        // Record that Fact 1 was triggered for this patient
+        $patient.addTriggeredFact($fact);
         logger.info($patient.toString());
 end
 
@@ -488,6 +490,8 @@ rule "Laryngoscopy SUCCESSFUL"
         modify($fact2) {
             setStatus(Status.STARTED)
         }
+        // Record that Fact 2 was triggered for this patient
+        $patient.addTriggeredFact($fact2);
         logger.info($patient.toString());
 end
 
@@ -515,6 +519,8 @@ rule "Laryngoscopy FAILED"
         modify($fact2) {
             setStatus(Status.STARTED)
         }
+        // Record that Fact 3 was triggered for this patient
+        $patient.addTriggeredFact($fact2);
         logger.info($patient.toString());
 end
 
@@ -542,6 +548,8 @@ rule "Apllying supraglottic airway device SUCCESS"
         modify($fact2) {
             setStatus(Status.STARTED)
         }
+        // Record that Fact 4 was triggered for this patient
+        $patient.addTriggeredFact($fact2);
         logger.info($patient.toString());
 end
 
@@ -569,6 +577,8 @@ rule "Apllying supraglottic airway device FAILED"
         modify($fact2) {
             setStatus(Status.STARTED)
         }
+        // Record that Fact 5 was triggered for this patient
+        $patient.addTriggeredFact($fact2);
         logger.info($patient.toString());
 end
 
