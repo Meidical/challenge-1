@@ -111,7 +111,7 @@ reply_processo_json(PatientID) :-
     (   facto(PatientID, N1, conclusao(true)),
         reply_json(_{
             nextFactDescription: Rec, 
-            conclusion: true,
+            nextFactId: -1,
             justification_id: N1
         })
     ;   reply_json(_{
