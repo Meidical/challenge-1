@@ -139,7 +139,7 @@ regra 21
 
 regra 22
     se [avalia(mnemonica_cf("RODS", >, 0.7)) e 
-        via_aerea_dificil(true)]
+        nao via_aerea_dificil(true)]
     entao [cria_facto(via_aerea_dificil(true)), 
         cria_facto(rec_processo(4, "Consider video laryngoscopy or fiber optic intubation")),
         cria_facto(id_prox_facto(4)),
@@ -216,7 +216,7 @@ regra 31
 % Via aérea difícil previsível
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% ---------------- Alternative Technique ----------------
+
 regra 32
     se [processo("Alternative Technique", "STARTED") e 
         facto_pedido("4", true)]
@@ -242,7 +242,6 @@ regra 35
 
 
 
-% ---------------- Airway Approach ----------------
 regra 36
     se [processo("Airway Approach", "STARTED") e 
         facto_pedido("6", true)]
@@ -268,7 +267,6 @@ regra 39
 
 
 
-% ---------------- Non-invasive Technique ----------------
 regra 40
     se [processo("Non-invasive Technique", "STARTED") e 
         facto_pedido("7", true)]
@@ -294,7 +292,6 @@ regra 43
 
 
 
-% ---------------- Planned Surgery ----------------
 regra 44
     se [processo("Planned Surgery", "STARTED") e 
         facto_pedido("9", true)]
@@ -323,7 +320,6 @@ regra 47
 % Via aérea difícil não previsível
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% ---------------- Supraglotic Device ----------------
 regra 48
     se [processo("Supraglotic Device", "STARTED") e 
         facto_pedido("12", true)]
@@ -350,7 +346,6 @@ regra 51
 
 
 
-% ---------------- Fibroscopy Intubation ----------------
 regra 52
     se [processo("Fibroscopy Intubation", "STARTED") e 
         facto_pedido("13", true)]
@@ -375,7 +370,6 @@ regra 55
 
 
 
-% ---------------- Emergency Evaluation ----------------
 regra 56
     se [processo("Emergency Evaluation", "STARTED") e 
         facto_pedido("16", true)]

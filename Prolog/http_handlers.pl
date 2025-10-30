@@ -47,11 +47,29 @@ build_inferir_via_aerea_json(PatientID, JSONFinal) :-
 
     % Encontrar id do próximo processo
     facto(PatientID, _, id_prox_facto(NFacto)),
-    append(JSON3, [nextFactId=NFacto], JSONFinal),
+    append(JSON3, [nextFactId=NFacto], JSON4),
+
+    % Justificar resultados da mnemónica
+    build_justificacao_mnemonicas(PatientID, MnemonicsText),
+    append(JSON4, [justification=MnemonicsText], JSONFinal),
 
     retractall(facto(PatientID, _, id_prox_facto(_))).
 
 
+build_justificacao_mnemonicas(PatientID, FullText) :-
+    findall(N, facto(PatientID, N, mnemonica_cf(_, _)), Ns),
+    juntar_texto_mnemonicas(PatientID, Ns, "", FullText).
+
+juntar_texto_mnemonicas(_, [], Acc, Acc).
+juntar_texto_mnemonicas(PatientID, [N | Rest], Acc, FullText) :-
+    (   facto(PatientID, N, mnemonica_cf(Name, _)),
+        como_json(PatientID, N, Text)
+    ->  format(string(Header), "\n\n=== Explanation for ~w ===\n", [Name]),
+        string_concat(Acc, Header, Acc1),
+        string_concat(Acc1, Text, Acc2)
+    ;   Acc2 = Acc
+    ),
+    juntar_texto_mnemonicas(PatientID, Rest, Acc2, FullText).
 
 
 
@@ -63,7 +81,7 @@ get_explanation_json(Request) :-
         patientId(PatientID, [string])
     ]),
     como_json(PatientID, ID, JSON),
-    reply_json(JSON).
+    reply_json(json([justification=JSON])).
 
 
 
@@ -82,7 +100,27 @@ post_prox_processo(PatientIDA, IDA, Request) :-
     
     retractall(facto(PatientID, _, id_prox_facto(_))).
 
+reply_processo_json(PatientID) :-
+    facto(PatientID, _, id_prox_facto(N)),
+    ultimo_rec_processo(PatientID, N, Rec),
+    (   facto(PatientID, N1, conclusao(true)),
+        reply_json(_{
+            nextFactDescription: Rec, 
+            conclusion: true,
+            justification_id: N1
+        })
+    ;   reply_json(_{
+            nextFactDescription: Rec, 
+            conclusion: false, 
+            nextFactId: N
+        })
+    ).
 
+ultimo_rec_processo(PatientID, N, Valor) :-
+    facto(PatientID, _, rec_processo(N, Valor)).
+
+ultimo_rec_processo(PatientID, _, "Nenhum processo encontrado") :-
+    \+ facto(PatientID, _, rec_processo(_)).
 
 
 
@@ -97,6 +135,6 @@ delete_retirar_paciente(Request) :-
 
 %  HTTP DELETE para retirar todos os factos
 :- http_handler(root(api/removeAll), delete_retirar_factos, [method(delete)]).
-delete_retirar_factos(Request) :-
+delete_retirar_factos(_Request) :-
     retractall(facto(_, _, _)),
     reply_json(_{status:"Facts removed successfully"}).
