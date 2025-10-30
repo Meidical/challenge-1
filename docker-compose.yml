@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  drools:
+    image: drools:latest
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  prolog:
+    image: prolog:latest
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+
+  interface:
+    image: interface:latest
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
