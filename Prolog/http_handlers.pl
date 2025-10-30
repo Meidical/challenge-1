@@ -36,7 +36,7 @@ build_inferir_via_aerea_json(PatientID, JSONFinal) :-
     findall(Key=CF,
     (   facto(PatientID, _, mnemonica_cf(Name, CF)),
         downcase_atom(Name, LowerName),
-        atomic_list_concat([LowerName, 'Cf'], '', Key)
+        atomic_list_concat([LowerName, 'CF'], '', Key)
     ),
     JSON1),
 
