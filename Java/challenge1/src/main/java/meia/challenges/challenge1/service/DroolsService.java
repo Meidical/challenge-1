@@ -37,6 +37,7 @@ public class DroolsService {
      */
     public PatientAirwayAssessment evaluateAirwayAssessment(PatientAirwayAssessment assessment) {
         String patientId = assessment.getPatientId();
+        disposeSession(patientId);
         patientAssessments.put(patientId, assessment);
         KieSession kieSession = getOrCreateSession(patientId);
         kieSession.setGlobal("logger", logger);
@@ -226,6 +227,7 @@ public class DroolsService {
      * @param session the KieSession where facts will be inserted
      */
     public void insertFact(KieSession session) {
+
         session.insert(new Fact(1, "Direct Laryngoscopy", "Direct Laryngoscopy", Status.NOT_STARTED, 0, ""));
         session.insert(new Fact(2, "Facial Mask Ventilation", "Facial Mask Ventilation", Status.NOT_STARTED, 0, ""));
         session.insert(new Fact(3, "Supraglottic Device", "Supraglottic Device", Status.NOT_STARTED, 0, ""));
