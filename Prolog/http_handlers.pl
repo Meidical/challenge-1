@@ -33,7 +33,12 @@ post_inferir_via_aerea(Request) :-
 build_inferir_via_aerea_json(PatientID, JSONFinal) :-
 
     % Encontrar CFs para cada mnemónica
-    findall(Name=CF, facto(PatientID, _, mnemonica_cf(Name, CF)), JSON1),
+    findall(Key=CF,
+    (   facto(PatientID, _, mnemonica_cf(Name, CF)),
+        downcase_atom(Name, LowerName),
+        atomic_list_concat([LowerName, 'Cf'], '', Key)
+    ),
+    JSON1),
 
     (   facto(PatientID, _, via_aerea_dificil(true)),
         append(JSON1, [difficultAirwayPredicted=true], JSON2)
