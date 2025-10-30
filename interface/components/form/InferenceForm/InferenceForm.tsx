@@ -19,6 +19,7 @@ export default function InferenceForm() {
   const {
     data,
     instructionData,
+    // resetInstructionData,
     isLoading,
     setIsLoading,
     currentAddress,
@@ -29,7 +30,6 @@ export default function InferenceForm() {
   const { pushNotification } = useNotificationContext();
 
   const requestBody = useRef<InstructionPost>({
-    nextFactId: instructionData.nextFactId,
     status: null,
   });
 
@@ -47,22 +47,22 @@ export default function InferenceForm() {
   );
 
   const setAnswer = (isTrue: boolean) => {
-    requestBody.current.status = isTrue ? "SUCCESSFULL" : "FAILED";
+    requestBody.current.status = isTrue ? "SUCCESSFUL" : "FAILED";
     console.log(requestBody.current);
   };
 
   async function postData() {
-    // resetInstructionData ?
     setIsLoading(true);
     await Delay(500);
-    const url = `${currentAddress.current}/assessment`;
+    const patientID = "1";
+    const url = `${currentAddress.current}/assessment/${patientID}/facts/${instructionData.nextFactId}`;
     try {
       const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify("requestBody.current"),
+        body: JSON.stringify(requestBody.current),
       });
 
       if (!response.ok) {
@@ -71,6 +71,7 @@ export default function InferenceForm() {
 
       const result = await response.json();
 
+      // resetInstructionData();
       setInstructionData(result as InstructionResponse);
       console.log(result);
 
@@ -124,20 +125,24 @@ export default function InferenceForm() {
       </div>
       <form className={styles.rightContainer} onSubmit={(e) => submitForm(e)}>
         <span className={styles.questionText}>
-          {`${instructionData.nextFactDescription} was successful?`}
+          {instructionData &&
+            `nextFactDescription: ${instructionData.nextFactDescription} was successful?`}
         </span>
         <span className={styles.questionText}>
-          {instructionData.recommendedApproach}
+          {`recommendedApproach: ${
+            instructionData && instructionData.recommendedApproach
+          } was successful?`}
         </span>
+        <span className={styles.radiogroupTitle}>Status of Procedure</span>
         <div className={styles.radiogroup}>
           <RadioButton
-            label="Yes"
+            label="Successful"
             className="flex"
             name="question_response"
             onChange={() => setAnswer(true)}
           />
           <RadioButton
-            label="No"
+            label="Failed"
             className="flex"
             name="question_response"
             onChange={() => setAnswer(false)}

@@ -16,8 +16,8 @@ export type PrevisionResponse = {
 };
 
 export type InstructionPost = {
-  nextFactId: number;
-  status: "SUCCESSFULL" | "FAILED" | boolean | null;
+  // nextFactId: number;
+  status: "SUCCESSFUL" | "FAILED" | boolean | null;
 };
 
 export type InstructionResponse = {

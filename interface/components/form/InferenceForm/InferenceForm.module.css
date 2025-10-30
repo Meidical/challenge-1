@@ -38,6 +38,14 @@
   color: white;
 }
 
+.radiogroupTitle {
+  font-family: "OpenSans";
+  display: flex;
+  font-size: var(--fmicro);
+  color: var(--steel);
+  text-wrap-mode: nowrap;
+}
+
 .radiogroup {
   display: flex;
   flex-direction: row;
