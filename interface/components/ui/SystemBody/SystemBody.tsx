@@ -25,8 +25,8 @@ export default function SystemBody() {
       <Notification
         title="Engine Switched"
         description={`Rule engine changed to ${
-          switched ? "DROOLS" : "PROLOG"
-        }!`}
+          switched ? "Drools" : "Prolog"
+        }.`}
         durationInMs={4000}
       />
     );
@@ -48,10 +48,10 @@ export default function SystemBody() {
       <div className={styles.systemBar}>
         <Image
           className={styles.logo}
-          src="/assets/svgs/dap-logo-abreviated.svg"
-          alt="Dap Logo"
-          width={1131}
-          height={740}
+          src="/assets/svgs/dap-logomark.svg"
+          alt="Dap Logomark"
+          width={509}
+          height={733}
         />
         <div className="row gap-md">
           <SwitchButton

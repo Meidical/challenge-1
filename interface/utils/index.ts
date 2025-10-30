@@ -1,1 +1,1 @@
-export { default as Delay } from "./delay";
+export { default as Delay } from "./Delay";

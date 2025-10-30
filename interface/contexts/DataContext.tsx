@@ -98,11 +98,18 @@ export const useDataContext = () => {
 
   const fullReset = () => {
     setIsPredictionDone(false);
+    setInstructionData(null);
     resetData();
   };
 
   const resetData = () => {
     setData(null);
+    setIsLoading(false);
+    setIsSuccess(false);
+    setIsError(false);
+  };
+
+  const resetInstructionData = () => {
     setInstructionData(null);
     setIsLoading(false);
     setIsSuccess(false);
@@ -115,6 +122,7 @@ export const useDataContext = () => {
     setIsPredictionDone,
     currentAddress,
     resetData,
+    resetInstructionData,
     data,
     setData,
     instructionData,
