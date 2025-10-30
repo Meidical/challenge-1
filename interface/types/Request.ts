@@ -17,8 +17,7 @@ export type PrevisionResponse = {
 
 export type InstructionPost = {
   nextFactId: number;
-  nextFactDescription: string;
-  recommendedApproach: string;
+  status: "SUCCESSFULL" | "FAILED" | boolean | null;
 };
 
 export type InstructionResponse = {
