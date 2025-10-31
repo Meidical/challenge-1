@@ -1,4 +1,4 @@
-const PROLOG_ADDRESS = "http://localhost:8000";
+const PROLOG_ADDRESS = "http://localhost:8081/api";
 const DROLLS_ADDRESS = "http://localhost:8080/api";
 
 type SystemAddressType = "PROLOG" | "DROLLS";

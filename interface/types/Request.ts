@@ -13,16 +13,15 @@ export type PrevisionResponse = {
   rodsCF: number;
   shortCF: number;
   difficultAirwayPredicted: boolean;
-  recommendedApproach: string;
-  nextFactId: number;
 };
 
 export type InstructionPost = {
-  factId: number;
-  value: boolean;
+  // nextFactId: number;
+  status: "SUCCESSFUL" | "FAILED" | boolean | null;
 };
 
 export type InstructionResponse = {
   nextFactId: number;
+  nextFactDescription: string;
   recommendedApproach: string;
 };

@@ -79,32 +79,3 @@ calcular_total_cf([[N,CF]|CFs], Total) :-
     mnemonica(N, Peso),
     calcular_total_cf(CFs, Subtotal),
     Total is CF * Peso + Subtotal.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Obter procedimento recomendado atual
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-ultimo_rec_processo(PatientID, N, Valor) :-
-    facto(PatientID, _, rec_processo(N, Valor)).
-
-ultimo_rec_processo(PatientID, _, "Nenhum processo encontrado") :-
-    \+ facto(PatientID, _, rec_processo(_)).
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Responder com JSON do processo
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-reply_processo_json(PatientID) :-
-    facto(PatientID, _, id_prox_facto(N)),
-    ultimo_rec_processo(PatientID, N, Rec),
-    (   facto(PatientID, _, conclusao(true)),
-        reply_json(_{
-            nextFactDescription: Rec, 
-            conclusion: true
-        })
-    ;   reply_json(_{
-            nextFactDescription: Rec, 
-            conclusion: false, 
-            nextFactId: N
-        })
-    ).

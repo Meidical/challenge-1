@@ -462,6 +462,8 @@ rule "Default Easy Airway Approach"
         modify($fact) {
             setStatus(Status.STARTED)
         }
+        // Record that Fact 1 was triggered for this patient
+        $patient.addTriggeredFact($fact);
         logger.info($patient.toString());
 end
 
@@ -490,6 +492,8 @@ rule "Laryngoscopy SUCCESSFUL"
         modify($fact2) {
             setStatus(Status.STARTED)
         }
+        // Record that Fact 2 was triggered for this patient
+        $patient.addTriggeredFact($fact2);
         logger.info($patient.toString());
 end
 
@@ -513,11 +517,13 @@ rule "Laryngoscopy FAILED"
         }
         modify($fact) {
             setNextFactId(3),
-            setNextFactDescription($fact.getDescription())
+            setNextFactDescription($fact2.getDescription())
         }
         modify($fact2) {
             setStatus(Status.STARTED)
         }
+        // Record that Fact 3 was triggered for this patient
+        $patient.addTriggeredFact($fact2);
         logger.info($patient.toString());
 end
 
@@ -541,11 +547,13 @@ rule "Apllying supraglottic airway device SUCCESS"
         }
         modify($fact) {
             setNextFactId(4),
-            setNextFactDescription($fact.getDescription())
+            setNextFactDescription($fact2.getDescription())
         }
         modify($fact2) {
             setStatus(Status.STARTED)
         }
+        // Record that Fact 4 was triggered for this patient
+        $patient.addTriggeredFact($fact2);
         logger.info($patient.toString());
 end
 
@@ -569,11 +577,13 @@ rule "Apllying supraglottic airway device FAILED"
         }
         modify($fact) {
             setNextFactId(5),
-            setNextFactDescription($fact.getDescription())
+            setNextFactDescription($fact2.getDescription())
         }
         modify($fact2) {
             setStatus(Status.STARTED)
         }
+        // Record that Fact 5 was triggered for this patient
+        $patient.addTriggeredFact($fact2);
         logger.info($patient.toString());
 end
 
@@ -591,8 +601,15 @@ rule "Fibroscopic Intubation SUCCESS"
         modify($patient) {
             setRecommendedApproach("Intubation")
         }
+        // Record the Conclusion
+        $patient.addTriggeredFact($fact);
         Conclusion c = new Conclusion(Conclusion.INTUBATION);
         insert(c);
+        // Mark this fact as terminal leading to the given conclusion
+        modify($fact) {
+            setNextFactId(0),
+            setNextFactDescription(c.getDescription())
+        }
         logger.info($patient.toString());
 end
 
@@ -610,8 +627,15 @@ rule "Fibroscopic Intubation FAILED"
         modify($patient) {
             setRecommendedApproach("Intubation")
         }
+        // Record the Conclusion
+        $patient.addTriggeredFact($fact);
         Conclusion c = new Conclusion(Conclusion.WAKE_UP_PACIENT);
         insert(c);
+        // Mark this fact as terminal leading to the given conclusion
+        modify($fact) {
+            setNextFactId(0),
+            setNextFactDescription(c.getDescription())
+        }
         logger.info($patient.toString());
 end
 

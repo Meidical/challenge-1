@@ -11,6 +11,7 @@ type SwitchButtonProps = {
   onChange?: (switched: boolean) => void;
   switchIconLeft?: IconName;
   switchIconRight?: IconName;
+  disabled?: boolean;
 };
 
 export default function SwitchButton({
@@ -21,6 +22,7 @@ export default function SwitchButton({
   onChange = () => {},
   switchIconLeft = "prolog",
   switchIconRight = "drools",
+  disabled = false,
 }: SwitchButtonProps) {
   const [isSwitched, setIsSwitched] = React.useState(switched);
 
@@ -30,7 +32,7 @@ export default function SwitchButton({
   };
 
   return (
-    <div className={styles.wrapper}>
+    <div className={disabled ? styles.disabled : styles.wrapper}>
       <span className={isSwitched ? styles.textInactive : styles.textActive}>
         {textLeft}
       </span>

@@ -7,7 +7,23 @@ facto_dispara_regras(fator(_, _), Regras1) :- numlist(1, 19, Regras1).
 facto_dispara_regras(mnemonica_cf(_, _), Regras2) :- numlist(20, 23, Regras2).
 facto_dispara_regras(facto_pedido("1", _), [24, 26]).
 facto_dispara_regras(facto_pedido("2", _), [28, 30]).
-facto_dispara_regras(processo(_, _), [25,27,29,31]).
+facto_dispara_regras(facto_pedido("4", _), [32, 33]).
+facto_dispara_regras(processo("Alternative Technique", _), [34, 35]).
+facto_dispara_regras(facto_pedido("6", _), [36, 37]).
+facto_dispara_regras(processo("Airway Approach", _), [38, 39]).
+facto_dispara_regras(facto_pedido("7", _), [40, 41]).
+facto_dispara_regras(processo("Non-invasive Technique", _), [42, 43]).
+facto_dispara_regras(facto_pedido("9", _), [44, 45]).
+facto_dispara_regras(processo("Planned Surgery", _), [46, 47]).
+facto_dispara_regras(facto_pedido("12", _), [48, 49]).
+facto_dispara_regras(processo("Supraglotic Device", _), [50, 51]).
+facto_dispara_regras(facto_pedido("13", _), [52, 53]).
+facto_dispara_regras(processo("Fibroscopy Intubation", _), [54, 55]).
+facto_dispara_regras(facto_pedido("16", _), [56, 57]).
+facto_dispara_regras(processo("Emergency Evaluation", _), [58, 59]).
+facto_dispara_regras(processo(_, _), [25, 27, 29, 31]).
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % LEMON
@@ -110,21 +126,24 @@ regra 20
         nao via_aerea_dificil(true)]
     entao [cria_facto(via_aerea_dificil(true)), 
         cria_facto(rec_processo(4, "Consider alternative techniques to direct laryngoscopy")),
-        cria_facto(id_prox_facto(4))].
+        cria_facto(id_prox_facto(4)),
+        cria_facto(processo("Alternative Technique", "STARTED"))].
 
 regra 21
     se [avalia(mnemonica_cf("MOANS", >, 0.7)) e 
         nao via_aerea_dificil(true)]
     entao [cria_facto(via_aerea_dificil(true)), 
         cria_facto(rec_processo(4, "Consider alternative ventilation techniques")),
-        cria_facto(id_prox_facto(4))].
+        cria_facto(id_prox_facto(4)),
+        cria_facto(processo("Alternative Technique", "STARTED"))].
 
 regra 22
     se [avalia(mnemonica_cf("RODS", >, 0.7)) e 
-        via_aerea_dificil(true)]
+        nao via_aerea_dificil(true)]
     entao [cria_facto(via_aerea_dificil(true)), 
         cria_facto(rec_processo(4, "Consider video laryngoscopy or fiber optic intubation")),
-        cria_facto(id_prox_facto(4))].
+        cria_facto(id_prox_facto(4)),
+        cria_facto(processo("Alternative Technique", "STARTED"))].
 
 regra 23
     se [avalia(mnemonica_cf("LEMON", <, 0.7)) e 
@@ -194,91 +213,181 @@ regra 31
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Via aérea dificil previsível
+% Via aérea difícil previsível
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-regra 32 % Procurar outra técnica
-    se [facto_pedido("4", true)]
-    entao [cria_facto(id_prox_facto(5)),
-        cria_facto(rec_processo(5, "Proceed with alternative technique")),
-        cria_facto(conclusao(true))].
+regra 32
+    se [processo("Alternative Technique", "STARTED") e 
+        facto_pedido("4", true)]
+    entao [cria_facto(processo("Alternative Technique", "SUCCESSFUL"))].
 
 regra 33
-    se [facto_pedido("4", false)]
-    entao [cria_facto(id_prox_facto(6)),
-    cria_facto(rec_processo(6, "Airway approach with intubation"))].
+    se [processo("Alternative Technique", "STARTED") e 
+        facto_pedido("4", false)]
+    entao [cria_facto(processo("Alternative Technique", "FAILED"))].
 
 regra 34
-    se [facto_pedido("6", true)]
-    entao [cria_facto(id_prox_facto(7)),
-    cria_facto(rec_processo(7, "Non-invasive technique"))].
+    se [processo("Alternative Technique", "SUCCESSFUL")]
+    entao [cria_facto(rec_processo(5, "Proceed with alternative technique")),
+        cria_facto(id_prox_facto(5)),
+        cria_facto(conclusao(true))].
 
 regra 35
-    se [facto_pedido("6", false)]
-    entao [cria_facto(rec_processo(11, "Invasive technique (Cricothyrotomy)")),
-    cria_facto(id_prox_facto(11)),
-    cria_facto(conclusao(true))].
+    se [processo("Alternative Technique", "FAILED") e
+        nao processo("Airway Approach", "STARTED")]
+    entao [cria_facto(rec_processo(6, "Airway approach with intubation")),
+        cria_facto(id_prox_facto(6)),
+        cria_facto(processo("Airway Approach", "STARTED"))].
+
+
 
 regra 36
-    se [facto_pedido("7", true)]
-    entao [cria_facto(rec_processo(8, "Administer general anaesthesia")),
-    cria_facto(id_prox_facto(8)),
-    cria_facto(conclusao(true))].
+    se [processo("Airway Approach", "STARTED") e 
+        facto_pedido("6", true)]
+    entao [cria_facto(processo("Airway Approach", "SUCCESSFUL"))].
 
 regra 37
-    se [facto_pedido("7", false)]
-    entao [cria_facto(rec_processo(9, "Planned surgery?")),
-    cria_facto(id_prox_facto(9))].
+    se [processo("Airway Approach", "STARTED") e 
+        facto_pedido("6", false)]
+    entao [cria_facto(processo("Airway Approach", "FAILED"))].
 
 regra 38
-    se [facto_pedido("9", true)]
-    entao [cria_facto(rec_processo(10, "Cancel procedure")),
-    cria_facto(id_prox_facto(10))].
+    se [processo("Airway Approach", "SUCCESSFUL") e
+        nao processo("Non-invasive Technique", "STARTED")]
+    entao [cria_facto(rec_processo(7, "Non-invasive technique")),
+        cria_facto(id_prox_facto(7)),
+        cria_facto(processo("Non-invasive Technique", "STARTED"))].
 
 regra 39
-    se [facto_pedido("9", false)]
+    se [processo("Airway Approach", "FAILED")]
     entao [cria_facto(rec_processo(11, "Invasive technique (Cricothyrotomy)")),
-    cria_facto(id_prox_facto(11)),
-    cria_facto(conclusao(true))].
+        cria_facto(id_prox_facto(11)),
+        cria_facto(conclusao(true))].
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Via aérea dificil não previsível
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 regra 40
-    se [facto_pedido("12", true)]
-    entao [cria_facto(rec_processo(13, "Fibroscopy intubation")),
-    cria_facto(id_prox_facto(13))].
+    se [processo("Non-invasive Technique", "STARTED") e 
+        facto_pedido("7", true)]
+    entao [cria_facto(processo("Non-invasive Technique", "SUCCESSFUL"))].
 
 regra 41
-    se [facto_pedido("12", false)]
-    entao [cria_facto(rec_processo(16, "Oxygenate and ventilate. Is the situation an emergency?")),
-    cria_facto(id_prox_facto(16))].
+    se [processo("Non-invasive Technique", "STARTED") e 
+        facto_pedido("7", false)]
+    entao [cria_facto(processo("Non-invasive Technique", "FAILED"))].
 
 regra 42
-    se [facto_pedido("13", true)]
-    entao [cria_facto(rec_processo(14, "Intubate")),
-    cria_facto(id_prox_facto(14)),
-    cria_facto(conclusao(true))].
+    se [processo("Non-invasive Technique", "SUCCESSFUL")]
+    entao [cria_facto(rec_processo(8, "Administer general anaesthesia")),
+        cria_facto(id_prox_facto(8)),
+        cria_facto(conclusao(true))].
 
 regra 43
-    se [facto_pedido("13", false)]
-    entao [cria_facto(rec_processo(15, "Wake up patient")),
-    cria_facto(id_prox_facto(15)),
-    cria_facto(conclusao(true))].
+    se [processo("Non-invasive Technique", "FAILED") e
+        nao processo("Planned Surgery", "STARTED")]
+    entao [cria_facto(rec_processo(9, "Planned surgery?")),
+        cria_facto(id_prox_facto(9)),
+        cria_facto(processo("Planned Surgery", "STARTED"))].
+
+
 
 regra 44
-    se [facto_pedido("16", true)]
-    entao [cria_facto(rec_processo(11, "Invasive technique (Cricothyrotomy)")),
-    cria_facto(id_prox_facto(11)),
-    cria_facto(conclusao(true))].
+    se [processo("Planned Surgery", "STARTED") e 
+        facto_pedido("9", true)]
+    entao [cria_facto(processo("Planned Surgery", "SUCCESSFUL"))].
 
 regra 45
-    se [facto_pedido("16", false)]
+    se [processo("Planned Surgery", "STARTED") e 
+        facto_pedido("9", false)]
+    entao [cria_facto(processo("Planned Surgery", "FAILED"))].
+
+regra 46
+    se [processo("Planned Surgery", "SUCCESSFUL")]
+    entao [cria_facto(rec_processo(10, "Cancel procedure")),
+        cria_facto(id_prox_facto(10)),
+        cria_facto(conclusao(true))].
+
+regra 47
+    se [processo("Planned Surgery", "FAILED")]
+    entao [cria_facto(rec_processo(11, "Invasive technique (Cricothyrotomy)")),
+        cria_facto(id_prox_facto(11)),
+        cria_facto(conclusao(true))].
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Via aérea difícil não previsível
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+regra 48
+    se [processo("Supraglotic Device", "STARTED") e 
+        facto_pedido("12", true)]
+    entao [cria_facto(processo("Supraglotic Device", "SUCCESSFUL"))].
+
+regra 49
+    se [processo("Supraglotic Device", "STARTED") e 
+        facto_pedido("12", false)]
+    entao [cria_facto(processo("Supraglotic Device", "FAILED"))].
+
+regra 50
+    se [processo("Supraglotic Device", "SUCCESSFUL") e
+        nao processo("Fibroscopy Intubation", "STARTED")]
+    entao [cria_facto(rec_processo(13, "Fibroscopy intubation")),
+        cria_facto(id_prox_facto(13)),
+        cria_facto(processo("Fibroscopy Intubation", "STARTED"))].
+
+regra 51
+    se [processo("Supraglotic Device", "FAILED") e
+        nao processo("Emergency Evaluation", "STARTED")]
+    entao [cria_facto(rec_processo(16, "Oxygenate and ventilate. Is the situation an emergency?")),
+        cria_facto(id_prox_facto(16)),
+        cria_facto(processo("Emergency Evaluation", "STARTED"))].
+
+
+
+regra 52
+    se [processo("Fibroscopy Intubation", "STARTED") e 
+        facto_pedido("13", true)]
+    entao [cria_facto(processo("Fibroscopy Intubation", "SUCCESSFUL"))].
+
+regra 53
+    se [processo("Fibroscopy Intubation", "STARTED") e 
+        facto_pedido("13", false)]
+    entao [cria_facto(processo("Fibroscopy Intubation", "FAILED"))].
+
+regra 54
+    se [processo("Fibroscopy Intubation", "SUCCESSFUL")]
+    entao [cria_facto(rec_processo(14, "Intubate")),
+        cria_facto(id_prox_facto(14)),
+        cria_facto(conclusao(true))].
+
+regra 55
+    se [processo("Fibroscopy Intubation", "FAILED")]
     entao [cria_facto(rec_processo(15, "Wake up patient")),
-    cria_facto(id_prox_facto(15)),
-    cria_facto(conclusao(true))].
+        cria_facto(id_prox_facto(15)),
+        cria_facto(conclusao(true))].
+
+
+
+regra 56
+    se [processo("Emergency Evaluation", "STARTED") e 
+        facto_pedido("16", true)]
+    entao [cria_facto(processo("Emergency Evaluation", "SUCCESSFUL"))].
+
+regra 57
+    se [processo("Emergency Evaluation", "STARTED") e 
+        facto_pedido("16", false)]
+    entao [cria_facto(processo("Emergency Evaluation", "FAILED"))].
+
+regra 58
+    se [processo("Emergency Evaluation", "SUCCESSFUL")]
+    entao [cria_facto(rec_processo(11, "Invasive technique (Cricothyrotomy)")),
+        cria_facto(id_prox_facto(11)),
+        cria_facto(conclusao(true))].
+
+regra 59
+    se [processo("Emergency Evaluation", "FAILED")]
+    entao [cria_facto(rec_processo(15, "Wake up patient")),
+        cria_facto(id_prox_facto(15)),
+        cria_facto(conclusao(true))].

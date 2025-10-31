@@ -1,7 +1,15 @@
-.wrapper {
+.wrapper,
+.disabled {
   display: flex;
   gap: var(--tiny);
   align-items: center;
+}
+
+.disabled {
+  opacity: 0.7;
+  transform-origin: center;
+  pointer-events: none;
+  user-select: none;
 }
 
 .switch,

@@ -1,0 +1,51 @@
+.daPredictionContainer,
+.daPredictionContainerPositive {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  height: fit-content;
+  padding: 10px;
+  align-items: baseline;
+  justify-content: space-between;
+
+  border-radius: var(--small-radius);
+}
+
+.daPredictionContainer {
+  color: var(--grey);
+  border: solid 1px var(--terciary-color);
+}
+
+.daPredictionContainerPositive {
+  border: solid 1px var(--primary-color);
+}
+
+/* .descriptionText {
+  font-family: "OpenSans";
+  display: flex;
+  font-weight: 600;
+  font-size: var(--ftiny);
+  color: white;
+} */
+
+.descriptionText {
+  font-family: "OpenSans";
+  display: flex;
+  font-size: var(--fmicro);
+  color: var(--steel);
+}
+
+.isDaText {
+  font-family: "OpenSans";
+  display: flex;
+  font-weight: 600;
+  font-size: var(--fsm);
+  /* color: white; */
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: last baseline;
+}

@@ -1,94 +1,104 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Geração de explicações do tipo "Como"
 
-como_json(PatientID, N, JSON) :-
+como_json(PatientID, N, TextStr) :-
+    % retrieve airway difficulty status once
+    (   once(facto(PatientID, _, via_aerea_dificil(Status)))
+    ->  true
+    ;   Status = unknown
+    ),
     with_output_to(atom(TextAtom),
-        (   (   como(PatientID, N)
-            ->  true                   % printed successfully
-            ;   true                   % printed nothing, still succeed
+        (   (   como(PatientID, N, 0, Status)
+            ->  true
+            ;   true
             )
         )
     ),
-    atom_string(TextAtom, TextStr),
-    JSON = json([justification=TextStr]).
+    atom_string(TextAtom, TextStr).
 
-
-% Caso base
-como(PatientID, N) :-
-    como(PatientID, N, 0).
+% Caso base (4-arg version)
+como(PatientID, N, Status) :-
+    como(PatientID, N, 0, Status).
 
 % Caso o facto não exista
-como(PatientID, N, _) :-
+como(PatientID, N, _, _) :-
     ultimo_facto(PatientID, Last),
     Last < N, !,
-    nl, write('Essa conclusão não foi tirada.'), nl, nl.
+    nl, write('That conclusion was not yet reached.'), nl, nl.
 
 % Caso o facto seja derivado
-como(PatientID, N, Depth) :-
+como(PatientID, N, Depth, Status) :-
     justifica(PatientID, N, RegraID, LFactos), !,
     facto(PatientID, N, F),
     F =.. [Pred | Args],
     junta_argumentos(Args, ArgsStr),
     tab(Depth * 2),
-    format('Conclusion: ~w ~w was obtained by rule ~w because~n', [Pred, ArgsStr, RegraID]),
+    format('[~w] (rule ~w) -> ~n', [ArgsStr, RegraID]),
     NextDepth is Depth + 1,
-    explica(PatientID, LFactos, NextDepth),
+    explica(PatientID, LFactos, NextDepth, Status),
 
-    % ALSO show mnemonic factors when the derived fact is a mnemonica_cf(Name, CF)
     (   Pred == mnemonica_cf,
         Args = [Mnemonica, _CF]
-    ->  mostra_fatores(PatientID, Mnemonica, NextDepth)
+    ->  
+        tab(NextDepth * 2),
+        (   Status == true ->
+            write('Airway assessment: difficult'), nl
+        ;   Status == false ->
+            write('Airway assessment: normal'), nl
+        ;   true
+        ),
+        mostra_fatores(PatientID, Mnemonica, NextDepth)
     ;   true
     ).
 
 % Caso o facto seja inicial
-como(PatientID, N, Depth) :-
+como(PatientID, N, Depth, Status) :-
     facto(PatientID, N, F),
     F =.. [Pred | Args],
     junta_argumentos(Args, ArgsStr),
     tab(Depth * 2),
     format('~w = ~w~n', [Pred, ArgsStr]),
 
-    % Caso o predicado seja mnemonica_cf então explicar fatores
     (   Pred == mnemonica_cf,
         Args = [Mnemonica, _CF]
-    ->  NextDepth is Depth + 1,
-        mostra_fatores(PatientID, Mnemonica, NextDepth)
+    ->  
+        tab((Depth + 1) * 2),
+        (   Status == true ->
+            write('Airway assessment: difficult'), nl
+        ;   Status == false ->
+            write('Airway assessment: normal'), nl
+        ;   true
+        ),
+        mostra_fatores(PatientID, Mnemonica, Depth + 1)
     ;   true
     ).
 
-
-explica(_, [], _).
-explica(PatientID, [I | R], Depth) :-
+explica(_, [], _, _).
+explica(PatientID, [I | R], Depth, Status) :-
     integer(I), !,
-    como(PatientID, I, Depth),
-    explica(PatientID, R, Depth).
-
-explica(PatientID, [_ | R], Depth) :-
-    explica(PatientID, R, Depth).
-
+    como(PatientID, I, Depth, Status),
+    explica(PatientID, R, Depth, Status).
+    
+explica(PatientID, [_ | R], Depth, Status) :-
+    explica(PatientID, R, Depth, Status).
 
 % Obter todos os fatores de cada mnemonica
 mostra_fatores(PatientID, Mnemonica0, Depth) :-
     term_to_atom(Mnemonica0, Mn),
-    
     findall(Let-Val,
-        (   facto(PatientID, _,
-                fator(MnX, [Let, Val])),
+        (   facto(PatientID, _, fator(MnX, [Let, Val])),
             term_to_atom(MnX, Mn)
         ),
-        RawPairs),
-    sort(RawPairs, Pairs),
+        Pairs),
     forall(member(Let-Val, Pairs),
         (   tab(Depth * 4),
             format('~w -> ~w~n', [Let, Val])
         )).
 
-
 % Obter lista de argumentos no caso dos fatores
 junta_argumentos(Argumentos, TextoSaida) :-
     maplist(arg_para_texto, Argumentos, ListaAtomos),
-    atomic_list_concat(ListaAtomos, ' ', TextoSaida).
+    atomic_list_concat(ListaAtomos, ' = ', TextoSaida).
 
 arg_para_texto(Arg, Texto) :-
     (   is_list(Arg)
@@ -97,6 +107,7 @@ arg_para_texto(Arg, Texto) :-
         format(atom(Texto), '[~w]', [InternosTxt])
     ;   term_to_atom(Arg, Texto)
     ).
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,14 +1,36 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useRef } from "react";
 import styles from "./InferenceForm.module.css";
 import MnemonicPercentageContainer from "./MnemonicPercentageContainer";
 
 import { SubmitButton, RadioButton } from "@/components/form";
-import { useDataContext } from "@/contexts";
-import { PrevisionResponse } from "@/types";
+import { useDataContext, useNotificationContext } from "@/contexts";
+import {
+  InstructionPost,
+  InstructionResponse,
+  PrevisionResponse,
+} from "@/types";
+import DaPredictionContainer from "./DaPredictionContainer";
+import JustificationContainer from "./JustificationContainer";
+import { Delay } from "@/utils";
+import { Notification } from "@/components/feedback";
 
 export default function InferenceForm() {
-  const { data } = useDataContext();
+  const {
+    data,
+    instructionData,
+    isLoading,
+    setIsLoading,
+    currentAddress,
+    setInstructionData,
+    setIsSuccess,
+    setIsError,
+  } = useDataContext();
+  const { pushNotification } = useNotificationContext();
+
+  const requestBody = useRef<InstructionPost>({
+    status: null,
+  });
 
   const LEMON_PERCENT: number = Math.floor(
     (data as PrevisionResponse).lemonCF * 100
@@ -23,152 +45,54 @@ export default function InferenceForm() {
     (data as PrevisionResponse).shortCF * 100
   );
 
-  //##########################################################
-  type Answer = "yes" | "no" | null;
-  type Step = "q1" | "q2" | "q3Vent" | "qEmergency";
-
-  const [answers, setAnswers] = useState<{
-    q1: Answer;
-    q2: Answer;
-    q3Vent: Answer;
-    qEmergency: Answer;
-  }>({
-    q1: null,
-    q2: null,
-    q3Vent: null,
-    qEmergency: null,
-  });
-  const [step, setStep] = useState<Step>("q1");
-  const [finalOutcome, setFinalOutcome] = useState<string | null>(null);
-  const [intermediateNote, setIntermediateNote] = useState<string | null>(null);
-
-  const questionLabel = useMemo(() => {
-    switch (step) {
-      case "q1":
-        return "Laringoscopia foi difícil?";
-      case "q2":
-        return "Possível entubar?";
-      case "q3Vent":
-        return "Foi possível ventilar?";
-      case "qEmergency":
-        return "É uma emergência?";
-    }
-  }, [step]);
-
-  const procedureLabel = useMemo(() => {
-    switch (step) {
-      case "q1":
-        return "Procedimento: Laringoscopia";
-      case "q2":
-        return "Procedimento: SUPRAGLÓTICO";
-      case "q3Vent":
-        return "Procedimento: Fibroscopia intubação";
-      case "qEmergency":
-        return "Procedimento: SUPRAGLÓTICO";
-    }
-  }, [step]);
-
-  const stepsOrder: Step[] = useMemo(() => {
-    if (answers.q1 !== "yes") return ["q1"]; // ends after q1 if 'no'
-    if (answers.q2 === null) return ["q1", "q2"]; // haven't decided yet
-    if (answers.q2 === "yes") return ["q1", "q2", "q3Vent"]; // ventilation path
-    return ["q1", "q2", "qEmergency"]; // emergency path
-  }, [answers.q1, answers.q2]);
-
-  const stepIndex = stepsOrder.indexOf(step);
-  const currentAnswer = answers[step];
-
-  const handleAnswer = (value: Exclude<Answer, null>) => {
-    if (finalOutcome) return;
-
-    switch (step) {
-      case "q1": {
-        const q1 = value;
-        setAnswers({ q1, q2: null, q3Vent: null, qEmergency: null });
-        setIntermediateNote(null);
-        if (q1 === "no") {
-          setFinalOutcome("Sequência concluída.");
-          setStep("q1");
-        } else {
-          setStep("q2");
-        }
-        break;
-      }
-      case "q2": {
-        const q2 = value;
-        setAnswers((prev) => ({ ...prev, q2, q3Vent: null, qEmergency: null }));
-        if (q2 === "no") {
-          setIntermediateNote("Oxigenar e ventilar.");
-          setStep("qEmergency");
-        } else {
-          setIntermediateNote(null);
-          setStep("q3Vent");
-        }
-        break;
-      }
-      case "q3Vent": {
-        const q3Vent = value;
-        setAnswers((prev) => ({ ...prev, q3Vent }));
-        setFinalOutcome(
-          q3Vent === "yes"
-            ? "Tente entubar o paciente."
-            : "Tentar acordar o paciente."
-        );
-        break;
-      }
-      case "qEmergency": {
-        const qEmergency = value;
-        setAnswers((prev) => ({ ...prev, qEmergency }));
-        setFinalOutcome(
-          qEmergency === "yes"
-            ? "Técnica Invasiva (Cricotirotomia)."
-            : "Acordar o paciente."
-        );
-        break;
-      }
-    }
+  const setAnswer = (isTrue: boolean) => {
+    requestBody.current.status = isTrue ? "SUCCESSFUL" : "FAILED";
+    // console.log(requestBody.current);
   };
 
-  const handleBack = () => {
-    if (finalOutcome) {
-      setFinalOutcome(null);
-      // Return to last step based on current answers
-      if (answers.q1 !== "yes") {
-        setStep("q1");
-      } else if (answers.q2 === "yes") {
-        setStep("q3Vent");
-      } else {
-        setStep("qEmergency");
-      }
-      return;
-    }
+  async function postData() {
+    setIsLoading(true);
+    await Delay(500);
+    const patientID = "1";
+    const url = `${currentAddress.current}/assessment/${patientID}/facts/${instructionData.nextFactId}`;
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody.current),
+      });
 
-    switch (step) {
-      case "q1":
-        break;
-      case "q2":
-        setStep("q1");
-        setAnswers({
-          q1: answers.q1,
-          q2: null,
-          q3Vent: null,
-          qEmergency: null,
-        });
-        setIntermediateNote(null);
-        break;
-      case "q3Vent":
-        setStep("q2");
-        setAnswers((prev) => ({ ...prev, q2: answers.q2, q3Vent: null }));
-        break;
-      case "qEmergency":
-        setStep("q2");
-        setAnswers((prev) => ({ ...prev, q2: answers.q2, qEmergency: null }));
-        setIntermediateNote(null);
-        break;
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      setInstructionData(result as InstructionResponse);
+      console.log(result);
+
+      setIsLoading(false);
+      setIsSuccess(true);
+    } catch (error) {
+      setIsLoading(false);
+      setIsError(true);
+      pushNotification(
+        <Notification
+          title="Error"
+          description={error.message + "."}
+          connotation="Negative"
+        />
+      );
     }
+  }
+
+  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    postData();
   };
 
-  //##########################################################
   return (
     <div className={styles.form}>
       <div className={styles.leftContainer}>
@@ -193,90 +117,37 @@ export default function InferenceForm() {
           percentage={SHORT_PERCENT}
         />
       </div>
-      <div className={styles.centerContainer}></div>
-      <form
-        className={styles.rightContainer}
-        onSubmit={(e) => e.preventDefault()}
-      >
+      <div className={styles.centerContainer}>
+        <JustificationContainer text={"Justification not provided."} />
+        <DaPredictionContainer isDa={data.difficultAirwayPredicted} />
+      </div>
+      <form className={styles.rightContainer} onSubmit={(e) => submitForm(e)}>
         <span className={styles.questionText}>
-          Did the entubation went well?
+          {instructionData &&
+            `nextFactDescription: ${instructionData.nextFactDescription} was successful?`}
         </span>
+        <span className={styles.questionText}>
+          {`recommendedApproach: ${
+            instructionData && instructionData.recommendedApproach
+          }.`}
+        </span>
+        <span className={styles.radiogroupTitle}>Status of Procedure</span>
         <div className={styles.radiogroup}>
-          <RadioButton label="Yes" className="flex" name="question_response" />
-          <RadioButton label="No" className="flex" name="question_response" />
+          <RadioButton
+            label="Successful"
+            className="flex"
+            name="question_response"
+            onChange={() => setAnswer(true)}
+          />
+          <RadioButton
+            label="Failed"
+            className="flex"
+            name="question_response"
+            onChange={() => setAnswer(false)}
+          />
         </div>
-        <SubmitButton text="Continue" />
+        <SubmitButton text="Continue" loading={isLoading} />
       </form>
-      {/* <div className={`${styles.qaContainer} row gap-md`}>
-        <div className={`${styles.qaColumn} ${styles.questionsCol}`}>
-          <div className={styles.questionItem}>
-            <span className={styles.questionIndex}>LEMON</span>
-            <span className={styles.questionText}>—%</span>
-          </div>
-          <div className={styles.questionItem}>
-            <span className={styles.questionIndex}>MOANS</span>
-            <span className={styles.questionText}>—%</span>
-          </div>
-          <div className={styles.questionItem}>
-            <span className={styles.questionIndex}>RODS</span>
-            <span className={styles.questionText}>—%</span>
-          </div>
-          <div className={styles.questionItem}>
-            <span className={styles.questionIndex}>SHORT</span>
-            <span className={styles.questionText}>—%</span>
-          </div>
-        </div>
-
-        <div className={`${styles.qaColumn} ${styles.answersCol}`}>
-          {!finalOutcome ? (
-            <>
-              <div className={styles.procedureTitle}>{procedureLabel}</div>
-              <div className={styles.questionHeader}>
-                <div className={styles.questionText}>{questionLabel}</div>
-              </div>
-              {intermediateNote && (
-                <div className={styles.infoPanel}>
-                  <div className={styles.panelTitle}>Indicação</div>
-                  <div>{intermediateNote}</div>
-                </div>
-              )}
-              <div
-                className={styles.radioGroupCentered}
-                role="radiogroup"
-                aria-label={`Resposta da pergunta ${stepIndex + 1}`}
-              >
-                <label className={styles.radioOption}>
-                  <input
-                    type="radio"
-                    name={`q-${step}`}
-                    value="yes"
-                    checked={currentAnswer === "yes"}
-                    onChange={() => handleAnswer("yes")}
-                  />
-                  <span>Sim</span>
-                </label>
-                <label className={styles.radioOption}>
-                  <input
-                    type="radio"
-                    name={`q-${step}`}
-                    value="no"
-                    checked={currentAnswer === "no"}
-                    onChange={() => handleAnswer("no")}
-                  />
-                  <span>Não</span>
-                </label>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className={styles.procedureTitle}>Resultado</div>
-              <div className={styles.resultPanel}>
-                <div className={styles.resultText}>{finalOutcome}</div>
-              </div>
-            </>
-          )}
-        </div>
-      </div> */}
     </div>
   );
 }
