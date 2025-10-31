@@ -19,7 +19,6 @@ export default function InferenceForm() {
   const {
     data,
     instructionData,
-    // resetInstructionData,
     isLoading,
     setIsLoading,
     currentAddress,
@@ -48,7 +47,7 @@ export default function InferenceForm() {
 
   const setAnswer = (isTrue: boolean) => {
     requestBody.current.status = isTrue ? "SUCCESSFUL" : "FAILED";
-    console.log(requestBody.current);
+    // console.log(requestBody.current);
   };
 
   async function postData() {
@@ -71,7 +70,6 @@ export default function InferenceForm() {
 
       const result = await response.json();
 
-      // resetInstructionData();
       setInstructionData(result as InstructionResponse);
       console.log(result);
 
@@ -131,7 +129,7 @@ export default function InferenceForm() {
         <span className={styles.questionText}>
           {`recommendedApproach: ${
             instructionData && instructionData.recommendedApproach
-          } was successful?`}
+          }.`}
         </span>
         <span className={styles.radiogroupTitle}>Status of Procedure</span>
         <div className={styles.radiogroup}>

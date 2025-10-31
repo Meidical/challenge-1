@@ -58,6 +58,7 @@ export default function SystemBody() {
             textLeft="Prolog"
             textRight="Drools"
             onChange={(switched) => switchAddress(switched)}
+            disabled={isLoading || isPredictionDone}
           />
           {!isPredictionDone ? (
             <SubmitButton
