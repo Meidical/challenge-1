@@ -40,10 +40,11 @@ build_inferir_via_aerea_json(PatientID, JSONFinal) :-
     ),
     JSON1),
 
-    (   facto(PatientID, _, via_aerea_dificil(true)),
-        append(JSON1, [difficultAirwayPredicted=true], JSON2)
-    ;   append(JSON1, [difficultAirwayPredicted=false], JSON2)
+    (   facto(PatientID, _, via_aerea_dificil(true))
+    ->  Bool = @(true)
+    ;   Bool = @(false)
     ),
+    append(JSON1, [difficultAirwayPredicted=Bool], JSON2),
  
     % Encontrar processo recomendado
     facto(PatientID, _, id_prox_facto(N)),
@@ -107,7 +108,7 @@ post_prox_processo(PatientIDA, IDA, Request) :-
 
 reply_processo_json(PatientID) :-
     facto(PatientID, _, id_prox_facto(N)),
-    ultimo_rec_processo(PatientID, N, Rec),
+    ultimo_rec_processo(PatientID, ID, N, Rec),
     (   facto(PatientID, N1, conclusao(true)),
         reply_json(_{
             nextFactDescription: Rec, 
@@ -116,12 +117,13 @@ reply_processo_json(PatientID) :-
         })
     ;   reply_json(_{
             nextFactDescription: Rec, 
-            nextFactId: N
+            nextFactId: N,
+            justification_id: ID
         })
     ).
 
-ultimo_rec_processo(PatientID, N, Valor) :-
-    facto(PatientID, _, rec_processo(N, Valor)).
+ultimo_rec_processo(PatientID, ID, N, Valor) :-
+    facto(PatientID, ID, rec_processo(N, Valor)).
 
 ultimo_rec_processo(PatientID, _, "Nenhum processo encontrado") :-
     \+ facto(PatientID, _, rec_processo(_)).
