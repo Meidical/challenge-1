@@ -22,7 +22,7 @@
 :- consult('utils.pl').
 
 main :-
-    http_server(http_dispatch, [port(8081)]).
-    %repeat, sleep(60), fail.
+    http_server(http_dispatch, [port(8081)]),
+    repeat, sleep(60), fail.
 
-:- main.
+:- initialization(main,main).
