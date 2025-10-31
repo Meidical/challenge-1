@@ -116,7 +116,6 @@ reply_processo_json(PatientID) :-
         })
     ;   reply_json(_{
             nextFactDescription: Rec, 
-            conclusion: false, 
             nextFactId: N
         })
     ).
