@@ -48,34 +48,21 @@ build_inferir_via_aerea_json(PatientID, JSONFinal) :-
  
     % Encontrar processo recomendado
     facto(PatientID, _, id_prox_facto(N)),
-    ultimo_rec_processo(PatientID, _, N, ValorRec),
+    facto(PatientID, _, rec_processo(N, ValorRec)),
     append(JSON2, [recommendedApproach=ValorRec], JSON3),
 
     % Encontrar id do próximo processo
     facto(PatientID, _, id_prox_facto(NFacto)),
     append(JSON3, [nextFactId=NFacto], JSON4),
-
+    
     % Justificar resultados da mnemónica
-    build_justificacao_mnemonicas(PatientID, MnemonicsText),
-    append(JSON4, [justification=MnemonicsText], JSONFinal),
+    facto(PatientID, IDVA, via_aerea_dificil(_)),
+    como_json(PatientID, IDVA, JustMnemonicas),
+    append(JSON4, [justification=JustMnemonicas], JSONFinal),
 
     retractall(facto(PatientID, _, id_prox_facto(_))).
 
 
-build_justificacao_mnemonicas(PatientID, FullText) :-
-    findall(N, facto(PatientID, N, mnemonica_cf(_, _)), Ns),
-    juntar_texto_mnemonicas(PatientID, Ns, "", FullText).
-
-juntar_texto_mnemonicas(_, [], Acc, Acc).
-juntar_texto_mnemonicas(PatientID, [N | Rest], Acc, FullText) :-
-    (   facto(PatientID, N, mnemonica_cf(Name, _)),
-        como_json(PatientID, N, Text)
-    ->  format(string(Header), "\n\n=== Explanation for ~w ===\n", [Name]),
-        string_concat(Acc, Header, Acc1),
-        string_concat(Acc1, Text, Acc2)
-    ;   Acc2 = Acc
-    ),
-    juntar_texto_mnemonicas(PatientID, Rest, Acc2, FullText).
 
 
 
@@ -108,7 +95,7 @@ post_prox_processo(PatientIDA, IDA, Request) :-
 
 reply_processo_json(PatientID) :-
     facto(PatientID, _, id_prox_facto(N)),
-    ultimo_rec_processo(PatientID, ID, N, Rec),
+    facto(PatientID, ID, rec_processo(N, Rec)),
     (   facto(PatientID, N1, conclusao(true)),
         reply_json(_{
             nextFactDescription: Rec, 
@@ -121,13 +108,6 @@ reply_processo_json(PatientID) :-
             justification_id: ID
         })
     ).
-
-ultimo_rec_processo(PatientID, ID, N, Valor) :-
-    facto(PatientID, ID, rec_processo(N, Valor)).
-
-ultimo_rec_processo(PatientID, _, "Nenhum processo encontrado") :-
-    \+ facto(PatientID, _, rec_processo(_)).
-
 
 
 %  HTTP DELETE para retirar todos os factos de um paciente

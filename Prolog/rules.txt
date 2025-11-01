@@ -43,7 +43,7 @@ regra 3
 
 regra 4
     se [fator("LEMON", "O")]    % Obstruction
-    entao [cria_facto(fator("LEMON", ["O", 0.7]))].
+    entao [cria_facto(fator("LEMON", ["O", 0.3]))].
 
 regra 5
     se [fator("LEMON", "N")]    % Neck mobility
