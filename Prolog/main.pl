@@ -25,4 +25,4 @@ main :-
     http_server(http_dispatch, [port(8081)]),
     repeat, sleep(60), fail.
 
-:- initialization(main, main).
+:- initialization(main,main).

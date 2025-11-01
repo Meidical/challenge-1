@@ -183,7 +183,13 @@ assert_fator(PatientID, Category, Code) :-
 
 get_prox_processo(PatientID, ID, Dict) :-
     prox_facto(PatientID, N),
-    assertz(facto(PatientID, N, facto_pedido(ID, Dict.status))),
+
+    (   Dict.status = "SUCCESSFUL"
+    ->  Status = true
+    ;   Status = false
+    ),
+
+    assertz(facto(PatientID, N, facto_pedido(ID, Status))),
 
     arranca_motor(PatientID),
     arranca_motor(PatientID),
