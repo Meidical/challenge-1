@@ -78,6 +78,22 @@ get_explanation_json(Request) :-
 
 
 
+% HTTP POST para explicaoes "whynot"
+:- http_handler(root(api/whynot), post_whynot, [method(post)]).
+post_whynot(Request) :-
+    http_read_json_dict(Request, Dict),
+
+    % Expect: { "patientId": "001", "fact": {"predicate": "processo", "args": ["Alternative Technique", "SUCCESSFUL"]} }
+    PatientID = Dict.patientId,
+    FactDict = Dict.fact,
+    string_to_atom(FactDict.predicate, PredAtom),
+    Args = FactDict.args,
+    Term =.. [PredAtom | Args],   % dynamically build the term, e.g. processo("Alternative Technique", "SUCCESSFUL")
+
+    whynot_json(PatientID, Term, JSON),
+    reply_json(JSON).
+
+
 
 
 % HTTP POST para processos médicos

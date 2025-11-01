@@ -97,6 +97,18 @@ get_root_id(PatientID, RootID) :-
 % Geração de explicações do tipo "Porque nao"
 % Exemplo: ?- whynot(classe(meu_veículo,ligeiro)).
 
+whynot_json(PatientID, Facto, JSON) :-
+    with_output_to(atom(TextAtom),
+        (   (   whynot(PatientID, Facto)
+            ->  true
+            ;   true
+            )
+        )
+    ),
+    atom_string(TextAtom, TextStr),
+    JSON = json([justification=TextStr]).
+
+
 whynot(PatientID, Facto):-
 	whynot(PatientID, Facto,1).
 
