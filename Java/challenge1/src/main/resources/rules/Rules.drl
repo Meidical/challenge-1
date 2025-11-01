@@ -445,7 +445,7 @@ end
 
 // Rules for Airway Management Approach
 rule "25 - Default Easy Airway Approach"
-    salience -100
+    salience -25
     when
         $patient : PatientAirwayAssessment(
             difficultAirwayPredicted == false
@@ -470,7 +470,7 @@ end
 
 // Laryngoscopy SUCCESSFUL/FAILED
 rule "26 - Laryngoscopy SUCCESSFUL"
-    salience -110  // Lower salience than Default Easy Airway Approach so it fires afterward
+    salience -26  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Proceed with standard direct laryngoscopy"
@@ -500,7 +500,7 @@ rule "26 - Laryngoscopy SUCCESSFUL"
 end
 
 rule "27 - Laryngoscopy FAILED"
-    salience -130  // Lower salience than Default Easy Airway Approach so it fires afterward
+    salience -27  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Proceed with standard direct laryngoscopy"
@@ -531,7 +531,7 @@ end
 
 // Facial Mask Ventilation SUCCESSFUL/FAILED
 rule "28 - Facial Mask Ventilation SUCCESSFUL"
-    salience -120  // Lower salience than Default Easy Airway Approach so it fires afterward
+    salience -28  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Facial Mask Ventilation"
@@ -552,7 +552,7 @@ rule "28 - Facial Mask Ventilation SUCCESSFUL"
 end
 
 rule "29 - Facial Mask Ventilation FAILED"
-    salience -125  // Lower salience than Default Easy Airway Approach so it fires afterward
+    salience -29  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Facial Mask Ventilation"
@@ -579,7 +579,7 @@ end
 
 // Supraglottic Airway Device SUCCESSFUL/FAILED
 rule "30 - Apllying supraglottic airway device SUCCESS"
-    salience -140  // Lower salience than Default Easy Airway Approach so it fires afterward
+    salience -30  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Unpredicted difficult airway - Apllying supraglottic airway device"
@@ -609,7 +609,7 @@ rule "30 - Apllying supraglottic airway device SUCCESS"
 end
 
 rule "31 - Apllying supraglottic airway device FAILED"
-    salience -150  // Lower salience than Default Easy Airway Approach so it fires afterward
+    salience -31  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Unpredicted difficult airway - Apllying supraglottic airway device"
@@ -640,7 +640,7 @@ end
 
 // Oxygenize and Ventilate patient - Emergency SUCCESSFUL/FAILED
 rule "32 - Oxygenize and Ventilate patient - Emergency SUCCESS"
-    salience -151  // Lower salience than Default Easy Airway Approach so it fires afterward
+    salience -32  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Oxygenize and Ventilate patient - Emergency"
@@ -655,7 +655,7 @@ rule "32 - Oxygenize and Ventilate patient - Emergency SUCCESS"
         }
         // Record that Fact 5 was triggered for this patient
         $patient.addTriggeredFact($fact);
-        Conclusion c = new Conclusion(Conclusion.WAKE_UP_PACIENT);
+        Conclusion c = new Conclusion(Conclusion.WAKE_UP_PATIENT);
         insert(c);
         // Mark this fact as terminal leading to the given conclusion
         modify($fact) {
@@ -666,7 +666,7 @@ rule "32 - Oxygenize and Ventilate patient - Emergency SUCCESS"
 end
 
 rule "33 - Oxygenize and Ventilate patient - Emergency FAILED"
-    salience -152  // Lower salience than Default Easy Airway Approach so it fires afterward
+    salience -33  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Oxygenize and Ventilate patient - Emergency"
@@ -681,7 +681,7 @@ rule "33 - Oxygenize and Ventilate patient - Emergency FAILED"
         }
         // Record that Fact 5 was triggered for this patient
         $patient.addTriggeredFact($fact);
-        Conclusion c = new Conclusion(Conclusion.CRICOTHOMY);
+        Conclusion c = new Conclusion(Conclusion.CRICOTOMY);
         insert(c);
         // Mark this fact as terminal leading to the given conclusion
         modify($fact) {
@@ -693,7 +693,7 @@ end
 
 // Fibroscopic Intubation SUCCESSFUL/FAILED
 rule "34 - Fibroscopic Intubation SUCCESS"
-    salience -160  // Lower salience than Default Easy Airway Approach so it fires afterward
+    salience -34  // Lower salience than Default Easy Airway Approach so it fires afterward
     when
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Fibroscopic Intubation"
@@ -719,7 +719,7 @@ rule "34 - Fibroscopic Intubation SUCCESS"
 end
 
 rule "35 - Fibroscopic Intubation FAILED"
-    salience -170  // Lower salience than Default Easy Airway Approach so it fires afterward
+    salience -35
     when
         $patient : PatientAirwayAssessment(
             recommendedApproach == "Fibroscopic Intubation"
@@ -734,7 +734,7 @@ rule "35 - Fibroscopic Intubation FAILED"
         }
         // Record the Conclusion
         $patient.addTriggeredFact($fact);
-        Conclusion c = new Conclusion(Conclusion.WAKE_UP_PACIENT);
+        Conclusion c = new Conclusion(Conclusion.WAKE_UP_PATIENT);
         insert(c);
         // Mark this fact as terminal leading to the given conclusion
         modify($fact) {
@@ -744,8 +744,9 @@ rule "35 - Fibroscopic Intubation FAILED"
         logger.info($patient.toString());
 end
 
-// "Via Aérea Difícil Previsível"
+// PREDICTED DIFFICULT AIRWAY PATHWAY
 rule "36 - Predictable Difficult Airway"
+    salience -36
     when
         $patient : PatientAirwayAssessment(
             difficultAirwayPredicted == true
@@ -768,22 +769,19 @@ rule "36 - Predictable Difficult Airway"
         logger.info($patient.toString());
 end
 
-// Etapa 10: Procurar alternativa com outra técnica anestésica
-// - SUCCESSFUL => "Outra técnica" (segue com a técnica alternativa)
-// - FAILED     => não foi possível; partir para abordagem de VA com intubação
-
+// Alternative anesthetic technique SUCCESSFUL/FAILED
 rule "37 - Alternative anesthetic technique SUCCESS"
-    salience -20
+    salience -37
     when
         $patient : PatientAirwayAssessment(
-            recommendedApproach == "Predictable difficult airway - seek alternative anesthetic technique"
+            recommendedApproach == "Difficult Airway Predicted - Seek other anesthetic airway management techniques"
         )
         $fact : Fact(
             id == 6,
             status == Status.SUCCESSFUL
         )
     then
-        Conclusion c = new Conclusion(Conclusion.OTHER_TECNIQUE);
+        Conclusion c = new Conclusion(Conclusion.OTHER_TECHNIQUE);
         insert(c);
         modify($fact) {
             setNextFactId(-1),
@@ -794,14 +792,44 @@ rule "37 - Alternative anesthetic technique SUCCESS"
 end
 
 rule "38 - Alternative anesthetic technique FAILED"
-    salience -30
+    salience -38
     when
         $patient : PatientAirwayAssessment(
-            recommendedApproach == "Predictable difficult airway - seek alternative anesthetic technique"
+            recommendedApproach == "Difficult Airway Predicted - Seek other anesthetic airway management techniques"
         )
         $fact : Fact(
             id == 6,
             status == Status.FAILED
+        )
+        $fact2 : Fact(
+            id == 7,
+            status == Status.NOT_STARTED
+        )
+    then
+        modify($patient) {
+            setRecommendedApproach("Airway approach with intubation")
+        }
+        modify($fact) {
+            setNextFactId(7),
+            setNextFactDescription($fact2.getDescription())
+        }
+        modify($fact2) {
+            setStatus(Status.STARTED)
+        }
+        $patient.addTriggeredFact($fact2);
+        logger.info($patient.toString());
+end
+
+// Airway approach with intubation SUCCESSFUL/FAILED
+rule "39 - Airway approach with intubation SUCCESS"
+    salience -39
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Airway approach with intubation"
+        )
+        $fact : Fact(
+            id == 7,
+            status == Status.SUCCESSFUL
         )
         $fact2 : Fact(
             id == 8,
@@ -809,188 +837,129 @@ rule "38 - Alternative anesthetic technique FAILED"
         )
     then
         modify($patient) {
-            setRecommendedApproach("Difficult Airway Predicted - Seek other anesthetic airway management techniques"),
-            setNextFactId(8),
-            setNextFactDescription($fact.getDescription())
+            setRecommendedApproach("Non evasive technique - Success with intubation")
         }
         modify($fact) {
-            setStatus(Status.STARTED),
-            setNextFactId(8)
+            setNextFactId(8),
+            setNextFactDescription($fact2.getDescription())
         }
-        // Record that Fact 1 was triggered for this patient
+        modify($fact2) {
+            setStatus(Status.STARTED)
+        }
+        $patient.addTriggeredFact($fact2);
+        logger.info($patient.toString());
+end
+
+rule "40 - Airway approach with intubation FAILED"
+    salience -40
+    when
+        $patient : PatientAirwayAssessment(
+            recommendedApproach == "Airway approach with intubation"
+        )
+        $fact : Fact(
+            id == 7,
+            status == Status.FAILED
+        )
+    then
+        Conclusion c = new Conclusion(Conclusion.CRICOTOMY);
+        insert(c);
+        modify($fact) {
+            setNextFactId(-1),
+            setNextFactDescription(c.getDescription())
+        }
         $patient.addTriggeredFact($fact);
         logger.info($patient.toString());
 end
 
-// Etapa 11: Abordagem de via aérea com intubação?
-// - SUCCESSFUL => Sim -> Técnica não invasiva
-// - FAILED     => Não  -> Cricotireotomia
-rule "Airway with intubation = YES -> Non-invasive technique"
-    salience -40
+
+rule "41 - Non evasive technique - Success with intubation SUCCESS"
+    salience -41
     when
         $patient : PatientAirwayAssessment(
-            recommendedApproach == "Airway approach with intubation - decide technique (non-invasive vs invasive)"
+            recommendedApproach == "Non evasive technique - Success with intubation"
         )
         $fact : Fact(
-            id == 11,
+            id == 8,
             status == Status.SUCCESSFUL
         )
-        $fact2 : Fact(
-            id == 12,
-            status == Status.NOT_STARTED
-        )
-    then
-        modify($patient) {
-            setRecommendedApproach("Non-invasive technique for intubation")
-        }
-        modify($fact) {
-            setNextFactId(12)
-        }
-        modify($fact2) {
-            setStatus(Status.STARTED)
-        }
-        logger.info($patient.toString());
-end
+     then
+         Conclusion c = new Conclusion(Conclusion.GENERAL_ANESTHESIA);
+         insert(c);
+         modify($fact) {
+             setNextFactId(-1),
+             setNextFactDescription(c.getDescription())
+         }
+         $patient.addTriggeredFact($fact);
+         logger.info($patient.toString());
+ end
 
-rule "Airway with intubation = NO -> Invasive technique (Cricothyrotomy)"
-    salience -50
-    when
-        $patient : PatientAirwayAssessment(
-            recommendedApproach == "Airway approach with intubation - decide technique (non-invasive vs invasive)"
-        )
-        $fact : Fact(
-            id == 11,
-            status == Status.FAILED
-        )
-        $fact2 : Fact(
-            id == 13,
-            status == Status.NOT_STARTED
-        )
-    then
-        modify($patient) {
-            setRecommendedApproach("Invasive technique (Cricothyrotomy)")
-        }
-        modify($fact) {
-            setNextFactId(13)
-        }
-        modify($fact2) {
-            setStatus(Status.STARTED)
-        }
-        logger.info($patient.toString());
-end
+ rule "42 - Non evasive technique - Success with intubation FAILED"
+     salience -42
+     when
+         $patient : PatientAirwayAssessment(
+             recommendedApproach == "Non evasive technique - Success with intubation"
+         )
+         $fact : Fact(
+             id == 8,
+             status == Status.FAILED
+         )
+         $fact2 : Fact(
+             id == 9,
+             status == Status.NOT_STARTED
+         )
+     then
+         modify($patient) {
+             setRecommendedApproach("Planned surgery")
+         }
+         modify($fact) {
+             setNextFactId(9),
+             setNextFactDescription($fact2.getDescription())
+         }
+         modify($fact2) {
+             setStatus(Status.STARTED)
+         }
+         $patient.addTriggeredFact($fact2);
+         logger.info($patient.toString());
+ end
 
-// Etapa 12: Técnica NÃO invasiva
-// - SUCCESSFUL => Intubação bem-sucedida -> realizar procedimento com AG
-// - FAILED     => Cricotireotomia
+ rule "41 - Planned surgery SUCCESS"
+     salience -41
+     when
+         $patient : PatientAirwayAssessment(
+             recommendedApproach == "Planned surgery"
+         )
+         $fact : Fact(
+             id == 9,
+             status == Status.SUCCESSFUL
+         )
+      then
+          Conclusion c = new Conclusion(Conclusion.CANCEL_PROCEDURE);
+          insert(c);
+          modify($fact) {
+              setNextFactId(-1),
+              setNextFactDescription(c.getDescription())
+          }
+          $patient.addTriggeredFact($fact);
+          logger.info($patient.toString());
+  end
 
-rule "Non-invasive technique SUCCESS -> Proceed with GA and surgery"
-    salience -60
-    when
-        $patient : PatientAirwayAssessment(
-            recommendedApproach == "Non-invasive technique for intubation"
-        )
-        $fact : Fact(
-            id == 12,
-            status == Status.SUCCESSFUL
-        )
-    then
-        modify($patient) {
-            setRecommendedApproach("Intubation successful - perform procedure under general anesthesia")
-        }
-        Conclusion c = new Conclusion(Conclusion.INTUBATION);
-        insert(c);
-        logger.info($patient.toString());
-end
-
-rule "Non-invasive technique FAILED -> Go to invasive technique"
-    salience -70
-    when
-        $patient : PatientAirwayAssessment(
-            recommendedApproach == "Non-invasive technique for intubation"
-        )
-        $fact : Fact(
-            id == 12,
-            status == Status.FAILED
-        )
-        $fact2 : Fact(
-            id == 13,
-            status == Status.NOT_STARTED
-        )
-    then
-        modify($patient) {
-            setRecommendedApproach("Invasive technique (Cricothyrotomy)")
-        }
-        modify($fact) {
-            setNextFactId(13)
-        }
-        modify($fact2) {
-            setStatus(Status.STARTED)
-        }
-        logger.info($patient.toString());
-end
-
-// Etapa 13: Técnica INVASIVA (Cricotireotomia)
-rule "Invasive technique START -> Ask if surgery planned"
-    salience -80
-    when
-        $patient : PatientAirwayAssessment(
-            recommendedApproach == "Invasive technique (Cricothyrotomy)"
-        )
-        $fact : Fact(
-            id == 13,
-            status == Status.STARTED
-        )
-        $fact2 : Fact(
-            id == 14,
-            status == Status.NOT_STARTED
-        )
-    then
-        modify($patient) {
-            setRecommendedApproach("Invasive technique (Cricothyrotomy) - Is surgery planned?")
-        }
-        modify($fact2) {
-            setStatus(Status.STARTED)
-        }
-        logger.info($patient.toString());
-end
-
-
-// Etapa 14: Cirurgia planeada?
-// - SUCCESSFUL => Sim  -> Cancelar procedimento
-// - FAILED     => Não  -> Prosseguir com AG
-
-rule "Planned surgery = YES -> Cancel procedure"
-    salience -90
-    when
-        $patient : PatientAirwayAssessment(
-            recommendedApproach == "Invasive technique (Cricothyrotomy) - Is surgery planned?"
-        )
-        $fact : Fact(
-            id == 14,
-            status == Status.SUCCESSFUL
-        )
-    then
-        modify($patient) {
-            setRecommendedApproach("Cancel procedure")
-        }
-        logger.info($patient.toString());
-end
-
-rule "Planned surgery = NO -> Proceed with GA and surgery"
-    salience -100
-    when
-        $patient : PatientAirwayAssessment(
-            recommendedApproach == "Invasive technique (Cricothyrotomy) - Is surgery planned?"
-        )
-        $fact : Fact(
-            id == 14,
-            status == Status.FAILED
-        )
-    then
-        modify($patient) {
-            setRecommendedApproach("Airway secured via invasive technique - perform procedure under general anesthesia")
-        }
-        Conclusion c = new Conclusion(Conclusion.INTUBATION);
-        insert(c);
-        logger.info($patient.toString());
-end
+  rule "42 - Planned surgery SUCCESS"
+       salience -42
+       when
+           $patient : PatientAirwayAssessment(
+               recommendedApproach == "Planned surgery"
+           )
+           $fact : Fact(
+               id == 9,
+               status == Status.FAILED
+           )
+        then
+            Conclusion c = new Conclusion(Conclusion.CRICOTOMY);
+            insert(c);
+            modify($fact) {
+                setNextFactId(-1),
+                setNextFactDescription(c.getDescription())
+            }
+            $patient.addTriggeredFact($fact);
+            logger.info($patient.toString());
+    end

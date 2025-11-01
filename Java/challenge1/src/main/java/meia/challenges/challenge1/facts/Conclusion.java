@@ -10,12 +10,12 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Conclusion {
-    public static final String OTHER_TECNIQUE = "Other Technique";
+    public static final String OTHER_TECHNIQUE = "Other Technique";
     public static final String GENERAL_ANESTHESIA = "General Anesthesia";
     public static final String CANCEL_PROCEDURE = "Cancel Procedure";
-    public static final String CRICOTHOMY = "Cricothyrotomy";
+    public static final String CRICOTOMY = "Cricotomy";
     public static final String INTUBATION = "Intubation";
-    public static final String WAKE_UP_PACIENT = "Wake up Pacient";
+    public static final String WAKE_UP_PATIENT = "Wake up Patient";
     public static final String ENDOTRACHEAL_INTUBATION = "Tracheal intubation";
 
     private String description;
