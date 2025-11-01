@@ -219,6 +219,15 @@ public class DroolsService {
         return null;
     }
 
+    public Conclusion getConclusionById(String patientid) {
+        KieSession kieSession = getOrCreateSession(patientid);
+        Collection<?> raw = kieSession.getObjects(new ClassObjectFilter(Conclusion.class));
+        return raw.stream()
+                .map(o -> (Conclusion) o)
+                .findFirst()
+                .orElse(null);
+    }
+
 
     /**
      * Inserts a predefined set of domain Facts into the provided KieSession.

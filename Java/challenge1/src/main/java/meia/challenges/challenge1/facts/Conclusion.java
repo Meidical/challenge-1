@@ -1,17 +1,22 @@
 package meia.challenges.challenge1.facts;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * A rule engine conclusion produced by the Drools rules. Contains a
  * single textual description and some well-known constant conclusions.
  */
+@Setter
+@Getter
 public class Conclusion {
-    public static final String OTHER_TECNIQUE = "Other Technique";
+    public static final String OTHER_TECHNIQUE = "Other Technique";
     public static final String GENERAL_ANESTHESIA = "General Anesthesia";
     public static final String CANCEL_PROCEDURE = "Cancel Procedure";
-    public static final String CRICOTHOMY = "Cricothyrotomy";
+    public static final String CRICOTOMY = "Cricotomy";
     public static final String INTUBATION = "Intubation";
-    public static final String WAKE_UP_PACIENT = "Wake up Pacient";
-
+    public static final String WAKE_UP_PATIENT = "Wake up Patient";
+    public static final String ENDOTRACHEAL_INTUBATION = "Tracheal intubation";
 
     private String description;
 
@@ -25,31 +30,8 @@ public class Conclusion {
         this.description = description;
     }
 
-    /**
-     * @return the conclusion description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Set the conclusion description.
-     *
-     * @param description new description text
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-}
-
-    /*
-     * String form used in logs/debug output.
-     *
-     * @return a short diagnostic string
+    @Override
     public String toString() {
-        return "Diagnosis: " + description;
+        return "Conclusion: " + description;
     }
-     */
-
-
+}

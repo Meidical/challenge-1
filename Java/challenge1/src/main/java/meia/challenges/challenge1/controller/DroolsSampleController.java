@@ -2,6 +2,7 @@ package meia.challenges.challenge1.controller;
 
 import meia.challenges.challenge1.explain.How;
 import meia.challenges.challenge1.explain.Why;
+import meia.challenges.challenge1.facts.Conclusion;
 import meia.challenges.challenge1.facts.Fact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -66,6 +67,12 @@ public class DroolsSampleController {
     public ResponseEntity<Fact> getFactById(@PathVariable String patientid, @PathVariable int id) {
         Fact fact = droolsService.getFactById(patientid, id);
         return new ResponseEntity<>(fact, HttpStatus.OK);
+    }
+
+    @GetMapping("/assessment/{patientid}/facts/conclusion")
+    public ResponseEntity<Conclusion> getConclusions(@PathVariable String patientid) {
+        Conclusion conclusion = droolsService.getConclusionById(patientid);
+        return new ResponseEntity<>(conclusion, HttpStatus.OK);
     }
 
     /*@PostMapping("/assessment/{patientid}/insertfact")
