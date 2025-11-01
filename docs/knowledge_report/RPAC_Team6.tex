@@ -204,7 +204,16 @@
     \subsection{Objetivos}
     Este projeto tem como principal objetivo prever com elevada precisão qual a abordagem da via aérea a aplicar tendo em conta as caracteristicas de cada paciente. Num primeiro momento, baseado nessas mesmas características, será determinado se um doente tem ou não uma \gls{vad}. Nesta fase, o importante é ajudar o perito a evitar uma situação de \gls{vadnp}, avaliando as caracteristicas dos pacientes e atribuindo diferentes pesos a cada uma delas de modo a chegar a uma conclusão mais correta possível.
     
-    Numa segunda fase, depois de determinar a abordagem a efetuar, o perito será guiado pelas várias fases do processo de forma a efetuar os passos mais acertados para cada situação específica.
+    Numa segunda fase, depois de determinar a abordagem a efetuar, o perito será guiado pelas várias fases do processo de forma a efetuar os passos mais acertados para cada situação específica. Desta forma, o sistema atua como um guia interativode apoio à decisão, garantindo maior segurança e consistência na execução dos procedimentos médicos.
+
+    Para além destes objetivos principais, o projeto visa também:
+    \begin{itemize}
+        \item Promover a explicabilidade das decisões tomadas através da geração automática de justificações que permitem ao utilizador a qualquer momento obter um esclarecimento do procedimento sugerido ou da conclusão a que foi chegada;
+        \item Diminuir o tempo gasto no processo de avaliação inicial ou tomadas de decisão sobre o procedimento adequado, que pode ser crucial para a vida do paciente;
+        \item Apoiar a investigação e melhoria contínua, por exemplo, através da recolha e análise de dados anónimos dos pacientes que podem contribuir para estudos futuros e melhoramento do sistema, de forma a ser possível obter resultados cada vez mais precisos.
+    \end{itemize}
+
+    Desta forma, este projeto não se limita a uma ferramenta de previsão, mas constitui um sistema completo de apoio à decisão médica.
 
     \subsection{Fontes de Conhecimento}
 
@@ -232,6 +241,7 @@
 
 
     \section{Conhecimento Adquirido}
+    Nesta secção é apresentado o conhecimento adquirido ao longo do desenvolvimento do sistema, bem como a forma como este foi estruturado e representado no motor de inferência. Será representado e explicado detalhadamente o fluxograma do conhecimento obtido e cada uma das mnemónicas e os seus fatores. De seguida, serão mostrados dois casos de uso e, finalmente detalhadas as sessões com o perito.
     \subsection{Conhecimento}
     \subsubsection{Fluxograma}
     \begin{figure}[H]
@@ -355,6 +365,8 @@
     
     De seguida, o perito irá avaliar se existe outra técnica de ventilação possível no momento. Neste caso hipotético, o perito conclui que não existe, por isso será realizada uma abordagem de via aérea com intubação com recurso a uma técnica não invasiva, como uma \gls{fibroscopia}. O procedimento realiza-se com sucesso e é então possível aplicar anestesia geral. O fluxograma para este caso pode ser visto na Figura~\ref{fig:caso1}.
 
+    Em relação às regras ativadas por este caso de uso, em primeiro lugar serão acionadas as regras de criação dos fatores. Neste caso, os fatores correspondentes à idade (LEMON-A), ausência de dentes (MOANS-N), barba densa (MOANS-M), distância mento-hióide reduzida (LEMON-E) e antecedentes de cirurgia na via aérea (SHORT-S). De seguida, será efetuado o cálculo de previsão de via aérea utilizando valores de certeza. Neste exemplo, o valor obtido será acima do estipulado como valor máximo para via aérea normal para a mnemónica MOANS e, dado isso, irá ativar a regra correspondente, chegando então a uma conclusão intermédia. A partir daqui, o sistema irá interativamente, para cada processo, perguntar ao utilizador pelo sucesso/insucesso do mesmo e com base na sua resposta ativar as regras correspondentes até chegar a uma conclusão final. Por exemplo, após o insucesso de ``Realizar uma abordagem da via aérea com intubação``, o sistema irá acionar uma regra para iniciar o processo de ``Técnica não invasiva``, e retornar ao utilizador a abordagem recomendada. Após o processo, o utilizazador seleciona o sucesso da opção no sistema e, será acionada a regra final, que cria a conclusão ``Aplicar anestesia geral``.
+
     \subsubsection{Caso de Uso 2 --- Via Aérea Difícil Não Previsível}
 
     \begin{figure}[H]
@@ -382,31 +394,33 @@
     
     No entanto, durante o procedimento de \gls{LD}, algo corre inesperadamente mal e o procedimento transforma-se numa \gls{vadnp}. O perito tenta, com um \gls{ds} verificar se a intubação é possível e com uma \gls{fibroscopia} se o paciente pode ser ventilado. Ambos os procedimentos têm sucesso e então o sistema conclui que o paciente pode ser intubado. O fluxograma para este caso pode ser visto na Figura~\ref{fig:caso2}.
 
+    Para este exemplo, o processo é muito similar. Neste caso, não são ativadas nenhumas regras para criação dos fatores e, por isso, é acionada a regra para iniciar o processo de \gls{LD}. O processo será semelhante ao descrito no caso anterior, recomendando ao utilizador o processo seguinte, o utilizador indicando o sucesso/insucesso das operações e, consoante essa avaliação, será disparada a regra correspondente que irá iniciar o processo seguinte até o sistema chegar a uma conclusão final.
+
     \subsection{Sessões de Aquisição do Conhecimento}
     \subsubsection{Primeira sessão}
     \begin{tabularx}{0.6\textwidth}{@{}lX@{}}
-        \textbf{Data:} & 23/09/2024 \\
+        \textbf{Data:} & 23/09/2025 \\
     \end{tabularx}
 
     A primeira sessão foi uma sessão de apresentação do perito à equipa e vice-versa. Foram colocadas em cima da mesa vários problemas dentro da área de anestesia que seriam interessantes de abordar com um \gls{sp}, no entanto, dado á proximidade profissional do perito com a área da anestesia por via aérea, foi decidido que seria este o tema a abordar. Foi feita à equipa uma apresentação e explicação dos conceitos básicos do domínio, e foi fornecido um documento (\cite{consensosva}) que o perito considerou de extrema relevância para o desenvolvimento do conhecimento do projeto. A equipa ficou com a tarefa de analisar o documento e preparar questões para a próxima sessão.
 
     \subsubsection{Segunda sessão}
     \begin{tabularx}{0.5\textwidth}{@{}lX@{}}
-        \textbf{Data:} & 28/09/2024 \\
+        \textbf{Data:} & 28/09/2025 \\
     \end{tabularx}
 
     O principal objetivo da segunda sessão era esclarecer dúvidas sobre o documento fornecido anteriormente. Com a ajuda do perito, foi possível sistematizar e compreender os vários esquemas e fluxogramas e quais os pontos mais relevantes a serem tidos em conta. Foram também discutidas as mnemónicas e a sua importância na avaliação do paciente.
 
     \subsubsection{Terceira sessão}
     \begin{tabularx}{0.5\textwidth}{@{}lX@{}}
-        \textbf{Data:} & 4/10/2024 \\
+        \textbf{Data:} & 4/10/2025 \\
     \end{tabularx}
 
     Para a terceira sessão, a equipa preparou um primeiro fluxograma do conhecimento, baseado no que tinha sido discutido anteriormente. Após revisão do mesmo com o perito, foram feitas várias alterações ao mesmo. Foi também discutida a possibilidade de atribuir pesos a cada fator das mnemónicas, bem como a cada mnemónica em si de forma a que o sistema possa ser o mais preciso na sua avaliação.
 
     \subsubsection{Quarta sessão}
     \begin{tabularx}{0.5\textwidth}{@{}lX@{}}
-        \textbf{Data:} & 11/10/2024 \\
+        \textbf{Data:} & 11/10/2025 \\
     \end{tabularx}
 
     Sessão final para validação do conhecimento adquirido. Também foram esclarecidas algumas dúvidas finais e ajustados alguns valores probabilísticos referentes aos pesos das mnemónicas e dos seus fatores.
@@ -415,6 +429,8 @@
 
 
     \section{Reflexões finais}
+    \subsection{Adequação do trabalho ao meio envolvente}
+    O sistema desenvolvido apresenta uma clara adequação ao contexto hospitalar, uma vez que foi concebido para apoiar rapidamente e com clareza profissionais de saúde na avaliação e gestão de vias aéreas difíceis, um processo crítico em ambientes de urgência e anestesia. A forma como o projeto foi desenvolvido facilita a sua integração em infraestruturas existentes, sem necessidade de grandes alterações nos sistemas em uso, apenas sendo necessário o acesso do utilizador a um website onde rapidamente este pode iniciar o processo de auxilio de decisão. Além disso, as justificações do motor de inferência contribuem para a transparência das decisões clínicas, reforçando a confiança dos profissionais e promovendo a segurança do doente. Assim, este sistema demonstra um elevado potencial de aplicação prática em hospitais e outras instituições de saúde, tanto no apoio à decisão em situações críticas, como até mesmo na formação médica.
     \subsection{Próximos objetivos}
     O principal passo seguinte a tomar será ajustar os valores probabilísticos dos pesos das mnemónicas e dos seus fatores para valores definitivos.
     Com o conhecimento adquirido, o próximo passo será a implementação do \gls{sp} em si. Já foi feita a implementação das \glspl{API} tanto em Prolog como em Java, usando Spring Boot neste último caso. De seguida, será desenvolvida o \textit{frontend} do sistema e serão codificadas as várias regras do conhecimento tanto em Prolog como em Drools.

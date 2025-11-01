@@ -4,7 +4,7 @@
   padding: 10px;
   border-radius: var(--small-radius);
   border: 1px solid var(--terciary-color);
-  flex: 1;
+  flex: 0.33;
 }
 
 .title {
@@ -27,4 +27,5 @@
   /* font-weight: 600; */
   font-size: var(--ftiny);
   color: white;
+  white-space: pre-wrap;
 }

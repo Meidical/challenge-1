@@ -29,7 +29,7 @@ export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
 
   const { pushNotification } = useNotificationContext();
 
-  const requestBody = useRef<any>(DEFAULT_PAYLOAD);
+  const requestBody = useRef(structuredClone(DEFAULT_PAYLOAD));
 
   const changeFactor = (
     category: FactorCategory,
@@ -87,7 +87,8 @@ export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
 
       setData(result as PrevisionResponse);
       setInstructionData(result as InstructionResponse);
-      console.log(result);
+      console.log("request: ", requestBody.current);
+      console.log("response: ", result);
 
       setIsLoading(false);
       setIsSuccess(true);

@@ -1,0 +1,30 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  gap: var(--sm);
+  /* flex: 0.33; */
+}
+
+.questionText {
+  font-family: "OpenSans";
+  display: flex;
+  font-weight: 600;
+  font-size: var(--ftiny);
+  color: white;
+}
+
+.radiogroupTitle {
+  font-family: "OpenSans";
+  display: flex;
+  font-size: var(--fmicro);
+  color: var(--steel);
+  text-wrap-mode: nowrap;
+}
+
+.radiogroup {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}

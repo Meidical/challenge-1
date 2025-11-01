@@ -22,6 +22,8 @@ export type InstructionPost = {
 
 export type InstructionResponse = {
   nextFactId: number;
+  justification_id: string; //justificationId
   nextFactDescription: string;
+
   recommendedApproach: string;
 };

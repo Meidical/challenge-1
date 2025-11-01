@@ -48,7 +48,7 @@ build_inferir_via_aerea_json(PatientID, JSONFinal) :-
  
     % Encontrar processo recomendado
     facto(PatientID, _, id_prox_facto(N)),
-    ultimo_rec_processo(PatientID, N, ValorRec),
+    ultimo_rec_processo(PatientID, _, N, ValorRec),
     append(JSON2, [recommendedApproach=ValorRec], JSON3),
 
     % Encontrar id do próximo processo
