@@ -3,30 +3,14 @@ import React, { useRef } from "react";
 import styles from "./InferenceForm.module.css";
 import MnemonicPercentageContainer from "./MnemonicPercentageContainer";
 
-import { SubmitButton, RadioButton } from "@/components/form";
-import { useDataContext, useNotificationContext } from "@/contexts";
-import {
-  InstructionPost,
-  InstructionResponse,
-  PrevisionResponse,
-} from "@/types";
+import { useDataContext } from "@/contexts";
+import { InstructionPost, PrevisionResponse } from "@/types";
 import DaPredictionContainer from "./DaPredictionContainer";
 import JustificationContainer from "./JustificationContainer";
-import { Delay } from "@/utils";
-import { Notification } from "@/components/feedback";
+import InstructionForm from "./InstructionForm";
 
 export default function InferenceForm() {
-  const {
-    data,
-    instructionData,
-    isLoading,
-    setIsLoading,
-    currentAddress,
-    setInstructionData,
-    setIsSuccess,
-    setIsError,
-  } = useDataContext();
-  const { pushNotification } = useNotificationContext();
+  const { data, instructionData } = useDataContext();
 
   const requestBody = useRef<InstructionPost>({
     status: null,
@@ -44,54 +28,6 @@ export default function InferenceForm() {
   const SHORT_PERCENT: number = Math.floor(
     (data as PrevisionResponse).shortCF * 100
   );
-
-  const setAnswer = (isTrue: boolean) => {
-    requestBody.current.status = isTrue ? "SUCCESSFUL" : "FAILED";
-    // console.log(requestBody.current);
-  };
-
-  async function postData() {
-    setIsLoading(true);
-    await Delay(500);
-    const patientID = "1";
-    const url = `${currentAddress.current}/assessment/${patientID}/facts/${instructionData.nextFactId}`;
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody.current),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
-      }
-
-      const result = await response.json();
-
-      setInstructionData(result as InstructionResponse);
-      console.log(result);
-
-      setIsLoading(false);
-      setIsSuccess(true);
-    } catch (error) {
-      setIsLoading(false);
-      setIsError(true);
-      pushNotification(
-        <Notification
-          title="Error"
-          description={error.message + "."}
-          connotation="Negative"
-        />
-      );
-    }
-  }
-
-  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    postData();
-  };
 
   return (
     <div className={styles.form}>
@@ -118,36 +54,12 @@ export default function InferenceForm() {
         />
       </div>
       <div className={styles.centerContainer}>
-        <JustificationContainer text={"Justification not provided."} />
         <DaPredictionContainer isDa={data.difficultAirwayPredicted} />
+        {instructionData && instructionData.nextFactId !== -1 && (
+          <InstructionForm />
+        )}
       </div>
-      <form className={styles.rightContainer} onSubmit={(e) => submitForm(e)}>
-        <span className={styles.questionText}>
-          {instructionData &&
-            `nextFactDescription: ${instructionData.nextFactDescription} was successful?`}
-        </span>
-        <span className={styles.questionText}>
-          {`recommendedApproach: ${
-            instructionData && instructionData.recommendedApproach
-          }.`}
-        </span>
-        <span className={styles.radiogroupTitle}>Status of Procedure</span>
-        <div className={styles.radiogroup}>
-          <RadioButton
-            label="Successful"
-            className="flex"
-            name="question_response"
-            onChange={() => setAnswer(true)}
-          />
-          <RadioButton
-            label="Failed"
-            className="flex"
-            name="question_response"
-            onChange={() => setAnswer(false)}
-          />
-        </div>
-        <SubmitButton text="Continue" loading={isLoading} />
-      </form>
+      <JustificationContainer />
     </div>
   );
 }

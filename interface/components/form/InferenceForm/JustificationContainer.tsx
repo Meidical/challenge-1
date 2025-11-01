@@ -1,18 +1,58 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./JustificationContainer.module.css";
+import { Notification } from "@/components/feedback";
+import { useDataContext, useNotificationContext } from "@/contexts";
 
-type JustificationContainerProps = {
-  text?: string;
-};
+// type JustificationContainerProps = {
+//   text?: string;
+// };
 
-export default function JustificationContainer({
-  text = "",
-}: JustificationContainerProps) {
+export default function JustificationContainer() {
+  const { instructionData, currentAddress } = useDataContext();
+  const { pushNotification } = useNotificationContext();
+
+  const [justification, setJustification] = useState<string | null>(null);
+
+  async function getData() {
+    const patientID = "1";
+    const url = `${currentAddress.current}/explain?patientId=${patientID}&id=${instructionData.justification_id}`;
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      setJustification(result.justification);
+      console.log(result);
+    } catch (error) {
+      pushNotification(
+        <Notification
+          title="Error"
+          description={"Error fetching justification data."}
+          connotation="Negative"
+        />
+      );
+    }
+  }
+
+  useEffect(() => {
+    if (instructionData.nextFactId == -1) {
+      getData();
+    }
+  }, [instructionData]);
+
   return (
     <div className={styles.justificationContainer}>
       <span className={styles.title}>Justification</span>
-      <span className={styles.text}>{text}</span>
+      <span className={styles.text}>
+        {justification && justification}
+        {/* Justification available when procedure is finished. */}
+      </span>
     </div>
   );
 }
