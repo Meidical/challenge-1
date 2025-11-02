@@ -1,14 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import styles from "./JustificationContainer.module.css";
+import styles from "./WhyContainer.module.css";
 import { Notification } from "@/components/feedback";
 import { useDataContext, useNotificationContext } from "@/contexts";
-import {
-  GetJustificationEndpoint,
-  GetSystemTypeFromCurrentAddress,
-} from "@/lib";
 
-export default function JustificationContainer() {
+export default function WhyContainer() {
   const { instructionData, currentAddress } = useDataContext();
   const { pushNotification } = useNotificationContext();
 
@@ -16,13 +12,7 @@ export default function JustificationContainer() {
 
   async function getData() {
     const patientID = "1";
-    const endpoint = GetJustificationEndpoint(
-      GetSystemTypeFromCurrentAddress(currentAddress.current),
-      patientID,
-      instructionData.justificationId
-    );
-    const url = `${currentAddress.current}${endpoint}`;
-
+    const url = `${currentAddress.current}/explain?patientId=${patientID}&id=${instructionData.justificationId}`;
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -39,7 +29,7 @@ export default function JustificationContainer() {
       pushNotification(
         <Notification
           title="Error"
-          description={"Error fetching justification data."}
+          description={`Error fetching "why" justification data.`}
           connotation="Negative"
         />
       );
@@ -47,14 +37,12 @@ export default function JustificationContainer() {
   }
 
   useEffect(() => {
-    if (instructionData.nextFactId == -1) {
-      getData();
-    }
+    if (instructionData && instructionData?.justificationId) getData();
   }, [instructionData]);
 
   return (
-    <div className={styles.justificationContainer}>
-      <span className={styles.title}>Justification</span>
+    <div className={styles.container}>
+      <span className={styles.title}>Why</span>
       <span className={styles.text}>{justification && justification}</span>
     </div>
   );

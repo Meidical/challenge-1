@@ -9,6 +9,7 @@ import DaPredictionContainer from "./DaPredictionContainer";
 import JustificationContainer from "./JustificationContainer";
 import InstructionForm from "./InstructionForm";
 import ConclusionContainer from "./ConclusionContainer";
+import WhyContainer from "./WhyContainer";
 
 export default function InferenceForm() {
   const { data, instructionData } = useDataContext();
@@ -53,7 +54,10 @@ export default function InferenceForm() {
       <div className={styles.centerContainer}>
         <DaPredictionContainer isDa={data.difficultAirwayPredicted} />
         {instructionData && instructionData.nextFactId !== -1 ? (
-          <InstructionForm />
+          <>
+            <InstructionForm />
+            {/* <WhyContainer /> */}
+          </>
         ) : (
           <ConclusionContainer text={instructionData.nextFactDescription} />
         )}

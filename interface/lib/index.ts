@@ -1,1 +1,5 @@
-export { default as GetSystemAddress } from "./GetSystemAddress";
+export {
+  default as GetSystemAddress,
+  GetSystemTypeFromCurrentAddress,
+  GetJustificationEndpoint,
+} from "./GetSystemAddress";
