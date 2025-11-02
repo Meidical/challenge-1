@@ -78,7 +78,7 @@ export default function InstructionForm() {
         <span className={styles.radiogroupTitle}>Recommended Approach</span>
         {instructionData && instructionData.nextFactDescription && (
           <span className={styles.questionText}>
-            {`${instructionData.nextFactDescription} was successful?`}
+            {instructionData.nextFactDescription}
           </span>
         )}
         {instructionData && instructionData.recommendedApproach && (

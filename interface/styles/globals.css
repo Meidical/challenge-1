@@ -92,29 +92,6 @@ h6 {
   font-weight: 100;
 }
 
-#modal-root {
-  position: fixed;
-  z-index: 999;
-  pointer-events: none;
-  /* background-color: red; */
-  /* top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0; */
-
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
-}
-
-#modal-root:empty {
-  display: none;
-}
-
-#modal-root > * {
-  pointer-events: all;
-}
-
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 18px;
