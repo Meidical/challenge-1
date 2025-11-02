@@ -430,7 +430,7 @@
     A arquitetura do sistema é composta por um \textit{frontend} Web em React que recolhe os dados do paciente, apresenta o estado do processo e devolve conclusões e explicações, comunicando com o servidor por HTTP.
     No \textit{backend}, existem dois subsistemas periciais expostos por \glspl{APIs} independentes: 
     \begin{itemize}
-        \item Um sistema pericial em Prolog, que utiliza bibliotecas HTTP para receber e enviar JSON e executar inferência declarativa; 
+        \item Um sistema pericial em Prolog, que utiliza bibliotecas HTTP para receber e enviar JSON e executar inferência declarativa.
         \item Um sistema pericial em Java com Spring Boot, que expõe serviços REST e utiliza o motor de regras Drools para avaliação de regras e geração de justificações.
     \end{itemize}
     
@@ -447,7 +447,7 @@
     O sistema desenvolvido apresenta uma clara adequação ao contexto hospitalar, uma vez que foi concebido para apoiar rapidamente e com clareza profissionais de saúde na avaliação e gestão de vias aéreas difíceis, um processo crítico em ambientes de urgência e anestesia. A forma como o projeto foi desenvolvido facilita a sua integração em infraestruturas existentes, sem necessidade de grandes alterações nos sistemas em uso, apenas sendo necessário o acesso do utilizador a um website onde rapidamente este pode iniciar o processo de auxilio de decisão. Além disso, as justificações do motor de inferência contribuem para a transparência das decisões clínicas, reforçando a confiança dos profissionais e promovendo a segurança do doente. Assim, este sistema demonstra um elevado potencial de aplicação prática em hospitais e outras instituições de saúde, tanto no apoio à decisão em situações críticas, como até mesmo na formação médica.
     
     \subsection{Restrições no desenvolvimento do projeto}
-    
+
     \begin{itemize}
         \item \textbf{Dependência do perito:} a validação do conhecimento exigiu disponibilidade do perito e as alterações de agenda afetaram o ritmo das iterações.
         \item \textbf{Subjetividade das mnemónicas:} alguns fatores (p.\,ex., ``Look Externally'') têm componente subjetiva, tornando necessária a utilização de pesos conservadores e justificações transparentes.
