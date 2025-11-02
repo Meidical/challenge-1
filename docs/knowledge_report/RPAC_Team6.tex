@@ -125,6 +125,18 @@
     description={Interface de Programação de Aplicações (do inglês \text{Application Programming Interface}).},
     text={API},      
 }
+\newglossaryentry{HTTP}
+{
+    name=HTTP,
+    description={Protocolo de Transferência de Hipertexto (do inglês \text{HyperText Transfer Protocol}).},
+    text={HTTP},      
+}
+\newglossaryentry{REST}
+{
+    name=REST,
+    description={Transferência de Estado Representacional (do inglês \text{Representational State Transfer}).},
+    text={REST},      
+}
 \newglossaryentry{EAMS}
 {
     name=EAMS,
@@ -427,17 +439,17 @@
 
     \newpage
     \section{Arquitetura do Sistema}
-    A arquitetura do sistema é composta por um \textit{frontend} Web em React que recolhe os dados do paciente, apresenta o estado do processo e devolve conclusões e explicações, comunicando com o servidor por HTTP.
-    No \textit{backend}, existem dois subsistemas periciais expostos por \glspl{APIs} independentes: 
+    A arquitetura do sistema é composta por um \textit{frontend} Web em React que recolhe os dados do paciente, apresenta o estado do processo e devolve conclusões e explicações, comunicando com o servidor por \glspl{HTTP}.
+    No \textit{backend}, existem dois subsistemas periciais expostos por \glspl{API} independentes: 
     \begin{itemize}
-        \item Um sistema pericial em Prolog, que utiliza bibliotecas HTTP para receber e enviar JSON e executar inferência declarativa.
-        \item Um sistema pericial em Java com Spring Boot, que expõe serviços REST e utiliza o motor de regras Drools para avaliação de regras e geração de justificações.
+        \item Um sistema pericial em Prolog, que utiliza bibliotecas \glspl{HTTP} para receber e enviar JSON e executar inferência declarativa.
+        \item Um sistema pericial em Java com Spring Boot, que expõe serviços \glspl{REST} e utiliza o motor de regras Drools para avaliação de regras e geração de justificações.
     \end{itemize}
     
     \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{./resources/pdf/arquitetura.jpg}
-    \caption{Arquitetura lógica do sistema: React Web-App (cliente), APIs de Prolog e Spring Boot (servidor) e Docker.}
+    \caption{Arquitetura lógica do sistema: React Web-App (cliente), \glspl{API}s de Prolog e Spring Boot (servidor) e Docker.}
     \label{fig:arquitetura}
     \end{figure}
 
