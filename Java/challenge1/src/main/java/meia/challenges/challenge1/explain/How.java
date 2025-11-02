@@ -4,10 +4,17 @@ import meia.challenges.challenge1.facts.AssessmentFactor;
 import meia.challenges.challenge1.facts.Conclusion;
 import meia.challenges.challenge1.facts.Fact;
 import meia.challenges.challenge1.facts.PatientAirwayAssessment;
+import meia.challenges.challenge1.facts.Status;
+import meia.challenges.challenge1.utils.CertaintyFactor;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * "How" explanation utility inspired by the base project.
@@ -160,52 +167,47 @@ public class How {
         .append(approach)
         .append('\n');
     }
-    sb.append(indent(1))
-      .append("CFs: ")
-      .append("LEMON=").append(formatDouble(patient.getLemonCF()))
-      .append(", MOANS=").append(formatDouble(patient.getMoansCF()))
-      .append(", RODS=").append(formatDouble(patient.getRodsCF()))
-      .append(", SHORT=").append(formatDouble(patient.getShortCF()))
-      .append('\n');
+    // Mnemonics section with per-letter breakdowns and total combined CF
+    sb.append(indent(1)).append("Mnemonics:").append('\n');
+    appendMnemonicBlock(sb, "LEMON", patient.getLemonCF(), patient.getLemonFactors());
+    appendMnemonicBlock(sb, "MOANS", patient.getMoansCF(), patient.getMoansFactors());
+    appendMnemonicBlock(sb, "RODS", patient.getRodsCF(), patient.getRodsFactors());
+    appendMnemonicBlock(sb, "SHORT", patient.getShortCF(), patient.getShortFactors());
+
+    double totalCF = combineAll(
+            combineAll(patient.getLemonCF(), patient.getMoansCF()),
+            combineAll(patient.getRodsCF(), patient.getShortCF())
+    );
+    sb.append(indent(1)).append("Total = ").append(formatDouble2(totalCF)).append('\n');
     sb.append('\n');
     sb.append("Workflow for patient ").append(patient.getPatientId()).append(':').append('\n');
 
-    for (int i = 0; i < seq.size(); i++) {
-      Fact current = seq.get(i);
+    int step = 1;
+    Set<String> startedEmitted = new HashSet<>();
+    for (Fact current : seq) {
+      String name = current.getName();
+      Status status = current.getStatus();
 
-      Fact next = (i + 1 < seq.size()) ? seq.get(i + 1) : null;
-
-      if (next != null
-          && current.getNextFactId() == next.getId()
-          && next.getNextFactId() == 0
-          && next.getNextFactDescription() != null
-          && !next.getNextFactDescription().isEmpty()) {
+      // start 
+      if ((status == Status.SUCCESSFUL || status == Status.FAILED) && !startedEmitted.contains(name)) {
         sb.append(indent(1))
-          .append('[').append(current.getId()).append("] ")
-          .append(current.getName())
-          .append(" - ")
-          .append(current.getStatus())
-          .append(" (next->Conclusion)")
+          .append('[').append(step++).append("] ")
+          .append(name)
+          .append(" = STARTED")
           .append('\n');
-        sb.append(indent(1))
-          .append("Conclusion - ")
-          .append(next.getNextFactDescription())
-          .append('\n');
-        // Skip printing the terminal fact row
-        i++;
-        continue;
+        startedEmitted.add(name);
       }
 
-      // Default rendering
+      if (status == Status.STARTED) {
+        startedEmitted.add(name);
+      }
+
       sb.append(indent(1))
-        .append('[').append(current.getId()).append("] ")
-        .append(current.getName())
-        .append(" - ")
-        .append(current.getStatus());
-      if (current.getNextFactId() > 0) {
-        sb.append(" (next->").append(current.getNextFactId()).append(")");
-      }
-      sb.append('\n');
+        .append('[').append(step++).append("] ")
+        .append(name)
+        .append(" = ")
+        .append(status)
+        .append('\n');
     }
 
     return sb.toString();
@@ -270,4 +272,51 @@ public class How {
     private String formatDouble(double v) {
         return String.format(Locale.ROOT, "%.3f", v);
     }
+
+  private String formatDouble2(double v) {
+    return String.format(Locale.ROOT, "%.2f", v);
+  }
+
+  private void appendMnemonicBlock(StringBuilder sb,
+                   String name,
+                   double totalCf,
+                   List<AssessmentFactor> factors) {
+    sb.append(indent(1))
+      .append(name)
+      .append(" = ")
+      .append(formatDouble2(totalCf))
+      .append('\n');
+
+    if (factors == null || factors.isEmpty()) {
+      return;
+    }
+
+    Map<String, Double> byCode = new HashMap<>();
+    for (AssessmentFactor f : factors) {
+      if (!f.isPresent()) continue;
+      if (f.getCertaintyFactor() <= 0) continue;
+      String code = f.getCode() != null ? f.getCode() : "?";
+      double prev = byCode.getOrDefault(code, 0.0);
+      double combined = prev == 0.0 ? f.getCertaintyFactor() : CertaintyFactor.combine(prev, f.getCertaintyFactor());
+      byCode.put(code, combined);
+    }
+
+    if (byCode.isEmpty()) {
+      return;
+    }
+
+    List<Map.Entry<String, Double>> entries = byCode.entrySet().stream()
+        .sorted(Map.Entry.comparingByKey())
+        .collect(Collectors.toList());
+    for (Map.Entry<String, Double> e : entries) {
+      sb.append(indent(2))
+        .append(e.getKey()).append(" -> ")
+        .append(formatDouble2(e.getValue()))
+        .append('\n');
+    }
+  }
+
+  private double combineAll(double a, double b) {
+    return CertaintyFactor.combine(a, b);
+  }
 }
