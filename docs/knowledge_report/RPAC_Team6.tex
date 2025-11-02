@@ -426,11 +426,38 @@
     Sessão final para validação do conhecimento adquirido. Também foram esclarecidas algumas dúvidas finais e ajustados alguns valores probabilísticos referentes aos pesos das mnemónicas e dos seus fatores.
 
     \newpage
+    \section{Arquitetura do Sistema}
+    A arquitetura do sistema é composta por um \textit{frontend} Web em React que recolhe os dados do paciente, apresenta o estado do processo e devolve conclusões e explicações, comunicando com o servidor por HTTP.
+    No \textit{backend}, existem dois subsistemas periciais expostos por \glspl{APIs} independentes: 
+    \begin{itemize}
+        \item Um sistema pericial em Prolog, que utiliza bibliotecas HTTP para receber e enviar JSON e executar inferência declarativa; 
+        \item Um sistema pericial em Java com Spring Boot, que expõe serviços REST e utiliza o motor de regras Drools para avaliação de regras e geração de justificações.
+    \end{itemize}
+    
+    \begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{./resources/pdf/arquitetura.jpg}
+    \caption{Arquitetura lógica do sistema: React Web-App (cliente), APIs de Prolog e Spring Boot (servidor) e Docker.}
+    \label{fig:arquitetura}
+    \end{figure}
 
 
     \section{Reflexões finais}
     \subsection{Adequação do trabalho ao meio envolvente}
     O sistema desenvolvido apresenta uma clara adequação ao contexto hospitalar, uma vez que foi concebido para apoiar rapidamente e com clareza profissionais de saúde na avaliação e gestão de vias aéreas difíceis, um processo crítico em ambientes de urgência e anestesia. A forma como o projeto foi desenvolvido facilita a sua integração em infraestruturas existentes, sem necessidade de grandes alterações nos sistemas em uso, apenas sendo necessário o acesso do utilizador a um website onde rapidamente este pode iniciar o processo de auxilio de decisão. Além disso, as justificações do motor de inferência contribuem para a transparência das decisões clínicas, reforçando a confiança dos profissionais e promovendo a segurança do doente. Assim, este sistema demonstra um elevado potencial de aplicação prática em hospitais e outras instituições de saúde, tanto no apoio à decisão em situações críticas, como até mesmo na formação médica.
+    
+    \subsection{Restrições no desenvolvimento do projeto}
+    
+    \begin{itemize}
+        \item \textbf{Dependência do perito:} a validação do conhecimento exigiu disponibilidade do perito e as alterações de agenda afetaram o ritmo das iterações.
+        \item \textbf{Subjetividade das mnemónicas:} alguns fatores (p.\,ex., ``Look Externally'') têm componente subjetiva, tornando necessária a utilização de pesos conservadores e justificações transparentes.
+        \item \textbf{Dados limitados:} Inexistência de um \textit{dataset} clínico extenso para calibração estatística, por isso optou-se por uma abordagem baseada em regras com fatores de certeza.
+        \item \textbf{Privacidade e conformidade (RGPD):} o sistema foi estruturado para limitar a exposição de dados pessoais.
+        \item \textbf{Robustez e Disponibilidade:} asseguraram-se tempos de resposta reduzidos e desempenho, dado que o ambiente clínico exige elevada fiabilidade e rapidez.
+        \item \textbf{Paralelismo de motores:} manter Prolog e Java/Drools em paralelo aumenta a complexidade (testes, \textit{deploy}, sincronização de regras), mas dá flexibilidade.
+        \item \textbf{UX em contexto crítico:} a interface deve reduzir cliques e ambiguidade, por isso foram privilegiadas explicações breves, estados do processo e retorno rápido de resultado.
+    \end{itemize}
+
     \subsection{Próximos objetivos}
     O principal passo seguinte a tomar será ajustar os valores probabilísticos dos pesos das mnemónicas e dos seus fatores para valores definitivos.
     Com o conhecimento adquirido, o próximo passo será a implementação do \gls{sp} em si. Já foi feita a implementação das \glspl{API} tanto em Prolog como em Java, usando Spring Boot neste último caso. De seguida, será desenvolvida o \textit{frontend} do sistema e serão codificadas as várias regras do conhecimento tanto em Prolog como em Drools.
