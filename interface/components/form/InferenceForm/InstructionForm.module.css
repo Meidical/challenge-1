@@ -1,9 +1,12 @@
 .form {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  height: 100%;
+  justify-content: space-between;
+  /* height: 100%; */
   gap: var(--sm);
+  padding: 10px;
+  border-radius: var(--small-radius);
+  border: 1px solid var(--terciary-color);
   /* flex: 0.33; */
 }
 

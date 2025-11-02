@@ -22,7 +22,7 @@ export type InstructionPost = {
 
 export type InstructionResponse = {
   nextFactId: number;
-  justification_id: string; //justificationId
+  justificationId: string;
   nextFactDescription: string;
 
   recommendedApproach: string;

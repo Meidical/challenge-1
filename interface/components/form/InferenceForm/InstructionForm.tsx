@@ -75,7 +75,7 @@ export default function InstructionForm() {
   return (
     <form className={styles.form} onSubmit={(e) => submitForm(e)}>
       <div className="column gap-micro">
-        <span className={styles.radiogroupTitle}>Procedure Instructions</span>
+        <span className={styles.radiogroupTitle}>Recommended Approach</span>
         {instructionData && instructionData.nextFactDescription && (
           <span className={styles.questionText}>
             {`${instructionData.nextFactDescription} was successful?`}
@@ -87,6 +87,7 @@ export default function InstructionForm() {
           </span>
         )}
       </div>
+
       <div className={styles.radiogroup}>
         <RadioButton
           label="Successful"

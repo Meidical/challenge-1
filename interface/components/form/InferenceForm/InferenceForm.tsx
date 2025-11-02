@@ -1,20 +1,17 @@
 "use client";
-import React, { useRef } from "react";
+import React from "react";
 import styles from "./InferenceForm.module.css";
 import MnemonicPercentageContainer from "./MnemonicPercentageContainer";
 
 import { useDataContext } from "@/contexts";
-import { InstructionPost, PrevisionResponse } from "@/types";
+import { PrevisionResponse } from "@/types";
 import DaPredictionContainer from "./DaPredictionContainer";
 import JustificationContainer from "./JustificationContainer";
 import InstructionForm from "./InstructionForm";
+import ConclusionContainer from "./ConclusionContainer";
 
 export default function InferenceForm() {
   const { data, instructionData } = useDataContext();
-
-  const requestBody = useRef<InstructionPost>({
-    status: null,
-  });
 
   const LEMON_PERCENT: number = Math.floor(
     (data as PrevisionResponse).lemonCF * 100
@@ -55,8 +52,10 @@ export default function InferenceForm() {
       </div>
       <div className={styles.centerContainer}>
         <DaPredictionContainer isDa={data.difficultAirwayPredicted} />
-        {instructionData && instructionData.nextFactId !== -1 && (
+        {instructionData && instructionData.nextFactId !== -1 ? (
           <InstructionForm />
+        ) : (
+          <ConclusionContainer text={instructionData.nextFactDescription} />
         )}
       </div>
       <JustificationContainer />
