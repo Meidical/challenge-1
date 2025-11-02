@@ -83,12 +83,11 @@ get_explanation_json(Request) :-
 post_whynot(Request) :-
     http_read_json_dict(Request, Dict),
 
-    % Expect: { "patientId": "001", "fact": {"predicate": "processo", "args": ["Alternative Technique", "SUCCESSFUL"]} }
     PatientID = Dict.patientId,
     FactDict = Dict.fact,
     string_to_atom(FactDict.predicate, PredAtom),
     Args = FactDict.args,
-    Term =.. [PredAtom | Args],   % dynamically build the term, e.g. processo("Alternative Technique", "SUCCESSFUL")
+    Term =.. [PredAtom | Args], 
 
     whynot_json(PatientID, Term, JSON),
     reply_json(JSON).
@@ -116,12 +115,12 @@ reply_processo_json(PatientID) :-
         reply_json(_{
             nextFactDescription: Rec, 
             nextFactId: -1,
-            justification_id: N1
+            justificationId: N1
         })
     ;   reply_json(_{
             nextFactDescription: Rec, 
             nextFactId: N,
-            justification_id: ID
+            justificationId: ID
         })
     ).
 
