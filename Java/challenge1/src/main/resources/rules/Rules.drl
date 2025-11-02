@@ -554,7 +554,7 @@ rule "29 - Facial Mask Ventilation FAILED"
         )
         $fact2 : Fact(
             id == 3,
-            status == Status.STARTED
+            status == Status.NOT_STARTED
         )
     then
         modify($patient)  {
@@ -563,6 +563,9 @@ rule "29 - Facial Mask Ventilation FAILED"
         modify($fact) {
             setNextFactId(3),
             setNextFactDescription($fact2.getDescription())
+        }
+        modify($fact2) {
+            setStatus(Status.STARTED)
         }
         $patient.addTriggeredFact($fact);
         logger.info($patient.toString());
