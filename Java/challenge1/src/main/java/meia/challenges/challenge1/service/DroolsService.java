@@ -2,6 +2,7 @@ package meia.challenges.challenge1.service;
 
 import meia.challenges.challenge1.config.GroupedPropertiesLoader;
 import meia.challenges.challenge1.facts.*;
+import meia.challenges.challenge1.utils.FactParserUtils;
 import org.kie.api.runtime.ClassObjectFilter;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
@@ -28,6 +29,7 @@ public class DroolsService {
     private final Map<String, PatientAirwayAssessment> patientAssessments = new ConcurrentHashMap<>();
     private final Map<String, KieSession> patientSessions = new ConcurrentHashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(DroolsService.class);
+    private final GroupedPropertiesLoader factsLoader = new GroupedPropertiesLoader("facts.properties");
 
     /**
      * Evaluates airway assessment for a patient using certainty factors.
@@ -240,15 +242,10 @@ public class DroolsService {
      * @param session the KieSession where facts will be inserted
      */
     public void insertFact(KieSession session) {
-
-        session.insert(new Fact(1, "Direct Laryngoscopy", "Direct Laryngoscopy", Status.NOT_STARTED, 0, ""));
-        session.insert(new Fact(2, "Facial Mask Ventilation", "Facial Mask Ventilation", Status.NOT_STARTED, 0, ""));
-        session.insert(new Fact(3, "Supraglottic Device", "Supraglottic Device", Status.NOT_STARTED, 0, ""));
-        session.insert(new Fact(4, "Fibroscopic Intubation", "Fibroscopic Intubation", Status.NOT_STARTED, 0, ""));
-        session.insert(new Fact(5, "Emergency", "Emergency", Status.NOT_STARTED,0, ""));
-        session.insert(new Fact(6, "Seek other anesthetic airway management techniques", "Seek other anesthetic airway management techniques", Status.NOT_STARTED,0, ""));
-        session.insert(new Fact(7, "Airway with intubation", "Airway with intubation", Status.NOT_STARTED,0,""));
-        session.insert(new Fact(8, "Success with intubation", "Success with intubation", Status.NOT_STARTED,0,""));
-        session.insert(new Fact(9, "Planned surgery", "Planned surgery", Status.NOT_STARTED,0,""));
+        Map<String, String> flat = factsLoader.getGroup("fact"); // e.g. "1.name" -> "Direct Laryngoscopy"
+        List<Fact> facts = FactParserUtils.parseFacts(flat);
+        for (Fact f : facts) {
+            session.insert(f);
+        }
     }
 }
