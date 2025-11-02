@@ -1,5 +1,6 @@
 package meia.challenges.challenge1.service;
 
+import meia.challenges.challenge1.config.GroupedPropertiesLoader;
 import meia.challenges.challenge1.facts.*;
 import org.kie.api.runtime.ClassObjectFilter;
 import org.kie.api.runtime.KieContainer;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -128,7 +130,9 @@ public class DroolsService {
         return patientSessions.computeIfAbsent(patientId, id -> {
             KieSession kSession = kieContainer.newKieSession();
             kSession.setGlobal("logger", logger);
-
+            GroupedPropertiesLoader loader;
+            loader = new GroupedPropertiesLoader("certainty-factor.properties");
+            kSession.setGlobal("loader", loader);
             // Query listener - now only added once when session is first created
             ViewChangedEventListener listener = new ViewChangedEventListener() {
                 @Override
