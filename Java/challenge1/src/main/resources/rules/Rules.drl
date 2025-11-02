@@ -6,9 +6,10 @@ import meia.challenges.challenge1.facts.Fact;
 import meia.challenges.challenge1.facts.Status;
 import meia.challenges.challenge1.facts.Conclusion;
 import meia.challenges.challenge1.utils.CertaintyFactor;
-import meia.challenges.challenge1.config.CertaintyFactorUtil;
+import meia.challenges.challenge1.config.GroupedPropertiesLoader;
 import org.slf4j.Logger
 global Logger logger;
+global GroupedPropertiesLoader loader;
 
 query "Conclusions"
 	$conclusion : Conclusion()
@@ -26,12 +27,11 @@ rule "1 - Difficult Laryngoscopy - Look Externally"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
         modify($patient) {
-            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), cf))
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), loader.getValue("lemon", "l")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("lemon", "l"))
         }
 end
 
@@ -45,12 +45,11 @@ rule "2 - Difficult Laryngoscopy - Evaluate 3-3-2 Rule"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
         modify($patient) {
-            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), cf))
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), loader.getValue("lemon", "e")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("lemon", "e"))
         }
 end
 
@@ -64,12 +63,11 @@ rule "3 - Difficult Laryngoscopy - Mallampati Score High"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
         modify($patient) {
-            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), cf))
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), loader.getValue("lemon", "m")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("lemon", "m"))
         }
 end
 
@@ -83,12 +81,11 @@ rule "4 - Difficult Laryngoscopy - Obstruction or Obesity"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
         modify($patient) {
-            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), cf))
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), loader.getValue("lemon", "o")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("lemon", "o"))
         }
 end
 
@@ -102,19 +99,18 @@ rule "5 - Difficult Laryngoscopy - Neck Mobility"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
         modify($patient) {
-            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), cf))
+            setLemonCF(CertaintyFactor.combine($patient.getLemonCF(), loader.getValue("lemon", "n")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("lemon", "n"))
         }
 end
 
 // High overall LEMON score indicates difficult laryngoscopy
 rule "6 - Overall LEMON Assessment High"
     when
-        $patient : PatientAirwayAssessment(lemonCF > 0.6)
+        $patient : PatientAirwayAssessment(lemonCF > loader.getValue("lemon", "overall"))
     then
         modify($patient) {
             setDifficultAirwayPredicted(true),
@@ -136,12 +132,11 @@ rule "7 - Difficult Mask Ventilation - Mask Seal"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
         modify($patient) {
-            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), cf))
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), loader.getValue("moans", "m")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("moans", "m"))
         }
 end
 
@@ -155,12 +150,11 @@ rule "8 - Difficult Mask Ventilation - Obstruction"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
         modify($patient) {
-            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), cf))
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), loader.getValue("moans", "o")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("moans", "o"))
         }
 end
 
@@ -174,12 +168,11 @@ rule "9 - Difficult Mask Ventilation - Advanced Age"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
         modify($patient) {
-            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), cf))
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), loader.getValue("moans", "a")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("moans", "a"))
         }
 end
 
@@ -193,12 +186,12 @@ rule "10 - Difficult Mask Ventilation - No Teeth"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
+        
         modify($patient) {
-            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), cf))
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), loader.getValue("moans", "n")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("moans", "n"))
         }
 end
 
@@ -212,12 +205,12 @@ rule "11 - Difficult Mask Ventilation - Stiff Lungs or Airway"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
+        
         modify($patient) {
-            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), cf))
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), loader.getValue("moans", "s")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("moans", "s"))
         }
 end
 
@@ -227,7 +220,7 @@ rule "12 - Difficult Mask Ventilation - BMI Over 26"
         $patient : PatientAirwayAssessment(bmi > 26)
     then
         modify($patient) {
-            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), CertaintyFactorUtil.getCertaintyFactor("moans.bmi")))
+            setMoansCF(CertaintyFactor.combine($patient.getMoansCF(), loader.getValue("moans", "bmi")))
         }
         logger.info("Patient has BMI > 26, increasing MOANS CF");
 end
@@ -235,7 +228,7 @@ end
 // High overall MOANS score indicates difficult mask ventilation
 rule "13 - Overall MOANS Assessment High"
     when
-        $patient : PatientAirwayAssessment(moansCF > 0.6)
+        $patient : PatientAirwayAssessment(moansCF > loader.getValue("moans", "overall"))
     then
         modify($patient) {
             setDifficultAirwayPredicted(true),
@@ -256,12 +249,11 @@ rule "14 - Difficult Cricothyrotomy - Surgery or Disruption"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
         modify($patient) {
-            setShortCF(CertaintyFactor.combine($patient.getShortCF(), cf))
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), loader.getValue("short", "s")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("short", "s"))
         }
 end
 
@@ -275,12 +267,12 @@ rule "15 - Difficult Cricothyrotomy - Hematoma or Infection"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
+        
         modify($patient) {
-            setShortCF(CertaintyFactor.combine($patient.getShortCF(), cf))
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), loader.getValue("short", "h")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("short", "h"))
         }
 end
 
@@ -294,12 +286,12 @@ rule "16 - Difficult Cricothyrotomy - Obesity"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
+        
         modify($patient) {
-            setShortCF(CertaintyFactor.combine($patient.getShortCF(), cf))
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), loader.getValue("short", "o")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("short", "o"))
         }
 end
 
@@ -313,12 +305,12 @@ rule "17 - Difficult Cricothyrotomy - Radiation"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
+        
         modify($patient) {
-            setShortCF(CertaintyFactor.combine($patient.getShortCF(), cf))
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), loader.getValue("short", "r")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("short", "r"))
         }
 end
 
@@ -332,19 +324,19 @@ rule "18 - Difficult Cricothyrotomy - Tumor"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
+        
         modify($patient) {
-            setShortCF(CertaintyFactor.combine($patient.getShortCF(), cf))
+            setShortCF(CertaintyFactor.combine($patient.getShortCF(), loader.getValue("short", "t")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("short", "t"))
         }
 end
 
 // High overall SHORT score indicates difficult cricothyrotomy
 rule "19 - Overall SHORT Assessment High"
     when
-        $patient : PatientAirwayAssessment(shortCF > 0.6)
+        $patient : PatientAirwayAssessment(shortCF > loader.getValue("short", "overall"))
     then
         modify($patient) {
             setDifficultAirwayPredicted(true),
@@ -365,12 +357,11 @@ rule "20 - Difficult Airway - Restricted Mouth Opening"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
         modify($patient) {
-            setRodsCF(CertaintyFactor.combine($patient.getRodsCF(), cf))
+            setRodsCF(CertaintyFactor.combine($patient.getRodsCF(), loader.getValue("rods", "r")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("rods", "r"))
         }
 end
 
@@ -384,12 +375,12 @@ rule "21 - Difficult Airway - Obstruction"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
+        
         modify($patient) {
-            setRodsCF(CertaintyFactor.combine($patient.getRodsCF(), cf))
+            setRodsCF(CertaintyFactor.combine($patient.getRodsCF(), loader.getValue("rods", "o")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("rods", "o"))
         }
 end
 
@@ -403,12 +394,12 @@ rule "22 - Difficult Airway - Distorted Anatomy"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
+        
         modify($patient) {
-            setRodsCF(CertaintyFactor.combine($patient.getRodsCF(), cf))
+            setRodsCF(CertaintyFactor.combine($patient.getRodsCF(), loader.getValue("rods", "d")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("rods", "d"))
         }
 end
 
@@ -422,19 +413,19 @@ rule "23 - Difficult Airway - Stiff Neck"
             present == true
         )
     then
-        double cf = CertaintyFactorUtil.getCertaintyFactor($factor.getCategory().toLowerCase() + "." + $factor.getCode().toLowerCase());
+        
         modify($patient) {
-            setRodsCF(CertaintyFactor.combine($patient.getRodsCF(), cf))
+            setRodsCF(CertaintyFactor.combine($patient.getRodsCF(), loader.getValue("rods", "s")))
         }
         modify($factor) {
-            setCertaintyFactor(cf)
+            setCertaintyFactor(loader.getValue("rods", "s"))
         }
 end
 
 // High overall RODS score indicates difficult airway
 rule "24 - Overall RODS Assessment High"
     when
-        $patient : PatientAirwayAssessment(rodsCF > 0.5)
+        $patient : PatientAirwayAssessment(rodsCF > loader.getValue("rods", "overall"))
     then
         modify($patient) {
             setDifficultAirwayPredicted(true),
