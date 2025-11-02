@@ -66,6 +66,7 @@ export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
   };
 
   async function postData() {
+    console.log("request: ", requestBody.current);
     resetData();
     setIsLoading(true);
     await Delay(1000);
@@ -87,7 +88,6 @@ export default function FactForm({ ref }: { ref: React.Ref<HTMLFormElement> }) {
 
       setData(result as PrevisionResponse);
       setInstructionData(result as InstructionResponse);
-      console.log("request: ", requestBody.current);
       console.log("response: ", result);
 
       setIsLoading(false);

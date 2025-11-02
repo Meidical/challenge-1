@@ -78,6 +78,21 @@ get_explanation_json(Request) :-
 
 
 
+% HTTP POST para explicaoes "whynot"
+:- http_handler(root(api/whynot), post_whynot, [method(post)]).
+post_whynot(Request) :-
+    http_read_json_dict(Request, Dict),
+
+    PatientID = Dict.patientId,
+    FactDict = Dict.fact,
+    string_to_atom(FactDict.predicate, PredAtom),
+    Args = FactDict.args,
+    Term =.. [PredAtom | Args], 
+
+    whynot_json(PatientID, Term, JSON),
+    reply_json(JSON).
+
+
 
 
 % HTTP POST para processos médicos
@@ -100,12 +115,12 @@ reply_processo_json(PatientID) :-
         reply_json(_{
             nextFactDescription: Rec, 
             nextFactId: -1,
-            justification_id: N1
+            justificationId: N1
         })
     ;   reply_json(_{
             nextFactDescription: Rec, 
             nextFactId: N,
-            justification_id: ID
+            justificationId: ID
         })
     ).
 

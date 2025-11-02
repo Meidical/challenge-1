@@ -4,10 +4,6 @@ import styles from "./JustificationContainer.module.css";
 import { Notification } from "@/components/feedback";
 import { useDataContext, useNotificationContext } from "@/contexts";
 
-// type JustificationContainerProps = {
-//   text?: string;
-// };
-
 export default function JustificationContainer() {
   const { instructionData, currentAddress } = useDataContext();
   const { pushNotification } = useNotificationContext();
@@ -16,7 +12,7 @@ export default function JustificationContainer() {
 
   async function getData() {
     const patientID = "1";
-    const url = `${currentAddress.current}/explain?patientId=${patientID}&id=${instructionData.justification_id}`;
+    const url = `${currentAddress.current}/explain?patientId=${patientID}&id=${instructionData.justificationId}`;
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -49,10 +45,7 @@ export default function JustificationContainer() {
   return (
     <div className={styles.justificationContainer}>
       <span className={styles.title}>Justification</span>
-      <span className={styles.text}>
-        {justification && justification}
-        {/* Justification available when procedure is finished. */}
-      </span>
+      <span className={styles.text}>{justification && justification}</span>
     </div>
   );
 }

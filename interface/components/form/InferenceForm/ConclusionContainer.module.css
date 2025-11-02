@@ -1,33 +1,28 @@
-.form {
+.container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  /* height: 100%; */
-  gap: var(--sm);
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  position: relative;
   padding: 10px;
   border-radius: var(--small-radius);
-  border: 1px solid var(--terciary-color);
-  /* flex: 0.33; */
+  border: 1px solid var(--primary-color);
 }
 
-.questionText {
+.text {
   font-family: "OpenSans";
   display: flex;
   font-weight: 600;
-  font-size: var(--ftiny);
+  font-size: var(--fxs);
   color: white;
+  text-align: center;
 }
 
-.radiogroupTitle {
+.title {
   font-family: "OpenSans";
   display: flex;
   font-size: var(--fmicro);
   color: var(--steel);
   text-wrap-mode: nowrap;
-}
-
-.radiogroup {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
 }
