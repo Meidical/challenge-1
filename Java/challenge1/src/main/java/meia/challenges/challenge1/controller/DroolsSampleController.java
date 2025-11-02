@@ -1,6 +1,7 @@
 package meia.challenges.challenge1.controller;
 
 import meia.challenges.challenge1.explain.How;
+import meia.challenges.challenge1.explain.HowResponse;
 import meia.challenges.challenge1.explain.Why;
 import meia.challenges.challenge1.facts.Conclusion;
 import meia.challenges.challenge1.facts.Fact;
@@ -82,13 +83,14 @@ public class DroolsSampleController {
     }*/
 
     @GetMapping("/assessment/{patientid}/how")
-    public ResponseEntity<String> getHow(@PathVariable String patientid) {
+    public ResponseEntity<HowResponse> getHow(@PathVariable String patientid) {
         PatientAirwayAssessment patient = droolsService.getPatientById(patientid);
         if (patient == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         String explanation = new How().getFactsOnlyExplanation(patient);
-        return ResponseEntity.ok(explanation);
+        HowResponse response = new HowResponse(explanation);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/assessment/{patientid}/why/{factId}")
