@@ -16,25 +16,13 @@
   font-weight: 600;
   font-size: var(--fxs);
   color: white;
+  text-align: center;
 }
 
 .title {
   font-family: "OpenSans";
   display: flex;
   font-size: var(--fmicro);
-  color: var(--steel);
-  text-wrap-mode: nowrap;
-}
-
-.conclusion {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: "OpenSans";
-  display: flex;
-  font-weight: 600;
-  font-size: var(--fsm);
   color: var(--steel);
   text-wrap-mode: nowrap;
 }

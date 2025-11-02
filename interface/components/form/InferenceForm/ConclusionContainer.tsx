@@ -13,7 +13,6 @@ export default function ConclusionContainer({
     <div className={styles.container}>
       <span className={styles.title}>Conclusion</span>
       <span className={styles.text}>{text}</span>
-      {/* <span className={styles.conclusion}>End of Procedure</span> */}
     </div>
   );
 }
